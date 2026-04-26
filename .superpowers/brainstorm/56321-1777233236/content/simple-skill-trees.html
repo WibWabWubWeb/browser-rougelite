@@ -1,0 +1,51 @@
+<h2>Simple Skill Trees (Prototype)</h2>
+<p class="subtitle">Each unit gets a single branch choice at Level 3 and Level 6.</p>
+
+<div class="mockup">
+  <div class="mockup-header">Example: "Sentinel" (Plating Type)</div>
+  <div class="mockup-body" style="padding: 20px;">
+    <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+      
+      <!-- Base Level -->
+      <div class="card" style="width: 200px; text-align: center; border: 2px solid #666;">
+        <strong>Level 1: Base Unit</strong>
+        <p><small>+10 HP (Static Gain)</small></p>
+      </div>
+
+      <div style="font-size: 1.5rem;">⬇️</div>
+
+      <!-- First Choice -->
+      <div style="display: flex; gap: 40px;">
+        <div class="card" data-choice="tree-a" onclick="toggleSelect(this)" style="width: 180px; text-align: center;">
+          <div class="label">Branch Alpha</div>
+          <strong>Heavy Shield</strong>
+          <p><small>+20% Plating Armor</small></p>
+        </div>
+        <div style="align-self: center; font-weight: bold;">OR</div>
+        <div class="card" data-choice="tree-b" onclick="toggleSelect(this)" style="width: 180px; text-align: center;">
+          <div class="label">Branch Beta</div>
+          <strong>Spike Armor</strong>
+          <p><small>Reflect 5% Damage</small></p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="tree-ready" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Perfect for a prototype</h3>
+      <p>Easy to implement but gives the player a real choice.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="stats-only" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Even simpler: Just Stats</h3>
+      <p>Let player pick +ATK or +DEF at level up.</p>
+    </div>
+  </div>
+</div>

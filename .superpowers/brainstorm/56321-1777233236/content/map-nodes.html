@@ -1,0 +1,54 @@
+<h2>Map Structure & Node Types</h2>
+<p class="subtitle">How do players choose their path through the sector?</p>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">Node Types</div>
+    <div class="mockup-body">
+      <ul>
+        <li><strong>⚔️ Skirmish:</strong> Standard battle.</li>
+        <li><strong>☠️ Elite:</strong> Tougher battle, better rewards.</li>
+        <li><strong>🛒 Trade Hub:</strong> Shop for units and upgrades.</li>
+        <li><strong>❓ Distress Signal:</strong> Random event (narrative/choice).</li>
+        <li><strong>🔧 Repair Bay:</strong> Heal damaged units.</li>
+        <li><strong>🛸 Boss:</strong> Final sector encounter.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-header">Pathing Logic</div>
+    <div class="mockup-body">
+      <div class="options" data-multiselect>
+        <div class="option" data-choice="web" onclick="toggleSelect(this)">
+          <div class="content">
+            <strong>The Web (Slay the Spire)</strong>
+            <p>Branching paths that move forward. Can see several nodes ahead.</p>
+          </div>
+        </div>
+        <div class="option" data-choice="sector" onclick="toggleSelect(this)">
+          <div class="content">
+            <strong>Sector Map (FTL)</strong>
+            <p>Nodes scattered in space. Must jump forward before the "Fleet" catches you.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="web-style" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>The Web Style</h3>
+      <p>Clearer long-term planning.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="sector-style" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>The Sector Style</h3>
+      <p>Feels more like space exploration with time pressure.</p>
+    </div>
+  </div>
+</div>

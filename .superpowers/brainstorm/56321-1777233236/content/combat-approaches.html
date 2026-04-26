@@ -1,0 +1,39 @@
+<h2>Combat Approaches: How the lanes work</h2>
+<p class="subtitle">Choosing the core "Tactical Puzzle" for the player</p>
+
+<div class="cards">
+  <div class="card" data-choice="sap" onclick="toggleSelect(this)">
+    <div class="card-body">
+      <h3>1. The Battle Line (Single Lane)</h3>
+      <p>Units are lined up in a single row. The front units fight until one dies, then the next steps up.</p>
+      <div class="pros-cons">
+        <div class="pros"><ul><li>Simple to learn</li><li>Focus on unit order</li></ul></div>
+        <div class="cons"><ul><li>Lower tactical depth</li></ul></div>
+      </div>
+      <p><small>Example: Super Auto Pets</small></p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="lanes3" onclick="toggleSelect(this)">
+    <div class="card-body">
+      <h3>2. The 3-Lane Siege (Recommended)</h3>
+      <p>Three distinct lanes. Units fight their direct counterparts. Winning a lane deals damage to the enemy "Base".</p>
+      <div class="pros-cons">
+        <div class="pros"><ul><li>Strong counter-play</li><li>Split-focus strategy</li></ul></div>
+        <div class="cons"><ul><li>Slightly more UI work</li></ul></div>
+      </div>
+      <p><small>Example: Artifact / Card Game style</small></p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="shifting" onclick="toggleSelect(this)">
+    <div class="card-body">
+      <h3>3. Shifting Frontlines</h3>
+      <p>5 lanes. Units move to help adjacent lanes if they win their own battle early.</p>
+      <div class="pros-cons">
+        <div class="pros"><ul><li>Very dynamic</li><li>Feels like a "battle"</li></ul></div>
+        <div class="cons"><ul><li>Harder to predict</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,40 @@
+<h2>Troop Types & Combat Logic</h2>
+<p class="subtitle">How do units interact in the automated fights?</p>
+
+<div class="mockup">
+  <div class="mockup-header">Rock-Paper-Scissors Example</div>
+  <div class="mockup-body" style="text-align:center; padding: 20px;">
+    <div style="display:flex; justify-content:space-around; align-items:center; font-size: 1.2rem;">
+      <div class="card" style="width:120px; padding:10px;">🛡️<br><strong>Armor</strong><br><small>Beats Kinetic</small></div>
+      <div style="font-size:2rem;">➡️</div>
+      <div class="card" style="width:120px; padding:10px;">⚡<br><strong>Energy</strong><br><small>Beats Armor</small></div>
+      <div style="font-size:2rem;">➡️</div>
+      <div class="card" style="width:120px; padding:10px;">🔫<br><strong>Kinetic</strong><br><small>Beats Energy</small></div>
+      <div style="font-size:2rem;">🔄</div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="simple" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Simple 3-Way Cycle</h3>
+      <p>Easy to learn. Armor > Kinetic > Energy > Armor.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="complex" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Complex (4-5 Types)</h3>
+      <p>More strategic depth (e.g., adding "Shields", "Bio", or "Explosive").</p>
+    </div>
+  </div>
+  <div class="option" data-choice="stats" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Stat-Heavy (No hard cycle)</h3>
+      <p>Focus on individual stats (Range, Speed, Health) rather than type-bonuses.</p>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,50 @@
+<h2>Hybrid Progression System</h2>
+<p class="subtitle">Automatic Stat gains with "Milestone" choices</p>
+
+<div class="mockup">
+  <div class="mockup-header">Unit Leveling Path</div>
+  <div class="mockup-body" style="padding: 20px;">
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      
+      <div style="display: flex; align-items: center; gap: 20px;">
+        <div style="width: 80px; font-weight: bold;">Level 2</div>
+        <div style="flex-grow: 1; padding: 10px; border: 1px solid #444; background: rgba(255,255,255,0.05);">
+          <strong>Stat Boost:</strong> Pick +5 ATK or +10 HP
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 20px;">
+        <div style="width: 80px; font-weight: bold; color: #00ffcc;">Level 3</div>
+        <div style="flex-grow: 1; padding: 10px; border: 2px solid #00ffcc; background: rgba(0,255,204,0.1);">
+          <strong>Milestone Choice:</strong> <br>
+          <span style="color:#ffcc00;">[Branch A]</span> Heavy Shielding OR <span style="color:#ffcc00;">[Branch B]</span> Quick Reloader
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; gap: 20px;">
+        <div style="width: 80px; font-weight: bold;">Level 4</div>
+        <div style="flex-grow: 1; padding: 10px; border: 1px solid #444; background: rgba(255,255,255,0.05);">
+          <strong>Stat Boost:</strong> Pick +5 ATK or +10 HP
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="hybrid-ready" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>This is the one</h3>
+      <p>Stats for constant growth, Milestones for defining the unit's identity.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="refine-meta" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>One more thing...</h3>
+      <p>I have one more idea for unit growth.</p>
+    </div>
+  </div>
+</div>

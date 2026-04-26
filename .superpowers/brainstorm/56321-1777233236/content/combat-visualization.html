@@ -1,0 +1,42 @@
+<h2>How do the auto-battles look and feel?</h2>
+<p class="subtitle">Defining the core "automated fight" visualization and mechanics</p>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">Option A: Lane-Based (Tug-of-War)</div>
+    <div class="mockup-body">
+      <p>Units are placed in specific lanes (e.g., Top, Middle, Bottom). They fight whoever is directly in front of them.</p>
+      <ul>
+        <li><strong>Simple:</strong> Very easy to predict counters.</li>
+        <li><strong>Focus:</strong> Positioning units in the right lane to counter specific enemies.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-header">Option B: Free-Form Grid (Auto-Chess)</div>
+    <div class="mockup-body">
+      <p>Units are placed on a grid. Once the fight starts, they move and target enemies based on their range/AI.</p>
+      <ul>
+        <li><strong>Dynamic:</strong> More visual chaos and exciting "moments".</li>
+        <li><strong>Focus:</strong> Tactical placement (Frontline vs. Backline).</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="lanes" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Lane-Based</h3>
+      <p>Strategic and predictable. Great for a browser game.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="grid" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Free-Form Grid</h3>
+      <p>More complex and visual. Requires pathfinding AI.</p>
+    </div>
+  </div>
+</div>

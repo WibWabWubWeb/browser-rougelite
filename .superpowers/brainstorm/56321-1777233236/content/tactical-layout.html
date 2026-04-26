@@ -1,0 +1,45 @@
+<h2>3-Lane Combat: Tactical Layout</h2>
+<p class="subtitle">Players assign troops to lanes before the automated battle begins.</p>
+
+<div class="mockup">
+  <div class="mockup-header">Battle Arena Preview</div>
+  <div class="mockup-body" style="background: #1a1a2e; color: white; padding: 20px;">
+    <!-- Enemy Side -->
+    <div style="display: flex; justify-content: space-around; margin-bottom: 20px;">
+      <div style="border: 1px dashed #666; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">🛡️<br>E1</div>
+      <div style="border: 1px dashed #666; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">⚡<br>E2</div>
+      <div style="border: 1px dashed #666; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">🧬<br>E3</div>
+    </div>
+
+    <!-- The Lanes -->
+    <div style="display: flex; flex-direction: column; gap: 10px; align-items: center;">
+      <div style="background: rgba(255,255,255,0.1); width: 80%; height: 40px; border-radius: 5px; text-align: center; line-height: 40px;">Lane 1: Top Sector</div>
+      <div style="background: rgba(255,255,255,0.1); width: 80%; height: 40px; border-radius: 5px; text-align: center; line-height: 40px;">Lane 2: Center Sector</div>
+      <div style="background: rgba(255,255,255,0.1); width: 80%; height: 40px; border-radius: 5px; text-align: center; line-height: 40px;">Lane 3: Bottom Sector</div>
+    </div>
+
+    <!-- Player Side -->
+    <div style="display: flex; justify-content: space-around; margin-top: 20px;">
+      <div style="border: 2px solid #00ffcc; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; background: rgba(0,255,204,0.1);">🔥<br>P1</div>
+      <div style="border: 2px solid #00ffcc; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; background: rgba(0,255,204,0.1);">☣️<br>P2</div>
+      <div style="border: 2px solid #00ffcc; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; background: rgba(0,255,204,0.1);">🛡️<br>P3</div>
+    </div>
+  </div>
+</div>
+
+<div class="options">
+  <div class="option" data-choice="design-ready" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Design looks solid!</h3>
+      <p>Move on to finalizing the Design Document.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="meta" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Wait, what about the "Meta"?</h3>
+      <p>How do units persist or level up between battles?</p>
+    </div>
+  </div>
+</div>
