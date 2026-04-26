@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Unit } from '../../types/game';
 import './LevelUp.css';
 
@@ -15,27 +15,88 @@ export const LevelUp: React.FC<LevelUpProps> = ({
   onSelectMilestone,
   onConfirm,
 }) => {
+  const [selections, setSelections] = useState<Record<string, string>>({});
+
+  const handleStatSelect = (unitId: string, stat: 'atk' | 'hp') => {
+    setSelections(prev => ({ ...prev, [unitId]: stat }));
+    onSelectStat(unitId, stat);
+  };
+
+  const handleMilestoneSelect = (unitId: string, milestone: string) => {
+    setSelections(prev => ({ ...prev, [unitId]: milestone }));
+    onSelectMilestone(unitId, milestone);
+  };
+
+  const allSelected = leveledUnits.every(unit => selections[unit.id]);
+
   return (
     <div className="level-up-overlay">
       <div className="level-up-container">
         <h1>Level Up!</h1>
         <div className="units-grid">
-          {leveledUnits.map(unit => (
-            <div key={unit.id} className="unit-card">
-              <div className="unit-header">
-                <h2>{unit.name}</h2>
-                <span className="unit-type">{unit.type}</span>
+          {leveledUnits.map(unit => {
+            const isMilestoneLevel = unit.level === 3 || unit.level === 6;
+            const selection = selections[unit.id];
+
+            return (
+              <div key={unit.id} className="unit-card">
+                <div className="unit-header">
+                  <h2>{unit.name}</h2>
+                  <span className="unit-type">{unit.type}</span>
+                </div>
+                <p className="level-text">New Level: {unit.level}</p>
+                <div className="unit-stats">
+                  <div>ATK: {unit.atk}</div>
+                  <div>HP: {unit.hp}/{unit.maxHp}</div>
+                </div>
+
+                <div className="rewards-section">
+                  <h3>Choose Reward:</h3>
+                  {!isMilestoneLevel ? (
+                    <div className="choice-buttons">
+                      <button 
+                        className={`choice-button ${selection === 'atk' ? 'selected' : ''}`}
+                        onClick={() => handleStatSelect(unit.id, 'atk')}
+                      >
+                        Increase Firepower
+                        <span className="choice-detail">+5 ATK</span>
+                      </button>
+                      <button 
+                        className={`choice-button ${selection === 'hp' ? 'selected' : ''}`}
+                        onClick={() => handleStatSelect(unit.id, 'hp')}
+                      >
+                        Reinforce Hull
+                        <span className="choice-detail">+10 Max HP & Heal</span>
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="choice-buttons">
+                      <button 
+                        className={`choice-button ${selection === 'Heavy Shielding' ? 'selected' : ''}`}
+                        onClick={() => handleMilestoneSelect(unit.id, 'Heavy Shielding')}
+                      >
+                        Heavy Shielding
+                        <span className="choice-detail">Milestone Ability</span>
+                      </button>
+                      <button 
+                        className={`choice-button ${selection === 'Rapid Fire' ? 'selected' : ''}`}
+                        onClick={() => handleMilestoneSelect(unit.id, 'Rapid Fire')}
+                      >
+                        Rapid Fire
+                        <span className="choice-detail">Milestone Ability</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
-              <p className="level-text">New Level: {unit.level}</p>
-              <div className="unit-stats">
-                <div>ATK: {unit.atk}</div>
-                <div>HP: {unit.hp}/{unit.maxHp}</div>
-              </div>
-              {/* Rewards will go here */}
-            </div>
-          ))}
+            );
+          })}
         </div>
-        <button className="confirm-button" onClick={onConfirm}>
+        <button 
+          className="confirm-button" 
+          onClick={onConfirm}
+          disabled={!allSelected}
+        >
           Confirm and Continue
         </button>
       </div>
