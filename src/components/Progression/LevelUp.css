@@ -1,0 +1,117 @@
+.level-up-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  color: #fff;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.level-up-container {
+  background: #1a1a2e;
+  border: 2px solid #00d2ff;
+  border-radius: 8px;
+  padding: 2rem;
+  width: 90%;
+  max-width: 1000px;
+  max-height: 90%;
+  overflow-y: auto;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+}
+
+.level-up-container h1 {
+  margin-top: 0;
+  color: #00d2ff;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  border-bottom: 1px solid #334756;
+  padding-bottom: 1rem;
+}
+
+.units-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.unit-card {
+  background: #16213e;
+  border: 1px solid #334756;
+  border-radius: 6px;
+  padding: 1.5rem;
+  transition: transform 0.2s, border-color 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.unit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #334756;
+  padding-bottom: 0.5rem;
+}
+
+.unit-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.unit-type {
+  font-size: 0.8rem;
+  background: #334756;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.level-text {
+  font-weight: bold;
+  color: #00d2ff;
+  margin: 0;
+}
+
+.unit-stats {
+  display: flex;
+  justify-content: space-around;
+  font-size: 0.9rem;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.confirm-button {
+  background: #00d2ff;
+  color: #000;
+  border: none;
+  padding: 1rem 3rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.confirm-button:hover:not(:disabled) {
+  background: #33e0ff;
+  transform: translateY(-2px);
+}
+
+.confirm-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.confirm-button:disabled {
+  background: #334756;
+  color: #888;
+  cursor: not-allowed;
+}
