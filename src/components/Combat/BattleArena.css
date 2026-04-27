@@ -179,3 +179,32 @@
   from { opacity: 1; text-shadow: 0 0 10px #ffaa00; }
   to { opacity: 0.5; text-shadow: 0 0 0px #ffaa00; }
 }
+
+.speed-controls {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #003333;
+}
+
+.speed-btn {
+  background: transparent;
+  color: #00aaaa;
+  border: 1px solid #00aaaa;
+  padding: 5px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.speed-btn:hover {
+  background: rgba(0, 170, 170, 0.2);
+}
+
+.speed-btn.active {
+  background: #00aaaa;
+  color: #000;
+  box-shadow: 0 0 8px #00ffff;
+}

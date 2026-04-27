@@ -54,4 +54,22 @@ describe('BattleArena', () => {
 
     expect(onBattleEnd).toHaveBeenCalledWith('victory', expect.any(Object));
   });
+
+  test('renders speed controls and updates active speed', () => {
+    render(<BattleArena playerSquad={mockPlayerSquad} enemySquad={mockEnemySquad} onBattleEnd={() => {}} />);
+    
+    const speed1x = screen.getByText('1x');
+    const speed2x = screen.getByText('2x');
+    const speed4x = screen.getByText('4x');
+
+    expect(speed1x).toBeDefined();
+    expect(speed2x).toBeDefined();
+    expect(speed4x).toBeDefined();
+
+    expect(speed1x.className).toContain('active');
+    
+    fireEvent.click(speed2x);
+    expect(speed2x.className).toContain('active');
+    expect(speed1x.className).not.toContain('active');
+  });
 });

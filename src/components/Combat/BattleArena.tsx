@@ -25,6 +25,8 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
   enemySquad,
   onBattleEnd
 }) => {
+  const [speedMultiplier, setSpeedMultiplier] = useState<number>(1);
+
   const [state, setState] = useState<BattleState>({
     playerActiveIndex: 0,
     enemyActiveIndex: 0,
@@ -108,10 +110,10 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
           log: nextLog
         };
       });
-    }, 100);
+    }, 100 / speedMultiplier);
 
     return () => clearInterval(interval);
-  }, [state.status, playerSquad, enemySquad]);
+  }, [state.status, playerSquad, enemySquad, speedMultiplier]);
 
   useEffect(() => {
     if (state.status === 'victory' || state.status === 'defeat') {
@@ -162,6 +164,26 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
 
   return (
     <div className="battle-arena">
+      <div className="speed-controls">
+        <button 
+          className={`speed-btn ${speedMultiplier === 1 ? 'active' : ''}`} 
+          onClick={() => setSpeedMultiplier(1)}
+        >
+          1x
+        </button>
+        <button 
+          className={`speed-btn ${speedMultiplier === 2 ? 'active' : ''}`} 
+          onClick={() => setSpeedMultiplier(2)}
+        >
+          2x
+        </button>
+        <button 
+          className={`speed-btn ${speedMultiplier === 4 ? 'active' : ''}`} 
+          onClick={() => setSpeedMultiplier(4)}
+        >
+          4x
+        </button>
+      </div>
       <div className="status-header">
         {state.status === 'idle' && (
           <button className="start-btn" onClick={() => setState(p => ({ ...p, status: 'fighting' }))}>
