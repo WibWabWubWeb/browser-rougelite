@@ -23,7 +23,7 @@ export type GameAction =
   | { type: 'UPGRADE_UNIT'; unitId: string; upgrade: { atk?: number; maxHp?: number; milestone?: string } }
   | { type: 'CLOSE_LEVEL_UP' }
   | { type: 'CHOOSE_SQUAD'; squad: Unit[] }
-  | { type: 'REORDER_SQUAD'; unitIds: string[] };
+  | { type: 'REORDER_SQUAD'; squad: Unit[] };
 
 const INITIAL_CREDITS = 100;
 const MAP_DEPTH = 6;
@@ -38,12 +38,9 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       };
 
     case 'REORDER_SQUAD': {
-      const newSquad = action.unitIds
-        .map(id => state.squad.find(u => u.id === id))
-        .filter((u): u is Unit => !!u);
       return {
         ...state,
-        squad: newSquad,
+        squad: action.squad,
       };
     }
 
@@ -202,8 +199,8 @@ export function useGameState() {
     dispatch({ type: 'CHOOSE_SQUAD', squad });
   }, []);
 
-  const reorderSquad = useCallback((unitIds: string[]) => {
-    dispatch({ type: 'REORDER_SQUAD', unitIds });
+  const reorderSquad = useCallback((squad: Unit[]) => {
+    dispatch({ type: 'REORDER_SQUAD', squad });
   }, []);
 
   return {
