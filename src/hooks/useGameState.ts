@@ -18,7 +18,7 @@ export interface GameState {
 export type GameAction =
   | { type: 'TRAVEL'; nodeId: string }
   | { type: 'RECRUIT'; unit: Unit; cost: number }
-  | { type: 'RESOLVE_BATTLE'; xpGain: number; creditsGain: number; hpLosses: Record<string, number> }
+  | { type: 'RESOLVE_BATTLE'; xpGain: number; creditsGain: number; updatedHPs: Record<string, number> }
   | { type: 'HEAL_UNIT'; unitId: string; amount: number; cost: number }
   | { type: 'UPGRADE_UNIT'; unitId: string; upgrade: { atk?: number; maxHp?: number; milestone?: string } }
   | { type: 'CLOSE_LEVEL_UP' };
@@ -108,18 +108,21 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     case 'RESOLVE_BATTLE': {
       const leveledUnitIds: string[] = [];
       const updatedSquad = state.squad.map(unit => {
-        const hpLoss = action.hpLosses[unit.id] || 0;
-        const newHp = Math.max(0, unit.hp - hpLoss);
+        const newHp = action.updatedHPs[unit.id] !== undefined
+          ? Math.max(0, action.updatedHPs[unit.id])
+          : unit.hp;
         
         let newXp = unit.xp + action.xpGain;
         let newLevel = unit.level;
         let newXpToNext = unit.xpToNext;
 
-        if (newXp >= unit.xpToNext) {
-          newXp -= unit.xpToNext;
+        while (newXp >= newXpToNext) {
+          newXp -= newXpToNext;
           newLevel += 1;
-          newXpToNext = Math.floor(unit.xpToNext * 1.5);
-          leveledUnitIds.push(unit.id);
+          newXpToNext = Math.floor(newXpToNext * 1.5);
+          if (!leveledUnitIds.includes(unit.id)) {
+            leveledUnitIds.push(unit.id);
+          }
         }
 
         return {
@@ -202,8 +205,8 @@ export function useGameState() {
     dispatch({ type: 'RECRUIT', unit, cost });
   }, []);
 
-  const resolveBattle = useCallback((xpGain: number, creditsGain: number, hpLosses: Record<string, number>) => {
-    dispatch({ type: 'RESOLVE_BATTLE', xpGain, creditsGain, hpLosses });
+  const resolveBattle = useCallback((xpGain: number, creditsGain: number, updatedHPs: Record<string, number>) => {
+    dispatch({ type: 'RESOLVE_BATTLE', xpGain, creditsGain, updatedHPs });
   }, []);
 
   const healUnit = useCallback((unitId: string, amount: number, cost: number = 0) => {
