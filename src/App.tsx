@@ -1,10 +1,13 @@
+import { useState } from 'react';
 import { useGameState } from './hooks/useGameState';
 import { SectorMap } from './components/Map/SectorMap';
 import { BattleArena } from './components/Combat/BattleArena';
 import { LevelUp } from './components/Progression/LevelUp';
 import { DraftScreen } from './components/Draft/DraftScreen';
 import { ShopScreen } from './components/Shop/ShopScreen';
-import type { Unit } from './types/game';
+import { EventScreen } from './components/Events/EventScreen';
+import { getRandomEvent } from './logic/events';
+import type { Unit, GameEvent } from './types/game';
 import { AttackType, ArmorType } from './types/game';
 import './App.css';
 
@@ -39,8 +42,11 @@ function App() {
     buyItem,
     equipModule,
     recruit,
-    useItem
+    useItem,
+    resolveEvent
   } = useGameState();
+
+  const [activeEvent, setActiveEvent] = useState<GameEvent | null>(null);
 
   const handleBattleEnd = (result: 'victory' | 'defeat', updatedHPs: Record<string, number>) => {
     const playerWon = result === 'victory';
@@ -125,14 +131,24 @@ function App() {
           </div>
         );
 
-      case 'EVENT':
+      case 'EVENT': {
+        if (!activeEvent) {
+          const event = getRandomEvent();
+          setActiveEvent(event);
+          return <div className="game-container centered">Initializing Event...</div>;
+        }
         return (
           <div className="game-container centered">
-            <h2>Distress Signal</h2>
-            <p>A faint signal is coming from a nearby moon... (Events coming soon...)</p>
-            <button className="nav-button" onClick={closeLevelUp}>Return to Map</button>
+            <EventScreen 
+              event={activeEvent} 
+              onResolve={(outcome) => {
+                resolveEvent(outcome);
+                setActiveEvent(null);
+              }} 
+            />
           </div>
         );
+      }
 
       default:
         return <div>Unknown Screen</div>;
