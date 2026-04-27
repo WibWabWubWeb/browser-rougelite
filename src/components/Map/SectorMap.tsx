@@ -133,11 +133,17 @@ export const SectorMap: React.FC<SectorMapProps> = ({
   };
 
   const [showGraph, setShowGraph] = React.useState(false);
+  const [nodesMounted, setNodesMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    // Force a re-render after initial mount so connection lines can resolve node refs
+    setNodesMounted(true);
+  }, []);
 
   return (
     <div className="sector-map-container" data-testid="sector-map" ref={containerRef}>
       <svg className="connections-overlay">
-        {connections.map((conn, i) => (
+        {nodesMounted && connections.map((conn, i) => (
           <ConnectionLine
             key={`${conn.from}-${conn.to}-${i}`}
             fromId={conn.from}
