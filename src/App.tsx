@@ -2,6 +2,7 @@ import { useGameState } from './hooks/useGameState';
 import { SectorMap } from './components/Map/SectorMap';
 import { BattleArena } from './components/Combat/BattleArena';
 import { LevelUp } from './components/Progression/LevelUp';
+import { DraftScreen } from './components/Draft/DraftScreen';
 import type { Unit } from './types/game';
 import { UnitType } from './types/game';
 import './App.css';
@@ -12,7 +13,8 @@ function App() {
     travel, 
     resolveBattle, 
     upgradeUnit, 
-    closeLevelUp 
+    closeLevelUp,
+    chooseSquad
   } = useGameState();
 
   const handleBattleEnd = (result: 'victory' | 'defeat', updatedHPs: Record<string, number>) => {
@@ -42,6 +44,9 @@ function App() {
 
   const renderScreen = () => {
     switch (state.screen) {
+      case 'DRAFT':
+        return <DraftScreen onSelect={chooseSquad} />;
+
       case 'MAP':
         return (
           <div className="game-container">
