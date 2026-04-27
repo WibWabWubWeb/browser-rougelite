@@ -155,3 +155,15 @@
   background: #1a1a2e;
   box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
 }
+
+@media (max-width: 1400px) {
+  .sector-map-container {
+    gap: clamp(40px, 4vw, 80px);
+    padding: 20px;
+    padding-bottom: 180px; /* Space for taller 2-row squad bar */
+  }
+
+  .map-column {
+    gap: clamp(20px, 2vh, 40px);
+  }
+}
