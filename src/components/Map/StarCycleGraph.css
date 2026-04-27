@@ -1,0 +1,54 @@
+.star-cycle-container {
+  background: rgba(10, 20, 30, 0.9);
+  border: 1px solid #00f2ff;
+  border-radius: 8px;
+  padding: 1rem;
+  color: #fff;
+  width: 320px;
+  text-align: center;
+  box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+}
+
+.star-cycle-svg {
+  width: 100%;
+  height: auto;
+}
+
+.type-node-bg {
+  fill: #1a2a3a;
+  stroke: #00f2ff;
+  stroke-width: 1;
+}
+
+.type-icon {
+  font-size: 1.2rem;
+}
+
+.type-label {
+  font-size: 0.7rem;
+  fill: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.star-cycle-legend {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  font-size: 0.8rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.line {
+  width: 20px;
+  height: 2px;
+}
+
+.line.strong { background: #4caf50; }
+.line.weak { background: #f44336; border-top: 2px dashed #f44336; height: 0; }
