@@ -1,0 +1,77 @@
+.event-screen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  color: #e0e0e0;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.event-content {
+  max-width: 800px;
+  width: 90%;
+  padding: 2rem;
+  background: #1a1a1a;
+  border: 2px solid #00f2ff;
+  box-shadow: 0 0 20px rgba(0, 242, 255, 0.2);
+  text-align: center;
+}
+
+.event-title {
+  color: #00f2ff;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 1.5rem;
+}
+
+.event-prompt {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.choices-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+.choice-card {
+  background: #2a2a2a;
+  border: 1px solid #444;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.choice-card:hover {
+  border-color: #00f2ff;
+  background: #333;
+  transform: translateY(-2px);
+}
+
+.choice-card h3 {
+  margin-top: 0;
+  color: #00f2ff;
+}
+
+.outcome-preview {
+  margin-top: 1rem;
+  font-size: 0.8rem;
+  color: #888;
+  font-style: italic;
+}
+
+.outcome-text {
+  font-size: 1.4rem;
+  margin: 2rem 0;
+}
