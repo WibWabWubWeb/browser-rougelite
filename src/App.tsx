@@ -52,7 +52,11 @@ function App() {
   const renderScreen = () => {
     switch (state.screen) {
       case 'DRAFT':
-        return <DraftScreen onSelect={chooseSquad} />;
+        return (
+          <div className="game-container centered">
+            <DraftScreen onSelect={chooseSquad} />
+          </div>
+        );
 
       case 'MAP':
         return (
@@ -109,14 +113,16 @@ function App() {
 
       case 'SHOP':
         return (
-          <ShopScreen
-            credits={state.credits}
-            squad={state.squad}
-            buyItem={buyItem}
-            equipModule={equipModule}
-            recruit={recruit}
-            onClose={closeLevelUp}
-          />
+          <div className="game-container">
+            <ShopScreen
+              credits={state.credits}
+              squad={state.squad}
+              buyItem={buyItem}
+              equipModule={equipModule}
+              recruit={recruit}
+              onClose={closeLevelUp}
+            />
+          </div>
         );
 
       case 'EVENT':

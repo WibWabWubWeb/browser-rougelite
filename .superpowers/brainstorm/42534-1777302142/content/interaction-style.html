@@ -1,0 +1,44 @@
+<h2>Encounter Constraints & Speed</h2>
+<p class="subtitle">Refining the encounter logic and combat flow</p>
+
+<div class="options">
+  <div class="option" data-choice="enemy_only" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Enemy Specialization</h3>
+      <p>Only <b>Enemy Squads</b> are restricted to a single Armor Type (e.g., all 🛡️ Plating). This makes them predictable "puzzles" for the player to solve with their diverse squad.</p>
+      <div class="mockup" style="margin-top: 10px; padding: 10px;">
+        <div style="font-size: 0.7rem; color: #ff4444;">ENEMY ENCOUNTER: [PLATING SQUAD]</div>
+        <div style="display: flex; gap: 5px; margin-top: 5px;">
+           <div class="unit-card" style="width: 40px; border: 1px solid #ff4444;">🔥/🛡️</div>
+           <div class="unit-card" style="width: 40px; border: 1px solid #ff4444;">⚡/🛡️</div>
+           <div class="unit-card" style="width: 40px; border: 1px solid #ff4444;">☣️/🛡️</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="player_too" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Squad Archetypes</h3>
+      <p>Both <b>Player Drafts</b> and <b>Enemies</b> follow the rule. Each squad has a "Theme" based on armor, forcing you to pick an entire defensive strategy (e.g., "The Bio Squad").</p>
+    </div>
+  </div>
+</div>
+
+<div class="cards" style="margin-top: 20px;">
+  <div class="card">
+    <div class="card-body">
+      <h3>Battle Speed Control</h3>
+      <p>A toggle during battle to skip the animations and reach the result faster.</p>
+      <div class="mockup" style="padding: 10px; text-align: center;">
+         <div style="display: flex; gap: 10px; justify-content: center;">
+            <button style="background: #222; border: 1px solid #4facfe; color: #fff; padding: 5px 10px;">1x</button>
+            <button style="background: #4facfe; border: none; color: #000; padding: 5px 10px; font-weight: bold;">2x ⚡</button>
+            <button style="background: #222; border: 1px solid #ff4444; color: #fff; padding: 5px 10px;">INSTANT ⏩</button>
+         </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,50 @@
+<h2>Final Design Summary: Polish & Pace</h2>
+<p class="subtitle">Visible networks, specialized threats, and high-speed combat</p>
+
+<div class="cards">
+  <div class="card">
+    <div class="card-body">
+      <h3>1. Full Network Visibility</h3>
+      <p>All forward connections are rendered as subtle SVG lines, revealing the full map structure. Reachable paths are highlighted with animated dashes.</p>
+      <div class="mockup" style="padding: 10px;">
+        <svg style="width:100%; height:60px;">
+          <circle cx="20%" cy="50%" r="8" fill="#4facfe" />
+          <line x1="20%" y1="50%" x2="50%" y2="20%" stroke="#333" stroke-width="1" />
+          <line x1="20%" y1="50%" x2="50%" y2="80%" stroke="#4facfe" stroke-width="1" stroke-dasharray="3 3" />
+          <circle cx="50%" cy="20%" r="8" fill="#111" stroke="#333" />
+          <circle cx="50%" cy="80%" r="8" fill="#111" stroke="#4facfe" />
+          <line x1="50%" y1="20%" x2="80%" y2="50%" stroke="#222" stroke-width="1" />
+          <line x1="50%" y1="80%" x2="80%" y2="50%" stroke="#222" stroke-width="1" />
+          <circle cx="80%" cy="50%" r="8" fill="#111" stroke="#222" />
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h3>2. Specialized Enemy Squads</h3>
+      <p>Enemy encounters share a single <b>Armor Type</b> (e.g., "The Plating Fleet"). You know what defense to break, but their weapons (ATK) remain randomized and dangerous.</p>
+      <div class="mockup" style="padding: 10px; display: flex; gap: 5px; justify-content: center;">
+         <div class="unit-card" style="width: 35px; border-color: #ff4444;">🔥/🛡️</div>
+         <div class="unit-card" style="width: 35px; border-color: #ff4444;">⚡/🛡️</div>
+         <div class="unit-card" style="width: 35px; border-color: #ff4444;">☣️/🛡️</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body">
+      <h3>3. Combat Pacing Control</h3>
+      <p>A persistent speed bar during duels. Toggle between <b>1x, 2x, 4x</b> speeds, or use <b>SKIP</b> to instantly resolve the battle based on the current math.</p>
+      <div class="mockup" style="padding: 10px;">
+        <div style="background: #111; padding: 5px; border-radius: 4px; display: flex; gap: 5px; justify-content: center; font-size: 0.6rem;">
+           <span style="color: #4facfe;">1x</span>
+           <span>2x</span>
+           <span>4x</span>
+           <span style="color: #ff4444;">SKIP</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

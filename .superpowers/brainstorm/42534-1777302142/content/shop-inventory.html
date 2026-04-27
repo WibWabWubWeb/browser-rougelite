@@ -1,0 +1,61 @@
+<h2>Trade Hub Inventory</h2>
+<p class="subtitle">What kind of goods does the merchant sell?</p>
+
+<div class="options">
+  <div class="option" data-choice="consumables" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Consumables (One-Time Use)</h3>
+      <p>Items that help you survive the gauntlet. Use them before or during a battle for a temporary edge.</p>
+      <div class="mockup" style="margin-top: 10px; display: flex; gap: 10px; font-size: 0.7rem;">
+        <div style="background: #111; padding: 5px; border: 1px solid #4facfe; border-radius: 4px; flex: 1;">
+          <div style="font-weight: bold; color: #00ff00;">🔧 Repair Drone</div>
+          <div style="color: #aaa;">Restores 50% HP to one unit.</div>
+          <div style="text-align: right; color: #ffaa00; margin-top: 5px;">30 Credits</div>
+        </div>
+        <div style="background: #111; padding: 5px; border: 1px solid #4facfe; border-radius: 4px; flex: 1;">
+          <div style="font-weight: bold; color: #ff4444;">⚡ Overclock Stim</div>
+          <div style="color: #aaa;">+10 SPD for the next battle.</div>
+          <div style="text-align: right; color: #ffaa00; margin-top: 5px;">20 Credits</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="modules" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Permanent Modules (Equip)</h3>
+      <p>Passive upgrades that attach to a specific unit, enhancing their core stats or altering their mechanics.</p>
+      <div class="mockup" style="margin-top: 10px; display: flex; gap: 10px; font-size: 0.7rem;">
+        <div style="background: #111; padding: 5px; border: 1px solid #aa3bff; border-radius: 4px; flex: 1;">
+          <div style="font-weight: bold; color: #aa3bff;">💎 Titanium Plating</div>
+          <div style="color: #aaa;">Max HP +20.</div>
+          <div style="text-align: right; color: #ffaa00; margin-top: 5px;">80 Credits</div>
+        </div>
+        <div style="background: #111; padding: 5px; border: 1px solid #aa3bff; border-radius: 4px; flex: 1;">
+          <div style="font-weight: bold; color: #aa3bff;">🔥 Thermal Converter</div>
+          <div style="color: #aaa;">Changes ATK Type to Thermal.</div>
+          <div style="text-align: right; color: #ffaa00; margin-top: 5px;">100 Credits</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="recruitment" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Unit Recruitment (Swapping)</h3>
+      <p>Hire mercenaries to replace a member of your current 3-unit squad, allowing you to adapt to the late-game map.</p>
+      <div class="mockup" style="margin-top: 10px; font-size: 0.7rem;">
+        <div style="background: #111; padding: 5px; border: 1px dashed #ff4444; border-radius: 4px; display: flex; align-items: center; justify-content: space-between;">
+          <div>
+            <div style="font-weight: bold; color: #fff;">Mercenary "Goliath"</div>
+            <div style="color: #aaa;">ATK: ⚡ / DEF: 🛡️ (Level 4)</div>
+          </div>
+          <div style="color: #ffaa00; font-weight: bold;">150 Credits</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

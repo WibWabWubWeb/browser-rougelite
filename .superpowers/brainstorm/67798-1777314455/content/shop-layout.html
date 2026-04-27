@@ -1,0 +1,47 @@
+<h2>Trade Hub Interface</h2>
+<p class="subtitle">How should the shop layout handle all three categories?</p>
+
+<div class="options">
+  <div class="option" data-choice="tabbed" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Tabbed Layout</h3>
+      <p>Clean and organized. The player switches between Consumables, Modules, and Recruits using tabs at the top of the screen.</p>
+      <div class="mockup" style="margin-top: 10px; background: #0a0a1a; border: 1px solid #1a3a5a; border-radius: 4px; padding: 10px;">
+        <div style="display: flex; gap: 5px; border-bottom: 1px solid #333; padding-bottom: 5px; margin-bottom: 10px;">
+          <div style="padding: 2px 10px; background: #4facfe; color: #000; font-weight: bold; border-radius: 2px;">CONSUMABLES</div>
+          <div style="padding: 2px 10px; color: #888;">MODULES</div>
+          <div style="padding: 2px 10px; color: #888;">RECRUITS</div>
+        </div>
+        <div style="display: flex; gap: 5px;">
+           <div style="flex: 1; background: #111; padding: 10px; border: 1px solid #4facfe;">🔧 Repair Kit [30c]</div>
+           <div style="flex: 1; background: #111; padding: 10px; border: 1px solid #4facfe;">⚡ SPD Stim [20c]</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="single_page" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Single Page Dashboard</h3>
+      <p>Everything is visible at once in separate sections. Good for quick browsing without clicking around.</p>
+      <div class="mockup" style="margin-top: 10px; background: #0a0a1a; border: 1px solid #1a3a5a; border-radius: 4px; padding: 10px; font-size: 0.6rem;">
+        <div style="display: flex; gap: 10px;">
+          <div style="flex: 1;">
+             <div style="color: #4facfe; font-weight: bold; margin-bottom: 5px;">CONSUMABLES</div>
+             <div style="background: #111; padding: 5px; margin-bottom: 5px;">🔧 Repair [30c]</div>
+          </div>
+          <div style="flex: 1;">
+             <div style="color: #aa3bff; font-weight: bold; margin-bottom: 5px;">MODULES</div>
+             <div style="background: #111; padding: 5px; margin-bottom: 5px;">💎 Plating [80c]</div>
+          </div>
+          <div style="flex: 1;">
+             <div style="color: #ffaa00; font-weight: bold; margin-bottom: 5px;">RECRUITS</div>
+             <div style="background: #111; padding: 5px; margin-bottom: 5px;">👤 Merc [150c]</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

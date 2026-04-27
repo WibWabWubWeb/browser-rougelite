@@ -1,0 +1,41 @@
+<h2>Squad Display (Max 6 Units)</h2>
+<p class="subtitle">How should we fit 6 units and their HP on the map screen?</p>
+
+<div class="options">
+  <div class="option" data-choice="horizontal_scroll" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Expanded Horizontal Bar</h3>
+      <p>A single long bar at the bottom. Units get slightly narrower to fit. HP is shown as a bar under the name.</p>
+      <div class="mockup" style="margin-top: 10px; padding: 10px;">
+        <div style="display: flex; gap: 5px; overflow-x: auto;">
+          <div class="unit-card" style="width: 100px; flex-shrink: 0;">
+            <div style="font-size: 0.6rem;">P1</div>
+            <div style="height: 4px; background: #333; margin-top: 4px;"><div style="width: 80%; height: 100%; background: #00ff00;"></div></div>
+          </div>
+          <div class="unit-card" style="width: 100px; flex-shrink: 0;">P2</div>
+          <div class="unit-card" style="width: 100px; flex-shrink: 0;">P3</div>
+          <div class="unit-card" style="width: 100px; flex-shrink: 0; opacity: 0.3; border-style: dashed;">EMPTY</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="grid_layout" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Compact 2x3 Grid</h3>
+      <p>Units are stacked in two rows of three. Very compact, saves horizontal space for the map nodes.</p>
+      <div class="mockup" style="margin-top: 10px; padding: 10px;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px;">
+          <div class="unit-card" style="font-size: 0.6rem;">P1 [HP Bar]</div>
+          <div class="unit-card" style="font-size: 0.6rem;">P2</div>
+          <div class="unit-card" style="font-size: 0.6rem;">P3</div>
+          <div class="unit-card" style="font-size: 0.6rem; opacity: 0.3;">P4</div>
+          <div class="unit-card" style="font-size: 0.6rem; opacity: 0.3;">P5</div>
+          <div class="unit-card" style="font-size: 0.6rem; opacity: 0.3;">P6</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

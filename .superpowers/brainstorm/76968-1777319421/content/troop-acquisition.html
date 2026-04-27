@@ -1,0 +1,37 @@
+<h2>Empty Slot Behavior</h2>
+<p class="subtitle">How should the Squad Bar handle growth from 3 to 6 units?</p>
+
+<div class="options">
+  <div class="option" data-choice="placeholders" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Visible Placeholders</h3>
+      <p>Show empty "ghost" cards for slots 4, 5, and 6. It clearly communicates the max capacity and upcoming potential.</p>
+      <div class="mockup" style="margin-top: 10px; padding: 10px;">
+        <div style="display: flex; gap: 5px;">
+          <div class="unit-card" style="width: 60px;">P1</div>
+          <div class="unit-card" style="width: 60px;">P2</div>
+          <div class="unit-card" style="width: 60px;">P3</div>
+          <div class="unit-card" style="width: 60px; opacity: 0.2; border-style: dashed;">4</div>
+          <div class="unit-card" style="width: 60px; opacity: 0.2; border-style: dashed;">5</div>
+          <div class="unit-card" style="width: 60px; opacity: 0.2; border-style: dashed;">6</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="dynamic" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Dynamic Growth</h3>
+      <p>The bar only shows current units. When a new unit is recruited, the bar expands to fit. Keeps the UI cleaner in the early game.</p>
+      <div class="mockup" style="margin-top: 10px; padding: 10px;">
+        <div style="display: flex; gap: 5px; justify-content: center;">
+          <div class="unit-card" style="width: 80px;">P1</div>
+          <div class="unit-card" style="width: 80px;">P2</div>
+          <div class="unit-card" style="width: 80px;">P3</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

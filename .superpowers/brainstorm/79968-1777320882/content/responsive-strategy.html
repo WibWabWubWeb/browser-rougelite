@@ -1,0 +1,45 @@
+<h2>Responsive Layout Strategy</h2>
+<p class="subtitle">How should the game scale from 1080p up to 2K?</p>
+
+<div class="options">
+  <div class="option" data-choice="auto_scaling" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Adaptive Fluid Layout</h3>
+      <p>Uses <b>percentage-based</b> spacing and <b>relative units (rem/vh/vw)</b>. The map spreads out naturally as the screen grows, and squad cards get larger while maintaining their relative proportions.</p>
+      <div class="mockup" style="margin-top: 10px;">
+        <div class="split">
+          <div style="width: 45%; border: 1px dashed #4facfe; padding: 5px;">
+            <div style="font-size: 0.5rem; text-align: center;">1080p (Compact)</div>
+            <div style="height: 40px; background: #111; display: flex; align-items: center; justify-content: center; font-size: 0.8rem;">⭕ ⭕ ⭕</div>
+          </div>
+          <div style="width: 45%; border: 1px dashed #4facfe; padding: 5px;">
+            <div style="font-size: 0.5rem; text-align: center;">2K (Expansive)</div>
+            <div style="height: 40px; background: #111; display: flex; align-items: center; justify-content: space-around; font-size: 1.2rem;">⭕ &nbsp;&nbsp;&nbsp; ⭕ &nbsp;&nbsp;&nbsp; ⭕</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="breakpoints" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Strategic Breakpoints</h3>
+      <p>Hardcoded <b>media queries</b> for specific resolutions. We define a "Comfortable" layout for 1080p and an "Enhanced" layout for 1440p/2K (larger nodes, multi-column squad bar, etc.).</p>
+      <div class="pros-cons">
+        <div class="pros"><ul><li>Total control over each size</li></ul></div>
+        <div class="cons"><ul><li>Can look 'steppy' between sizes</li></ul></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="cards" style="margin-top: 20px;">
+  <div class="card">
+    <div class="card-body">
+      <h3>The Fix: Content Centering</h3>
+      <p>Regardless of scaling, the core issue in your 2K screenshot is <b>left-alignment</b>. I will wrap the map in a centering container so it stays the focal point of the screen.</p>
+    </div>
+  </div>
+</div>

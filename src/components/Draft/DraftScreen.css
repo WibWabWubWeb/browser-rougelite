@@ -3,11 +3,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  background-color: #0a0a0f;
-  color: #e0e0ff;
-  font-family: 'Courier New', Courier, monospace;
-  padding: 2rem;
+  flex: 1;
+  width: 100%;
 }
 
 .draft-header {
