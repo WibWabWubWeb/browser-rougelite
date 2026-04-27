@@ -1,0 +1,120 @@
+.draft-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: #0a0a0f;
+  color: #e0e0ff;
+  font-family: 'Courier New', Courier, monospace;
+  padding: 2rem;
+}
+
+.draft-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  border-bottom: 2px solid #00f2ff;
+  padding-bottom: 1rem;
+}
+
+.draft-header h1 {
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5rem;
+  color: #00f2ff;
+  text-shadow: 0 0 10px rgba(0, 242, 255, 0.5);
+}
+
+.squad-options {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.squad-card {
+  background: rgba(16, 16, 32, 0.8);
+  border: 1px solid #303040;
+  border-radius: 8px;
+  padding: 1.5rem;
+  width: 300px;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.squad-card:hover {
+  border-color: #00f2ff;
+  box-shadow: 0 0 15px rgba(0, 242, 255, 0.2);
+  transform: translateY(-5px);
+}
+
+.squad-card h3 {
+  margin-top: 0;
+  text-align: center;
+  color: #00f2ff;
+  border-bottom: 1px solid #303040;
+  padding-bottom: 0.5rem;
+}
+
+.unit-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.unit-info-compact {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+  cursor: help;
+}
+
+.unit-icon {
+  width: 40px;
+  height: 40px;
+  background: #00f2ff;
+  color: #0a0a0f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  border-radius: 50%;
+}
+
+.unit-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.unit-name {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.unit-type {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.select-button {
+  margin-top: auto;
+  padding: 0.8rem;
+  background: #00f2ff;
+  color: #0a0a0f;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.select-button:hover {
+  background: #00d2df;
+}
