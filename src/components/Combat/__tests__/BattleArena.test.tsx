@@ -86,4 +86,67 @@ describe('BattleArena', () => {
     
     expect(onBattleEnd).toHaveBeenCalledWith('victory', expect.any(Object));
   });
+
+  test('handles 6-unit squad and tagging in', () => {
+    const squad6: Unit[] = Array(6).fill(null).map((_, i) => ({
+      id: `p${i+1}`,
+      name: `Player ${i+1}`,
+      atkType: AttackType.Thermal,
+      defType: ArmorType.Plating,
+      hp: 10,
+      maxHp: 10,
+      atk: 10,
+      speed: 10,
+      level: 1,
+      xp: 0,
+      xpToNext: 100,
+      milestones: []
+    }));
+
+    // Strong enemy that can take down multiple player units
+    const strongEnemy: Unit[] = [{
+      id: 'e1',
+      name: 'Strong Enemy',
+      atkType: AttackType.Ion,
+      defType: ArmorType.Shields,
+      hp: 200,
+      maxHp: 200,
+      atk: 20, // 20 damage will 1-shot a player unit
+      speed: 15, // Faster than player
+      level: 10,
+      xp: 0,
+      xpToNext: 1000,
+      milestones: []
+    }];
+
+    render(<BattleArena playerSquad={squad6} enemySquad={strongEnemy} onBattleEnd={() => {}} />);
+    
+    fireEvent.click(screen.getByText('START BATTLE'));
+
+    // Check that Player 1 is initially present
+    expect(screen.getByText('Player 1')).toBeDefined();
+
+    // Advance time to let Player 1 fall and Player 2 tag in
+    act(() => {
+      vi.advanceTimersByTime(2000); 
+    });
+    expect(screen.getByText('Player 2')).toBeDefined();
+
+    // Advance more to let more units fall
+    act(() => {
+      vi.advanceTimersByTime(4000); 
+    });
+    
+    // Check for later units tagging in (4th, 5th, or 6th)
+    // Depending on timing, it might be any of them, but we want to see they CAN appear
+    const foundAnyLateUnit = ['Player 4', 'Player 5', 'Player 6'].some(name => {
+      try {
+        return screen.getByText(name) !== null;
+      } catch {
+        return false;
+      }
+    });
+    
+    expect(foundAnyLateUnit).toBe(true);
+  });
 });
