@@ -12,6 +12,7 @@ const mockUnits: Unit[] = [
     hp: 40,
     maxHp: 50,
     atk: 10,
+    speed: 10,
     level: 2,
     xp: 0,
     xpToNext: 100,
@@ -24,6 +25,7 @@ const mockUnits: Unit[] = [
     hp: 80,
     maxHp: 100,
     atk: 5,
+    speed: 10,
     level: 3, // Milestone level
     xp: 0,
     xpToNext: 200,

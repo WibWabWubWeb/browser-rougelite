@@ -44,6 +44,7 @@ describe('useGameState', () => {
       hp: 10,
       maxHp: 10,
       atk: 5,
+      speed: 10,
       level: 1,
       xp: 0,
       xpToNext: 10,

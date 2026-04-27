@@ -16,6 +16,7 @@ export interface Unit {
   hp: number;
   maxHp: number;
   atk: number;
+  speed: number;
   level: number;
   xp: number;
   xpToNext: number;

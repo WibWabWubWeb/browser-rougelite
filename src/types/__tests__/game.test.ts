@@ -29,6 +29,7 @@ describe('Core Game Types', () => {
       hp: 100,
       maxHp: 100,
       atk: 10,
+      speed: 10,
       level: 1,
       xp: 0,
       xpToNext: 100,

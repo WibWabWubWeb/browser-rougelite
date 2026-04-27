@@ -40,6 +40,7 @@ function App() {
       hp: 30 + level * 5,
       maxHp: 30 + level * 5,
       atk: 5 + level,
+      speed: 8 + level,
       level: level,
       xp: 0,
       xpToNext: 100,
