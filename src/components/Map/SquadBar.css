@@ -139,3 +139,24 @@
   color: #555;
   font-weight: bold;
 }
+
+@media (max-width: 1400px) {
+  .squad-bar {
+    height: 160px;
+  }
+
+  .squad-units {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .squad-unit-card, .empty-slot {
+    width: 100%;
+    padding: 8px;
+  }
+
+  .unit-name {
+    font-size: 0.9rem;
+  }
+}
