@@ -66,11 +66,11 @@ describe('useGameState', () => {
     const initialCredits = result.current.state.credits;
 
     act(() => {
-      result.current.resolveBattle(5, 20, { [firstUnitId]: 3 });
+      result.current.resolveBattle(5, 20, { [firstUnitId]: 10 });
     });
 
     const updatedUnit = result.current.state.squad.find(u => u.id === firstUnitId)!;
-    expect(updatedUnit.hp).toBe(updatedUnit.maxHp - 3);
+    expect(updatedUnit.hp).toBe(10);
     expect(updatedUnit.xp).toBe(5);
     expect(result.current.state.credits).toBe(initialCredits + 20);
   });
@@ -100,6 +100,7 @@ describe('useGameState', () => {
     });
 
     const damagedHp = result.current.state.squad[0].hp;
+    expect(damagedHp).toBe(10);
 
     act(() => {
       result.current.healUnit(firstUnitId, 5, 10);
