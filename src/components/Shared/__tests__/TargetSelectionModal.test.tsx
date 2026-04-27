@@ -53,6 +53,27 @@ describe('TargetSelectionModal', () => {
     expect(screen.getByText('80 / 80 HP')).toBeInTheDocument();
   });
 
+  it('renders correctly with 6 units', () => {
+    const largeSquad: Unit[] = Array(6).fill(null).map((_, i) => ({
+      ...mockSquad[0],
+      id: `u${i}`,
+      name: `Unit ${i}`
+    }));
+
+    render(
+      <TargetSelectionModal
+        title="Select Target"
+        squad={largeSquad}
+        onSelect={vi.fn()}
+        onCancel={vi.fn()}
+      />
+    );
+
+    for (let i = 0; i < 6; i++) {
+      expect(screen.getByText(`Unit ${i}`)).toBeInTheDocument();
+    }
+  });
+
   it('calls onSelect with unit id and index when a unit is clicked', async () => {
     const handleSelect = vi.fn();
     const user = userEvent.setup();

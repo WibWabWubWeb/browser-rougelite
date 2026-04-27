@@ -80,7 +80,11 @@ export function ShopScreen({
 
   const handleHireRecruitClick = (unit: Unit, cost: number) => {
     if (credits >= cost) {
-      setActiveModal({ type: 'recruit', unit, cost });
+      if (squad.length < 6) {
+        recruit(unit, cost);
+      } else {
+        setActiveModal({ type: 'recruit', unit, cost });
+      }
     }
   };
 

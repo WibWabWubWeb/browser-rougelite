@@ -34,9 +34,21 @@
 }
 
 .squad-list {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 12px;
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+@media (min-width: 800px) {
+  .modal-content {
+    max-width: 900px;
+  }
+  .squad-list {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 
 .unit-card {
