@@ -1,14 +1,14 @@
 import { render, screen } from '@testing-library/react';
 import { SquadBar } from '../SquadBar';
-import { Unit } from '../../../types/game';
+import type { Unit } from '../../../types/game';
 import { describe, it, expect } from 'vitest';
 import '@testing-library/jest-dom';
 
 const mockUnit: Unit = {
   id: '1',
   name: 'Scout',
-  atkType: 'Thermal',
-  defType: 'Plating',
+  atkType: 'Thermal' as any,
+  defType: 'Plating' as any,
   hp: 80,
   maxHp: 100,
   atk: 10,
@@ -21,7 +21,7 @@ const mockUnit: Unit = {
 
 describe('SquadBar', () => {
   it('renders 6 slots', () => {
-    const squad = [mockUnit];
+    const squad: Unit[] = [mockUnit];
     render(<SquadBar squad={squad} onReorder={() => {}} />);
     
     // 1 unit card + 5 empty slots = 6 total items in squad-units
@@ -30,7 +30,7 @@ describe('SquadBar', () => {
   });
 
   it('renders unit HP bar', () => {
-    const squad = [mockUnit];
+    const squad: Unit[] = [mockUnit];
     render(<SquadBar squad={squad} onReorder={() => {}} />);
     
     const hpBar = document.querySelector('.unit-hp-fill');
@@ -40,7 +40,7 @@ describe('SquadBar', () => {
   });
 
   it('renders empty slots', () => {
-    const squad = [];
+    const squad: Unit[] = [];
     render(<SquadBar squad={squad} onReorder={() => {}} />);
     
     const emptySlots = document.querySelectorAll('.empty-slot');

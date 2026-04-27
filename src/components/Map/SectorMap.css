@@ -168,7 +168,9 @@
   }
 
   .star-cycle-overlay {
-    bottom: 180px;
+    bottom: auto;
+    top: 20px;
+    left: 20px;
   }
 
   .graph-toggle-btn {

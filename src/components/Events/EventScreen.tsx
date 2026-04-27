@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { GameEvent, EventOutcome } from '../../types/game';
+import type { GameEvent, EventOutcome } from '../../types/game';
 import './EventScreen.css';
 
 interface EventScreenProps {

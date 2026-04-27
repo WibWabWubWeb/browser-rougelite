@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { EventScreen } from '../EventScreen';
-import { GameEvent } from '../../../types/game';
+import type { GameEvent } from '../../../types/game';
 
 const mockEvent: GameEvent = {
   id: 'test-event',
@@ -24,27 +24,38 @@ const mockEvent: GameEvent = {
 };
 
 describe('EventScreen', () => {
-  it('renders title and choices', () => {
+  it('renders title, prompt, and choices with outcome transparency', () => {
     render(<EventScreen event={mockEvent} onResolve={vi.fn()} />);
     expect(screen.getByText('Test Event Title')).toBeDefined();
     expect(screen.getByText('Test event prompt description.')).toBeDefined();
+    
+    // Check choices
     expect(screen.getByText('Choice 1')).toBeDefined();
-    expect(screen.getByText('Choice 2')).toBeDefined();
+    expect(screen.getByText('Description 1')).toBeDefined();
+    
+    // Check outcome transparency (preview text)
+    expect(screen.getByText('Outcome 1')).toBeDefined();
+    expect(screen.getByText('Outcome 2')).toBeDefined();
   });
 
-  it('shows result and calls onResolve when a choice is clicked', async () => {
+  it('shows result overlay and calls onResolve when a choice is clicked', async () => {
     const onResolve = vi.fn();
     render(<EventScreen event={mockEvent} onResolve={onResolve} />);
     
-    fireEvent.click(screen.getByText('Choice 1'));
+    // Initial state: No "Result" header
+    expect(screen.queryByText('Result')).toBeNull();
+
+    // Click a choice
+    fireEvent.click(screen.getByText('Choice 2'));
     
-    expect(screen.getByText('Outcome 1')).toBeDefined();
+    // Overlay state: Shows "Result" and the specific outcome text
+    expect(screen.getByText('Result')).toBeDefined();
+    expect(screen.getByText('Outcome 2')).toBeDefined();
     
-    // The component should show the result for a bit, then call onResolve
-    // For testing purposes, we use a "Continue" button
+    // Verify "Continue" button works
     const continueBtn = screen.getByText('Continue');
     fireEvent.click(continueBtn);
     
-    expect(onResolve).toHaveBeenCalledWith(mockEvent.choices[0].outcomes[0]);
+    expect(onResolve).toHaveBeenCalledWith(mockEvent.choices[1].outcomes[0]);
   });
 });

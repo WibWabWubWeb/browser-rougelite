@@ -345,28 +345,31 @@ describe('useGameState', () => {
     expect(result.current.state.squad).toHaveLength(6);
   });
 
-  it('should resolve an event and apply outcomes', () => {
+  it('should resolve an event and apply comprehensive outcomes to the whole squad', () => {
     const { result } = renderHook(() => useGameState());
-    const mockSquad = getMockSquad();
+    
+    // Initial setup: 2 units
+    const unit1: Unit = { id: 'u1', name: 'Unit 1', atkType: AttackType.Thermal, defType: ArmorType.Plating, hp: 10, maxHp: 10, atk: 5, speed: 10, level: 1, xp: 0, xpToNext: 10, milestones: [] };
+    const unit2: Unit = { id: 'u2', name: 'Unit 2', atkType: AttackType.Ion, defType: ArmorType.Shields, hp: 5, maxHp: 10, atk: 5, speed: 10, level: 1, xp: 0, xpToNext: 10, milestones: [] };
     
     act(() => {
-      result.current.chooseSquad(mockSquad);
+      result.current.chooseSquad([unit1, unit2]);
     });
 
     const mockItem = {
-      id: 'item1',
-      name: 'Medkit',
-      category: 'consumable' as const,
-      cost: 50,
-      description: 'Heals 5 HP',
-      effect: { hp: 5 }
+      id: 'event-item',
+      name: 'Rare Tech',
+      category: 'module' as const,
+      cost: 100,
+      description: 'Found in space',
+      effect: { atk: 3 }
     };
 
     const outcome = {
-      id: 'o1',
-      text: 'Gained credits and XP, but lost HP and got an item',
+      id: 'o-comp',
+      text: 'Discovery! +50 Credits, +5 XP to all, and a Rare Tech. But everyone takes 20% damage.',
       credits: 50,
-      hp: -10, // -10% of current HP (10) = -1 HP
+      hp: -20, // -20%
       xp: 5,
       item: mockItem
     };
@@ -375,10 +378,48 @@ describe('useGameState', () => {
       result.current.resolveEvent(outcome);
     });
 
+    // Credits: 100 (initial) + 50 = 150
     expect(result.current.state.credits).toBe(150);
-    expect(result.current.state.squad[0].hp).toBe(9);
-    expect(result.current.state.squad[0].xp).toBe(5);
-    expect(result.current.state.inventory).toContainEqual(mockItem);
+    
+    // Unit 1: 10 HP -> 10 + Math.floor(10 * -0.2) = 10 - 2 = 8 HP
+    // XP: 0 + 5 = 5
+    const updatedU1 = result.current.state.squad.find(u => u.id === 'u1')!;
+    expect(updatedU1.hp).toBe(8);
+    expect(updatedU1.xp).toBe(5);
+    
+    // Unit 2: 5 HP -> 5 + Math.floor(5 * -0.2) = 5 - 1 = 4 HP
+    // XP: 0 + 5 = 5
+    const updatedU2 = result.current.state.squad.find(u => u.id === 'u2')!;
+    expect(updatedU2.hp).toBe(4);
+    expect(updatedU2.xp).toBe(5);
+
+    // Inventory
+    expect(result.current.state.inventory).toHaveLength(1);
+    expect(result.current.state.inventory[0].id).toBe('event-item');
+    
+    // Screen transition
     expect(result.current.state.screen).toBe('MAP');
+  });
+
+  it('should handle positive HP outcomes and not exceed maxHp', () => {
+    const { result } = renderHook(() => useGameState());
+    const unit: Unit = { id: 'u1', name: 'Unit 1', atkType: AttackType.Thermal, defType: ArmorType.Plating, hp: 8, maxHp: 10, atk: 5, speed: 10, level: 1, xp: 0, xpToNext: 10, milestones: [] };
+    
+    act(() => {
+      result.current.chooseSquad([unit]);
+    });
+
+    const outcome = {
+      id: 'o-heal',
+      text: 'Everyone heals 50%',
+      hp: 50, // +50%
+    };
+
+    act(() => {
+      result.current.resolveEvent(outcome);
+    });
+
+    // 8 + Math.floor(8 * 0.5) = 8 + 4 = 12 -> clamped to 10
+    expect(result.current.state.squad[0].hp).toBe(10);
   });
 });

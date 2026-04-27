@@ -1,0 +1,39 @@
+<h2>Random Event Archetypes</h2>
+<p class="subtitle">What kind of encounters should the player face at '?' nodes?</p>
+
+<div class="options">
+  <div class="option" data-choice="story_choices" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Narrative Dilemmas</h3>
+      <p>A short story setup with 2-3 choices. Each choice has a different outcome (e.g., gain credits but lose HP, or risk a unit for a module).</p>
+      <div class="mockup" style="margin-top: 10px; padding: 10px; background: #0a0a1a; border: 1px solid #4facfe;">
+        <div style="font-size: 0.7rem; color: #aaa;">"You find a derelict freighter..."</div>
+        <div style="display: flex; flex-direction: column; gap: 5px; margin-top: 10px;">
+           <div style="background: #222; padding: 5px; border-radius: 3px; font-size: 0.6rem;">[SCAVENGE] (+50 Credits, 20% Risk)</div>
+           <div style="background: #222; padding: 5px; border-radius: 3px; font-size: 0.6rem;">[IGNORE] (Safe passage)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="mini_game" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Skill-Based Mini-Games</h3>
+      <p>A simple interaction like a "Hacking" or "Navigation" mini-game. Success gives a high reward, failure might trigger an ambush.</p>
+    </div>
+  </div>
+
+  <div class="option" data-choice="mystery_box" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>The Mystery Box</h3>
+      <p>The node instantly gives a random reward or penalty upon arrival. No choice required, high unpredictability.</p>
+      <div class="mockup" style="margin-top: 10px; text-align: center; padding: 10px;">
+        <div style="font-size: 1.5rem;">🎁</div>
+        <div style="font-size: 0.7rem; color: #00ff00;">REWARD: REPAIR KIT x1</div>
+      </div>
+    </div>
+  </div>
+</div>
