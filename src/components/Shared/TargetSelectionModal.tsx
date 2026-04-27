@@ -1,6 +1,5 @@
-import React from 'react';
 import './TargetSelectionModal.css';
-import { Unit } from '../../types/game';
+import type { Unit } from '../../types/game';
 
 interface TargetSelectionModalProps {
   title: string;

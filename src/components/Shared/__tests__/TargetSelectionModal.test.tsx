@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { TargetSelectionModal } from '../TargetSelectionModal';
-import { Unit } from '../../../types/game';
+import type { Unit } from '../../../types/game';
 
 const mockSquad: Unit[] = [
   {

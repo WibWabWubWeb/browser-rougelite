@@ -30,7 +30,7 @@ describe('generateMap', () => {
 
   it('should assign intel for battle nodes', () => {
     const battleNodes = nodes.filter(n => 
-      [NodeType.Skirmish, NodeType.Elite, NodeType.Boss].includes(n.type)
+      ([NodeType.Skirmish, NodeType.Elite, NodeType.Boss] as string[]).includes(n.type)
     );
     battleNodes.forEach(node => {
       expect(node.intelAtkType).toBeDefined();

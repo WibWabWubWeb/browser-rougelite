@@ -3,6 +3,7 @@ import { SectorMap } from './components/Map/SectorMap';
 import { BattleArena } from './components/Combat/BattleArena';
 import { LevelUp } from './components/Progression/LevelUp';
 import { DraftScreen } from './components/Draft/DraftScreen';
+import { ShopScreen } from './components/Shop/ShopScreen';
 import type { Unit } from './types/game';
 import { AttackType, ArmorType } from './types/game';
 import './App.css';
@@ -34,7 +35,10 @@ function App() {
     upgradeUnit, 
     closeLevelUp,
     chooseSquad,
-    reorderSquad
+    reorderSquad,
+    buyItem,
+    equipModule,
+    recruit
   } = useGameState();
 
   const handleBattleEnd = (result: 'victory' | 'defeat', updatedHPs: Record<string, number>) => {
@@ -102,11 +106,14 @@ function App() {
 
       case 'SHOP':
         return (
-          <div className="game-container centered">
-            <h2>Trade Hub</h2>
-            <p>Welcome to the Trade Hub. (Shop implementation coming soon...)</p>
-            <button className="nav-button" onClick={closeLevelUp}>Return to Map</button>
-          </div>
+          <ShopScreen
+            credits={state.credits}
+            squad={state.squad}
+            buyItem={buyItem}
+            equipModule={equipModule}
+            recruit={recruit}
+            onClose={closeLevelUp}
+          />
         );
 
       case 'EVENT':
