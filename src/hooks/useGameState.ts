@@ -1,5 +1,5 @@
 import { useReducer, useCallback } from 'react';
-import type { Unit, MapNode } from "../types/game";
+import type { Unit, MapNode, ShopItem } from "../types/game";
 import { NodeType } from '../types/game';
 import { generateMap } from '../logic/map';
 
@@ -7,6 +7,7 @@ export type GameScreen = 'MAP' | 'BATTLE' | 'SHOP' | 'LEVEL_UP' | 'EVENT' | 'DRA
 
 export interface GameState {
   squad: Unit[];
+  inventory: ShopItem[];
   credits: number;
   currentLevel: number;
   currentNodeId: string | null;
@@ -17,13 +18,16 @@ export interface GameState {
 
 export type GameAction =
   | { type: 'TRAVEL'; nodeId: string }
-  | { type: 'RECRUIT'; unit: Unit; cost: number }
+  | { type: 'RECRUIT'; unit: Unit; cost: number; replaceIndex?: number }
   | { type: 'RESOLVE_BATTLE'; xpGain: number; creditsGain: number; updatedHPs: Record<string, number> }
   | { type: 'HEAL_UNIT'; unitId: string; amount: number; cost: number }
   | { type: 'UPGRADE_UNIT'; unitId: string; upgrade: { atk?: number; maxHp?: number; milestone?: string } }
   | { type: 'CLOSE_LEVEL_UP' }
   | { type: 'CHOOSE_SQUAD'; squad: Unit[] }
-  | { type: 'REORDER_SQUAD'; squad: Unit[] };
+  | { type: 'REORDER_SQUAD'; squad: Unit[] }
+  | { type: 'BUY_ITEM'; item: ShopItem }
+  | { type: 'USE_ITEM'; itemId: string; targetUnitId: string }
+  | { type: 'EQUIP_MODULE'; item: ShopItem; targetUnitId: string };
 
 const INITIAL_CREDITS = 100;
 const MAP_DEPTH = 6;
@@ -72,12 +76,19 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       };
     }
 
-    case 'RECRUIT':
+    case 'RECRUIT': {
+      let newSquad = [...state.squad];
+      if (action.replaceIndex !== undefined && action.replaceIndex >= 0 && action.replaceIndex < newSquad.length) {
+        newSquad[action.replaceIndex] = action.unit;
+      } else {
+        newSquad.push(action.unit);
+      }
       return {
         ...state,
-        squad: [...state.squad, action.unit],
+        squad: newSquad,
         credits: state.credits - action.cost,
       };
+    }
 
     case 'RESOLVE_BATTLE': {
       const leveledUnitIds: string[] = [];
@@ -152,6 +163,61 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         credits: state.credits - action.cost,
       };
 
+    case 'BUY_ITEM':
+      return {
+        ...state,
+        inventory: [...state.inventory, action.item],
+        credits: state.credits - action.item.cost,
+      };
+
+    case 'USE_ITEM': {
+      const itemIndex = state.inventory.findIndex(i => i.id === action.itemId);
+      if (itemIndex === -1) return state;
+
+      const item = state.inventory[itemIndex];
+      const newInventory = [...state.inventory];
+      newInventory.splice(itemIndex, 1);
+
+      return {
+        ...state,
+        inventory: newInventory,
+        squad: state.squad.map(unit => {
+          if (unit.id !== action.targetUnitId) return unit;
+          
+          let newHp = unit.hp;
+          if (item.effect?.hp) {
+            newHp = Math.min(unit.maxHp, unit.hp + item.effect.hp);
+          }
+          // Assuming other consumable effects could go here, but only HP is mentioned/tested for now.
+
+          return { ...unit, hp: newHp };
+        }),
+      };
+    }
+
+    case 'EQUIP_MODULE': {
+      const itemIndex = state.inventory.findIndex(i => i.id === action.item.id);
+      if (itemIndex === -1) return state;
+
+      const newInventory = [...state.inventory];
+      newInventory.splice(itemIndex, 1);
+
+      return {
+        ...state,
+        inventory: newInventory,
+        squad: state.squad.map(unit => {
+          if (unit.id !== action.targetUnitId) return unit;
+          
+          return {
+            ...unit,
+            atk: unit.atk + (action.item.effect?.atk || 0),
+            maxHp: unit.maxHp + (action.item.effect?.maxHp || 0),
+            hp: unit.hp + (action.item.effect?.maxHp || 0), // also heal if maxHP increases
+          };
+        }),
+      };
+    }
+
     default:
       return state;
   }
@@ -162,6 +228,7 @@ export function useGameState() {
     const map = generateMap(MAP_DEPTH);
     return {
       squad: [],
+      inventory: [],
       credits: INITIAL_CREDITS,
       currentLevel: 0,
       currentNodeId: null,
@@ -175,8 +242,8 @@ export function useGameState() {
     dispatch({ type: 'TRAVEL', nodeId });
   }, []);
 
-  const recruit = useCallback((unit: Unit, cost: number) => {
-    dispatch({ type: 'RECRUIT', unit, cost });
+  const recruit = useCallback((unit: Unit, cost: number, replaceIndex?: number) => {
+    dispatch({ type: 'RECRUIT', unit, cost, replaceIndex });
   }, []);
 
   const resolveBattle = useCallback((xpGain: number, creditsGain: number, updatedHPs: Record<string, number>) => {
@@ -203,6 +270,18 @@ export function useGameState() {
     dispatch({ type: 'REORDER_SQUAD', squad });
   }, []);
 
+  const buyItem = useCallback((item: ShopItem) => {
+    dispatch({ type: 'BUY_ITEM', item });
+  }, []);
+
+  const useItem = useCallback((itemId: string, targetUnitId: string) => {
+    dispatch({ type: 'USE_ITEM', itemId, targetUnitId });
+  }, []);
+
+  const equipModule = useCallback((item: ShopItem, targetUnitId: string) => {
+    dispatch({ type: 'EQUIP_MODULE', item, targetUnitId });
+  }, []);
+
   return {
     state,
     travel,
@@ -213,5 +292,8 @@ export function useGameState() {
     closeLevelUp,
     chooseSquad,
     reorderSquad,
+    buyItem,
+    useItem,
+    equipModule,
   };
 }

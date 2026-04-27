@@ -48,3 +48,14 @@ export interface MapNode {
   intelAtkType?: AttackType;
   intelDefType?: ArmorType;
 }
+
+export type ItemCategory = 'consumable' | 'module';
+
+export interface ShopItem {
+  id: string;
+  name: string;
+  category: ItemCategory;
+  cost: number;
+  description: string;
+  effect: any;
+}
