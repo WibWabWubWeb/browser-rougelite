@@ -3,6 +3,7 @@ import type { MapNode, Unit } from "../../types/game";
 import { NodeType } from '../../types/game';
 import './SectorMap.css';
 import { SquadBar } from './SquadBar';
+import { StarCycleGraph } from './StarCycleGraph';
 
 interface SectorMapProps {
   map: MapNode[];
@@ -128,6 +129,8 @@ export const SectorMap: React.FC<SectorMapProps> = ({
     return currentNode?.connections.includes(node.id) || false;
   };
 
+  const [showGraph, setShowGraph] = React.useState(false);
+
   return (
     <div className="sector-map-container" data-testid="sector-map" ref={containerRef}>
       <svg className="connections-overlay">
@@ -167,6 +170,16 @@ export const SectorMap: React.FC<SectorMapProps> = ({
           ))}
         </div>
       ))}
+      <div className={`star-cycle-overlay ${showGraph ? 'expanded' : 'collapsed'}`}>
+        <button 
+          className="graph-toggle-btn" 
+          onClick={() => setShowGraph(!showGraph)}
+          title={showGraph ? "Hide Star Cycle" : "Show Star Cycle"}
+        >
+          {showGraph ? '×' : 'ℹ️'}
+        </button>
+        {showGraph && <StarCycleGraph />}
+      </div>
       <SquadBar squad={squad} onReorder={onReorder} />
     </div>
   );
