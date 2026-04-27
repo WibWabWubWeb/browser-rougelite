@@ -18,6 +18,8 @@ describe('SectorMap', () => {
         currentNodeId="1" 
         currentLevel={0} 
         onTravel={onTravel} 
+        squad={[]}
+        onReorder={() => {}}
       />
     );
     
@@ -41,6 +43,8 @@ describe('SectorMap', () => {
         currentNodeId={null} 
         currentLevel={0} 
         onTravel={onTravel} 
+        squad={[]}
+        onReorder={() => {}}
       />
     );
     
@@ -48,5 +52,25 @@ describe('SectorMap', () => {
     const firstNode = screen.getByText('⚔️');
     fireEvent.click(firstNode);
     expect(onTravel).toHaveBeenCalledWith('1');
+  });
+
+  test('renders intel icons for battle nodes', () => {
+    const mapWithIntel: MapNode[] = [
+      { id: '1', type: NodeType.Skirmish, depth: 0, connections: [], intelType: 'Thermal' },
+    ];
+    render(
+      <SectorMap 
+        map={mapWithIntel} 
+        currentNodeId={null} 
+        currentLevel={0} 
+        onTravel={() => {}} 
+        squad={[]}
+        onReorder={() => {}}
+      />
+    );
+    
+    // Check for Thermal intel icon (🔥)
+    expect(screen.getByText('🔥')).toBeDefined();
+    expect(screen.getByTitle('Primary Enemy: Thermal')).toBeDefined();
   });
 });

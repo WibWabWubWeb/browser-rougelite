@@ -1,13 +1,16 @@
 import React from 'react';
-import type { MapNode } from "../../types/game";
+import type { MapNode, Unit } from "../../types/game";
 import { NodeType } from '../../types/game';
 import './SectorMap.css';
+import { SquadBar } from './SquadBar';
 
 interface SectorMapProps {
   map: MapNode[];
   currentNodeId: string | null;
   currentLevel: number;
   onTravel: (nodeId: string) => void;
+  squad: Unit[];
+  onReorder: (newSquad: Unit[]) => void;
 }
 
 const getNodeIcon = (type: NodeType) => {
@@ -19,6 +22,18 @@ const getNodeIcon = (type: NodeType) => {
     case 'Repair': return '🔧';
     case 'Boss': return '👑';
     default: return '•';
+  }
+};
+
+const getIntelIcon = (type?: string) => {
+  switch (type) {
+    case 'Thermal': return '🔥';
+    case 'Ion': return '⚡';
+    case 'Toxic': return '☣️';
+    case 'Plating': return '🛡️';
+    case 'Shields': return '🌀';
+    case 'Bio': return '🌿';
+    default: return '';
   }
 };
 
@@ -75,7 +90,9 @@ export const SectorMap: React.FC<SectorMapProps> = ({
   map,
   currentNodeId,
   currentLevel,
-  onTravel
+  onTravel,
+  squad,
+  onReorder
 }) => {
   const nodeRefs = React.useRef<{ [key: string]: HTMLDivElement | null }>({});
   const containerRef = React.useRef<HTMLDivElement | null>(null);
@@ -141,10 +158,16 @@ export const SectorMap: React.FC<SectorMapProps> = ({
               title={node.type}
             >
               {getNodeIcon(node.type)}
+              {node.intelType && (
+                <div className="node-intel" title={`Primary Enemy: ${node.intelType}`}>
+                  {getIntelIcon(node.intelType)}
+                </div>
+              )}
             </div>
           ))}
         </div>
       ))}
+      <SquadBar squad={squad} onReorder={onReorder} />
     </div>
   );
 };

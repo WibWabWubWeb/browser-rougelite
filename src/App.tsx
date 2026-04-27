@@ -14,7 +14,8 @@ function App() {
     resolveBattle, 
     upgradeUnit, 
     closeLevelUp,
-    chooseSquad
+    chooseSquad,
+    reorderSquad
   } = useGameState();
 
   const handleBattleEnd = (result: 'victory' | 'defeat', updatedHPs: Record<string, number>) => {
@@ -62,6 +63,8 @@ function App() {
               currentNodeId={state.currentNodeId} 
               currentLevel={state.currentLevel}
               onTravel={travel} 
+              squad={state.squad}
+              onReorder={reorderSquad}
             />
           </div>
         );
