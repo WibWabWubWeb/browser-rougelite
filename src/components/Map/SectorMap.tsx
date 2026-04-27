@@ -111,10 +111,13 @@ export const SectorMap: React.FC<SectorMapProps> = ({
     const lines: Array<{ from: string; to: string; active: boolean }> = [];
     map.forEach(node => {
       node.connections.forEach(targetId => {
+        const isActive = currentNodeId === null 
+          ? node.depth === 0 
+          : node.id === currentNodeId;
         lines.push({
           from: node.id,
           to: targetId,
-          active: node.id === currentNodeId
+          active: isActive
         });
       });
     });

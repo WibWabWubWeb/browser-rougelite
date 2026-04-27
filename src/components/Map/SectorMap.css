@@ -75,15 +75,17 @@
 }
 
 .connection-line {
-  stroke: #3a3a45;
+  stroke: #222;
   stroke-width: 2;
   fill: none;
+  opacity: 0.3;
 }
 
 .connection-line.active {
   stroke: #4facfe;
   stroke-dasharray: 5;
   animation: dash 1s linear infinite;
+  opacity: 1;
 }
 
 @keyframes dash {
