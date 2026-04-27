@@ -36,6 +36,26 @@ describe('SectorMap', () => {
     expect(onTravel).toHaveBeenCalledWith('2');
   });
 
+  test('renders with fluid styles (visual check via classes)', () => {
+    const { container } = render(
+      <SectorMap 
+        map={mockMap} 
+        currentNodeId="1" 
+        currentLevel={0} 
+        onTravel={() => {}} 
+        squad={[]}
+        onReorder={() => {}}
+        inventory={[]}
+        useItem={() => {}}
+      />
+    );
+    
+    const containerEl = container.querySelector('.sector-map-container');
+    expect(containerEl).toBeDefined();
+    // We can't easily test computed styles in JSDOM for clamp(), but we can check if it rendered.
+    expect(containerEl?.classList.contains('sector-map-container')).toBe(true);
+  });
+
   test('renders intel icons for battle nodes', () => {
     render(
       <SectorMap 
