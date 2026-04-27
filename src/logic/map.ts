@@ -1,4 +1,5 @@
-import { MapNode, NodeType } from '../types/game';
+import type { MapNode } from "../types/game";
+import { NodeType } from '../types/game';
 
 export function generateMap(totalDepth: number): MapNode[] {
   const nodes: MapNode[] = [];

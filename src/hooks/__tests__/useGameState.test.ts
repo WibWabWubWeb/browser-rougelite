@@ -1,12 +1,13 @@
 import { renderHook, act } from '@testing-library/react';
 import { useGameState } from '../useGameState';
 import { describe, it, expect } from 'vitest';
+import type { Unit } from '../../types/game';
 import { UnitType, NodeType } from '../../types/game';
 
 describe('useGameState', () => {
   it('should initialize with default state', () => {
     const { result } = renderHook(() => useGameState());
-    expect(result.current.state.squad).toEqual([]);
+    expect(result.current.state.squad.length).toBe(3); // Initial 3 units
     expect(result.current.state.credits).toBe(100);
     expect(result.current.state.screen).toBe('MAP');
     expect(result.current.state.map.length).toBeGreaterThan(0);
@@ -35,8 +36,9 @@ describe('useGameState', () => {
 
   it('should recruit a unit', () => {
     const { result } = renderHook(() => useGameState());
-    const mockUnit = {
-      id: 'u1',
+    const initialLength = result.current.state.squad.length;
+    const mockUnit: Unit = {
+      id: 'u-new',
       name: 'Test Unit',
       type: UnitType.Thermal,
       hp: 10,
@@ -52,118 +54,80 @@ describe('useGameState', () => {
       result.current.recruit(mockUnit, 50);
     });
 
-    expect(result.current.state.squad).toHaveLength(1);
-    expect(result.current.state.squad[0].id).toBe('u1');
+    expect(result.current.state.squad).toHaveLength(initialLength + 1);
+    expect(result.current.state.squad.find(u => u.id === 'u-new')).toBeDefined();
     expect(result.current.state.credits).toBe(50);
   });
 
   it('should resolve battle results', () => {
     const { result } = renderHook(() => useGameState());
-    const mockUnit = {
-      id: 'u1',
-      name: 'Test Unit',
-      type: UnitType.Thermal,
-      hp: 10,
-      maxHp: 10,
-      atk: 5,
-      level: 1,
-      xp: 0,
-      xpToNext: 10,
-      milestones: []
-    };
+    const firstUnitId = result.current.state.squad[0].id;
+    const initialCredits = result.current.state.credits;
 
     act(() => {
-      result.current.recruit(mockUnit, 0);
+      result.current.resolveBattle(5, 20, { [firstUnitId]: 3 });
     });
 
-    act(() => {
-      result.current.resolveBattle(5, 20, { 'u1': 3 });
-    });
-
-    expect(result.current.state.squad[0].hp).toBe(7);
-    expect(result.current.state.squad[0].xp).toBe(5);
-    expect(result.current.state.credits).toBe(120);
-    expect(result.current.state.screen).toBe('LEVEL_UP');
+    const updatedUnit = result.current.state.squad.find(u => u.id === firstUnitId)!;
+    expect(updatedUnit.hp).toBe(updatedUnit.maxHp - 3);
+    expect(updatedUnit.xp).toBe(5);
+    expect(result.current.state.credits).toBe(initialCredits + 20);
   });
 
   it('should handle level up in battle resolution', () => {
     const { result } = renderHook(() => useGameState());
-    const mockUnit = {
-      id: 'u1',
-      name: 'Test Unit',
-      type: UnitType.Thermal,
-      hp: 10,
-      maxHp: 10,
-      atk: 5,
-      level: 1,
-      xp: 8,
-      xpToNext: 10,
-      milestones: []
-    };
+    const firstUnitId = result.current.state.squad[0].id;
 
+    // Set XP close to level up manually if we could, but we'll just give enough XP
     act(() => {
-      result.current.recruit(mockUnit, 0);
+      result.current.resolveBattle(25, 0, {}); // Initial xpToNext is 20
     });
 
-    act(() => {
-      result.current.resolveBattle(5, 0, {});
-    });
-
-    expect(result.current.state.squad[0].level).toBe(2);
-    expect(result.current.state.squad[0].xp).toBe(3); // 8+5 = 13, 13-10 = 3
-    expect(result.current.state.squad[0].xpToNext).toBe(15); // 10 * 1.5
+    const updatedUnit = result.current.state.squad.find(u => u.id === firstUnitId)!;
+    expect(updatedUnit.level).toBe(2);
+    expect(updatedUnit.xp).toBe(5); // 25 - 20 = 5
+    expect(result.current.state.screen).toBe('LEVEL_UP');
   });
 
   it('should heal a unit', () => {
     const { result } = renderHook(() => useGameState());
-    const mockUnit = {
-      id: 'u1',
-      name: 'Test Unit',
-      type: UnitType.Thermal,
-      hp: 5,
-      maxHp: 10,
-      atk: 5,
-      level: 1,
-      xp: 0,
-      xpToNext: 10,
-      milestones: []
-    };
-
+    const firstUnitId = result.current.state.squad[0].id;
+    
+    // Damage first
     act(() => {
-      result.current.recruit(mockUnit, 0);
+      result.current.resolveBattle(0, 0, { [firstUnitId]: 10 });
     });
 
+    const damagedHp = result.current.state.squad[0].hp;
+
     act(() => {
-      result.current.healUnit('u1', 3, 10);
+      result.current.healUnit(firstUnitId, 5, 10);
     });
 
-    expect(result.current.state.squad[0].hp).toBe(8);
+    expect(result.current.state.squad[0].hp).toBe(damagedHp + 5);
     expect(result.current.state.credits).toBe(90);
   });
 
   it('should not heal beyond max HP', () => {
     const { result } = renderHook(() => useGameState());
-    const mockUnit = {
-      id: 'u1',
-      name: 'Test Unit',
-      type: UnitType.Thermal,
-      hp: 8,
-      maxHp: 10,
-      atk: 5,
-      level: 1,
-      xp: 0,
-      xpToNext: 10,
-      milestones: []
-    };
+    const firstUnitId = result.current.state.squad[0].id;
 
     act(() => {
-      result.current.recruit(mockUnit, 0);
+      result.current.healUnit(firstUnitId, 100, 0);
     });
+
+    expect(result.current.state.squad[0].hp).toBe(result.current.state.squad[0].maxHp);
+  });
+
+  it('should upgrade unit stats', () => {
+    const { result } = renderHook(() => useGameState());
+    const firstUnitId = result.current.state.squad[0].id;
+    const initialAtk = result.current.state.squad[0].atk;
 
     act(() => {
-      result.current.healUnit('u1', 5, 0);
+      result.current.upgradeUnit(firstUnitId, { atk: 5 });
     });
 
-    expect(result.current.state.squad[0].hp).toBe(10);
+    expect(result.current.state.squad[0].atk).toBe(initialAtk + 5);
   });
 });

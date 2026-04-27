@@ -1,5 +1,6 @@
 import React from 'react';
-import { MapNode, NodeType } from '../../types/game';
+import type { MapNode } from "../../types/game";
+import { NodeType } from '../../types/game';
 import './SectorMap.css';
 
 interface SectorMapProps {

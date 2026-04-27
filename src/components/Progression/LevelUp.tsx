@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Unit } from '../../types/game';
+import type { Unit } from '../../types/game';
 import './LevelUp.css';
 
 interface LevelUpProps {

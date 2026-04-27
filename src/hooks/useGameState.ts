@@ -1,5 +1,6 @@
 import { useReducer, useCallback } from 'react';
-import { Unit, MapNode, NodeType } from '../types/game';
+import type { Unit, MapNode } from "../types/game";
+import { NodeType, UnitType } from '../types/game';
 import { generateMap } from '../logic/map';
 
 export type GameScreen = 'MAP' | 'BATTLE' | 'SHOP' | 'LEVEL_UP' | 'EVENT';
@@ -11,16 +12,58 @@ export interface GameState {
   currentNodeId: string | null;
   map: MapNode[];
   screen: GameScreen;
+  lastBattleLeveledUnits: string[]; // Track which units leveled up in the last battle
 }
 
-type GameAction =
+export type GameAction =
   | { type: 'TRAVEL'; nodeId: string }
   | { type: 'RECRUIT'; unit: Unit; cost: number }
   | { type: 'RESOLVE_BATTLE'; xpGain: number; creditsGain: number; hpLosses: Record<string, number> }
-  | { type: 'HEAL_UNIT'; unitId: string; amount: number; cost: number };
+  | { type: 'HEAL_UNIT'; unitId: string; amount: number; cost: number }
+  | { type: 'UPGRADE_UNIT'; unitId: string; upgrade: { atk?: number; maxHp?: number; milestone?: string } }
+  | { type: 'CLOSE_LEVEL_UP' };
 
 const INITIAL_CREDITS = 100;
-const MAP_DEPTH = 10;
+const MAP_DEPTH = 6;
+
+const INITIAL_SQUAD: Unit[] = [
+  {
+    id: 'p1',
+    name: 'Interceptor',
+    type: UnitType.Thermal,
+    hp: 40,
+    maxHp: 40,
+    atk: 10,
+    level: 1,
+    xp: 0,
+    xpToNext: 20,
+    milestones: [],
+  },
+  {
+    id: 'p2',
+    name: 'Bastion',
+    type: UnitType.Plating,
+    hp: 60,
+    maxHp: 60,
+    atk: 6,
+    level: 1,
+    xp: 0,
+    xpToNext: 20,
+    milestones: [],
+  },
+  {
+    id: 'p3',
+    name: 'Volt-Raider',
+    type: UnitType.Ion,
+    hp: 35,
+    maxHp: 35,
+    atk: 12,
+    level: 1,
+    xp: 0,
+    xpToNext: 20,
+    milestones: [],
+  },
+];
 
 function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
@@ -60,11 +103,11 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       };
 
     case 'RESOLVE_BATTLE': {
+      const leveledUnitIds: string[] = [];
       const updatedSquad = state.squad.map(unit => {
         const hpLoss = action.hpLosses[unit.id] || 0;
         const newHp = Math.max(0, unit.hp - hpLoss);
         
-        // Simple XP gain logic
         let newXp = unit.xp + action.xpGain;
         let newLevel = unit.level;
         let newXpToNext = unit.xpToNext;
@@ -73,6 +116,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
           newXp -= unit.xpToNext;
           newLevel += 1;
           newXpToNext = Math.floor(unit.xpToNext * 1.5);
+          leveledUnitIds.push(unit.id);
         }
 
         return {
@@ -88,9 +132,34 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         ...state,
         squad: updatedSquad,
         credits: state.credits + action.creditsGain,
-        screen: 'LEVEL_UP', // Switch to level up/reward screen
+        lastBattleLeveledUnits: leveledUnitIds,
+        screen: leveledUnitIds.length > 0 ? 'LEVEL_UP' : 'MAP',
       };
     }
+
+    case 'UPGRADE_UNIT':
+      return {
+        ...state,
+        squad: state.squad.map(unit => {
+          if (unit.id !== action.unitId) return unit;
+          return {
+            ...unit,
+            atk: unit.atk + (action.upgrade.atk || 0),
+            maxHp: unit.maxHp + (action.upgrade.maxHp || 0),
+            hp: unit.hp + (action.upgrade.maxHp || 0), // Heal for the HP gain
+            milestones: action.upgrade.milestone 
+              ? [...unit.milestones, action.upgrade.milestone]
+              : unit.milestones,
+          };
+        }),
+      };
+
+    case 'CLOSE_LEVEL_UP':
+      return {
+        ...state,
+        screen: 'MAP',
+        lastBattleLeveledUnits: [],
+      };
 
     case 'HEAL_UNIT':
       return {
@@ -112,12 +181,13 @@ export function useGameState() {
   const [state, dispatch] = useReducer(gameReducer, null, () => {
     const map = generateMap(MAP_DEPTH);
     return {
-      squad: [],
+      squad: INITIAL_SQUAD,
       credits: INITIAL_CREDITS,
       currentLevel: 0,
       currentNodeId: null,
       map: map,
       screen: 'MAP' as GameScreen,
+      lastBattleLeveledUnits: [],
     };
   });
 
@@ -137,11 +207,21 @@ export function useGameState() {
     dispatch({ type: 'HEAL_UNIT', unitId, amount, cost });
   }, []);
 
+  const upgradeUnit = useCallback((unitId: string, upgrade: { atk?: number; maxHp?: number; milestone?: string }) => {
+    dispatch({ type: 'UPGRADE_UNIT', unitId, upgrade });
+  }, []);
+
+  const closeLevelUp = useCallback(() => {
+    dispatch({ type: 'CLOSE_LEVEL_UP' });
+  }, []);
+
   return {
     state,
     travel,
     recruit,
     resolveBattle,
     healUnit,
+    upgradeUnit,
+    closeLevelUp,
   };
 }

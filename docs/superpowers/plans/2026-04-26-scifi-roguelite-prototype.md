@@ -1,218 +1,388 @@
-# Star-Commander Roguelite Implementation Plan
+# Battle Arena UI Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Build a functional prototype of a sci-fi squad auto-battler in the browser.
+**Goal:** Implement the `BattleArena` component for 3-lane siege combat.
 
-**Architecture:** A React-based application using a central custom hook for state management. Combat logic is isolated from UI, using a "Star Cycle" type system for automated 3-lane resolution.
+**Architecture:** A React component that manages combat state (HP, status) and simulates attacks every 1s using `setInterval`. It renders 3 lanes with player/enemy units and two Command Hubs.
 
-**Tech Stack:** React, TypeScript, Vite, Vitest, Vanilla CSS.
-
----
-
-## File Structure
-
-- `src/types/game.ts`: Core interfaces for Units, Node types, and Game State.
-- `src/logic/combat.ts`: Pure functions for damage calculation and lane resolution.
-- `src/logic/map.ts`: Map generation and navigation logic.
-- `src/hooks/useGameState.ts`: Central React hook for managing the run state.
-- `src/components/Map/SectorMap.tsx`: Visualization of the branching web map.
-- `src/components/Combat/BattleArena.tsx`: The 3-lane siege interface.
-- `src/components/Recruitment/UnitChoice.tsx`: Post-battle and Shop interfaces.
-- `src/components/Progression/LevelUp.tsx`: Stat boost and Milestone choice UI.
-- `src/App.tsx`: Main game loop and screen switching.
+**Tech Stack:** React, TypeScript, Vitest, Testing Library, Vanilla CSS.
 
 ---
 
-### Task 1: Core Types Definition
+### Task 1: Scaffolding and Styles
 
 **Files:**
-- Create: `src/types/game.ts`
+- Create: `src/components/Combat/BattleArena.css`
+- Create: `src/components/Combat/BattleArena.tsx` (Scaffold)
 
-- [ ] **Step 1: Define core enums and interfaces**
+- [ ] **Step 1: Create CSS file with Sci-Fi styles**
 
-```typescript
-export enum UnitType {
-  Thermal = 'Thermal',
-  Ion = 'Ion',
-  Toxic = 'Toxic',
-  Plating = 'Plating',
-  Shields = 'Shields',
-  Bio = 'Bio'
+```css
+.battle-arena {
+  background: #0a0a1a;
+  color: #00ffff;
+  padding: 20px;
+  border: 2px solid #004444;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-family: 'Courier New', Courier, monospace;
 }
 
-export interface Unit {
-  id: string;
-  name: string;
-  type: UnitType;
-  hp: number;
-  maxHp: number;
-  atk: number;
-  level: number;
-  xp: number;
-  xpToNext: number;
-  milestones: string[];
+.arena-hubs {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-export enum NodeType {
-  Skirmish = 'Skirmish',
-  Elite = 'Elite',
-  Shop = 'Shop',
-  Event = 'Event',
-  Repair = 'Repair',
-  Boss = 'Boss'
+.hub {
+  width: 200px;
+  text-align: center;
 }
 
-export interface MapNode {
-  id: string;
-  type: NodeType;
-  connections: string[];
-  depth: number;
+.hub-hp-bar {
+  height: 20px;
+  background: #222;
+  border: 1px solid #444;
+  margin-top: 5px;
 }
+
+.hub-hp-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.player-hub .hub-hp-fill { background: #00ff00; }
+.enemy-hub .hub-hp-fill { background: #ff0000; }
+
+.status-display {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.lanes {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.lane {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background: rgba(0, 255, 255, 0.05);
+  border: 1px dashed #004444;
+}
+
+.unit-card {
+  width: 120px;
+  padding: 10px;
+  border: 1px solid #008888;
+  background: #111;
+  text-align: center;
+}
+
+.unit-card.dead {
+  opacity: 0.5;
+  border-color: #444;
+}
+
+.unit-hp-bar {
+  height: 8px;
+  background: #333;
+  margin-top: 4px;
+}
+
+.unit-hp-fill {
+  height: 100%;
+}
+
+.start-btn {
+  padding: 10px 20px;
+  background: #008888;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.start-btn:disabled {
+  background: #444;
+  cursor: not-allowed;
+}
+
+.fighting-label {
+  font-weight: bold;
+  animation: pulse 1s infinite alternate;
+}
+
+@keyframes pulse {
+  from { opacity: 1; }
+  to { opacity: 0.5; }
+}
+```
+
+- [ ] **Step 2: Create BattleArena Scaffold**
+
+```tsx
+import React, { useState, useEffect } from 'react';
+import './BattleArena.css';
+import { Unit } from '../../types/game';
+
+interface BattleArenaProps {
+  playerSquad: Unit[];
+  enemySquad: Unit[];
+  onBattleEnd: (result: 'victory' | 'defeat') => void;
+}
+
+export const BattleArena: React.FC<BattleArenaProps> = ({
+  playerSquad,
+  enemySquad,
+  onBattleEnd
+}) => {
+  return (
+    <div className="battle-arena">
+      <div className="arena-hubs">
+        <div className="hub player-hub">
+          <span>PLAYER HUB</span>
+          <div className="hub-hp-bar"><div className="hub-hp-fill" style={{ width: '100%' }}></div></div>
+        </div>
+        <div className="status-display">
+          <button className="start-btn">START BATTLE</button>
+        </div>
+        <div className="hub enemy-hub">
+          <span>ENEMY HUB</span>
+          <div className="hub-hp-bar"><div className="hub-hp-fill" style={{ width: '100%' }}></div></div>
+        </div>
+      </div>
+      <div className="lanes">
+        {[0, 1, 2].map(i => (
+          <div key={i} className="lane">
+            <div className="unit-card">{playerSquad[i]?.name || 'Empty'}</div>
+            <div className="lane-divider">vs</div>
+            <div className="unit-card">{enemySquad[i]?.name || 'Empty'}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+```
+
+- [ ] **Step 3: Commit**
+
+```bash
+mkdir -p src/components/Combat
+git add src/components/Combat/BattleArena.css src/components/Combat/BattleArena.tsx
+git commit -m "feat: scaffold BattleArena component and styles"
+```
+
+### Task 2: Combat Logic and State
+
+**Files:**
+- Modify: `src/components/Combat/BattleArena.tsx`
+
+- [ ] **Step 1: Implement unified state and simulation logic**
+
+```tsx
+import React, { useState, useEffect } from 'react';
+import './BattleArena.css';
+import { Unit } from '../../types/game';
+import { calculateDamage } from '../../logic/combat';
+
+interface BattleArenaProps {
+  playerSquad: Unit[];
+  enemySquad: Unit[];
+  onBattleEnd: (result: 'victory' | 'defeat') => void;
+}
+
+interface BattleState {
+  playerHPs: number[];
+  enemyHPs: number[];
+  hubHPs: { player: number; enemy: number };
+  status: 'idle' | 'fighting' | 'victory' | 'defeat';
+}
+
+export const BattleArena: React.FC<BattleArenaProps> = ({
+  playerSquad,
+  enemySquad,
+  onBattleEnd
+}) => {
+  const [state, setState] = useState<BattleState>({
+    playerHPs: playerSquad.map(u => u.hp),
+    enemyHPs: enemySquad.map(u => u.hp),
+    hubHPs: { player: 100, enemy: 100 },
+    status: 'idle'
+  });
+
+  useEffect(() => {
+    if (state.status !== 'fighting') return;
+
+    const interval = setInterval(() => {
+      setState(prev => {
+        const nextPlayerHPs = [...prev.playerHPs];
+        const nextEnemyHPs = [...prev.enemyHPs];
+        let nextHubPlayer = prev.hubHPs.player;
+        let nextHubEnemy = prev.hubHPs.enemy;
+
+        for (let i = 0; i < 3; i++) {
+          // Player attacks
+          if (nextPlayerHPs[i] > 0) {
+            const attacker = playerSquad[i];
+            if (nextEnemyHPs[i] > 0) {
+              const damage = calculateDamage(attacker.type, enemySquad[i].type, attacker.atk);
+              nextEnemyHPs[i] = Math.max(0, nextEnemyHPs[i] - damage);
+            } else {
+              const damage = calculateDamage(attacker.type, 'Plating', attacker.atk);
+              nextHubEnemy = Math.max(0, nextHubEnemy - damage);
+            }
+          }
+
+          // Enemy attacks
+          if (nextEnemyHPs[i] > 0) {
+            const attacker = enemySquad[i];
+            if (nextPlayerHPs[i] > 0) {
+              const damage = calculateDamage(attacker.type, playerSquad[i].type, attacker.atk);
+              nextPlayerHPs[i] = Math.max(0, nextPlayerHPs[i] - damage);
+            } else {
+              const damage = calculateDamage(attacker.type, 'Plating', attacker.atk);
+              nextHubPlayer = Math.max(0, nextHubPlayer - damage);
+            }
+          }
+        }
+
+        let nextStatus = prev.status;
+        if (nextHubEnemy <= 0) nextStatus = 'victory';
+        else if (nextHubPlayer <= 0) nextStatus = 'defeat';
+
+        return {
+          playerHPs: nextPlayerHPs,
+          enemyHPs: nextEnemyHPs,
+          hubHPs: { player: nextHubPlayer, enemy: nextHubEnemy },
+          status: nextStatus
+        };
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [state.status, playerSquad, enemySquad]);
+
+  useEffect(() => {
+    if (state.status === 'victory' || state.status === 'defeat') {
+      onBattleEnd(state.status);
+    }
+  }, [state.status, onBattleEnd]);
+
+  const renderUnit = (unit: Unit, currentHp: number) => {
+    if (!unit) return <div className="unit-card empty">Empty</div>;
+    const hpPercent = Math.max(0, (currentHp / unit.maxHp) * 100);
+    return (
+      <div className={`unit-card ${currentHp <= 0 ? 'dead' : ''}`}>
+        <div className="unit-name">{unit.name}</div>
+        <div className="unit-type" style={{ fontSize: '0.8em', color: '#888' }}>{unit.type}</div>
+        <div className="unit-hp-bar">
+          <div className="unit-hp-fill" style={{ width: `${hpPercent}%`, background: hpPercent < 30 ? '#ff4444' : '#00ff00' }}></div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="battle-arena">
+      <div className="arena-hubs">
+        <div className="hub player-hub">
+          <span>PLAYER HUB</span>
+          <div className="hub-hp-bar">
+            <div className="hub-hp-fill" style={{ width: `${state.hubHPs.player}%` }}></div>
+          </div>
+        </div>
+        <div className="status-display">
+          {state.status === 'idle' && (
+            <button className="start-btn" onClick={() => setState(p => ({ ...p, status: 'fighting' }))}>
+              START BATTLE
+            </button>
+          )}
+          {state.status === 'fighting' && <div className="fighting-label">ENGAGED</div>}
+          {state.status === 'victory' && <div className="victory-label" style={{ color: '#00ff00' }}>VICTORY</div>}
+          {state.status === 'defeat' && <div className="defeat-label" style={{ color: '#ff0000' }}>DEFEAT</div>}
+        </div>
+        <div className="hub enemy-hub">
+          <span>ENEMY HUB</span>
+          <div className="hub-hp-bar">
+            <div className="hub-hp-fill" style={{ width: `${state.hubHPs.enemy}%` }}></div>
+          </div>
+        </div>
+      </div>
+      <div className="lanes">
+        {[0, 1, 2].map(i => (
+          <div key={i} className="lane">
+            {renderUnit(playerSquad[i], state.playerHPs[i])}
+            <div className="lane-divider">VS</div>
+            {renderUnit(enemySquad[i], state.enemyHPs[i])}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 ```
 
 - [ ] **Step 2: Commit**
 
 ```bash
-git add src/types/game.ts
-git commit -m "feat: define core game types"
+git add src/components/Combat/BattleArena.tsx
+git commit -m "feat: implement battle state and simulation logic"
 ```
 
----
-
-### Task 2: Combat Logic (The Star Cycle)
+### Task 3: Basic Tests
 
 **Files:**
-- Create: `src/logic/combat.ts`
-- Test: `src/logic/__tests__/combat.test.ts`
+- Create: `src/components/Combat/__tests__/BattleArena.test.tsx`
 
-- [ ] **Step 1: Write combat logic tests**
+- [ ] **Step 1: Write tests**
 
-```typescript
-import { calculateDamage, UnitType } from '../combat';
+```tsx
+import { render, screen, fireEvent } from '@testing-library/react';
+import { BattleArena } from '../BattleArena';
+import { UnitType } from '../../../types/game';
+import { describe, it, expect, vi } from 'vitest';
 
-describe('Combat Logic', () => {
-  test('Thermal counters Plating and Bio', () => {
-    expect(calculateDamage(UnitType.Thermal, UnitType.Plating, 10)).toBe(20);
-    expect(calculateDamage(UnitType.Thermal, UnitType.Bio, 10)).toBe(20);
-    expect(calculateDamage(UnitType.Thermal, UnitType.Shields, 10)).toBe(5);
+const mockSquad = [
+  { id: '1', name: 'Unit 1', type: UnitType.Thermal, hp: 10, maxHp: 10, atk: 2, level: 1, xp: 0, xpToNext: 10, milestones: [] },
+  { id: '2', name: 'Unit 2', type: UnitType.Ion, hp: 10, maxHp: 10, atk: 2, level: 1, xp: 0, xpToNext: 10, milestones: [] },
+  { id: '3', name: 'Unit 3', type: UnitType.Toxic, hp: 10, maxHp: 10, atk: 2, level: 1, xp: 0, xpToNext: 10, milestones: [] }
+];
+
+describe('BattleArena', () => {
+  it('renders start button and units', () => {
+    render(<BattleArena playerSquad={mockSquad} enemySquad={mockSquad} onBattleEnd={() => {}} />);
+    expect(screen.getByText('START BATTLE')).toBeDefined();
+    expect(screen.getAllByText('Unit 1')).toHaveLength(2);
+  });
+
+  it('starts battle when clicked', () => {
+    render(<BattleArena playerSquad={mockSquad} enemySquad={mockSquad} onBattleEnd={() => {}} />);
+    const btn = screen.getByText('START BATTLE');
+    fireEvent.click(btn);
+    expect(screen.getByText('ENGAGED')).toBeDefined();
   });
 });
 ```
 
-- [ ] **Step 2: Run tests (Verify failure)**
-Run: `npm test src/logic/__tests__/combat.test.ts`
+- [ ] **Step 2: Run tests**
 
-- [ ] **Step 3: Implement `calculateDamage`**
+Run: `npm test src/components/Combat/__tests__/BattleArena.test.tsx`
+Expected: PASS
 
-```typescript
-import { UnitType } from '../types/game';
-
-const multipliers: Record<UnitType, Partial<Record<UnitType, number>>> = {
-  [UnitType.Thermal]: { [UnitType.Plating]: 2, [UnitType.Bio]: 2, [UnitType.Shields]: 0.5 },
-  [UnitType.Ion]: { [UnitType.Shields]: 2, [UnitType.Plating]: 0.5 }, // Simplifying for now
-  // ... complete the cycle from spec
-};
-
-export const calculateDamage = (attackerType: UnitType, defenderType: UnitType, baseDamage: number): number => {
-  const mult = multipliers[attackerType]?.[defenderType] || 1;
-  return Math.floor(baseDamage * mult);
-};
-```
-
-- [ ] **Step 4: Run tests (Verify success)**
-
-- [ ] **Step 5: Commit**
+- [ ] **Step 3: Commit**
 
 ```bash
-git add src/logic/combat.ts src/logic/__tests__/combat.test.ts
-git commit -m "feat: implement star cycle combat logic"
+mkdir -p src/components/Combat/__tests__
+git add src/components/Combat/__tests__/BattleArena.test.tsx
+git commit -m "test: add basic tests for BattleArena"
 ```
-
----
-
-### Task 3: Map Generation Logic
-
-**Files:**
-- Create: `src/logic/map.ts`
-- Test: `src/logic/__tests__/map.test.ts`
-
-- [ ] **Step 1: Write map generation test**
-Verify it creates a web with a boss at the end.
-
-- [ ] **Step 2: Implement basic branching map generator**
-Use a depth-based approach (layers of nodes).
-
-- [ ] **Step 3: Commit**
-
----
-
-### Task 4: Game State Hook
-
-**Files:**
-- Create: `src/hooks/useGameState.ts`
-
-- [ ] **Step 1: Create `useGameState` with basic reducer**
-Manage `squad`, `credits`, `currentPath`, `screen` (MAP, BATTLE, SHOP).
-
-- [ ] **Step 2: Implement `recruitUnit`, `travelToNode`, `resolveBattle` actions**
-
-- [ ] **Step 3: Commit**
-
----
-
-### Task 5: Combat UI (3-Lane Siege)
-
-**Files:**
-- Create: `src/components/Combat/BattleArena.tsx`
-- Create: `src/components/Combat/BattleArena.css`
-
-- [ ] **Step 1: Implement Lane layout**
-Top, Center, Bottom sectors.
-
-- [ ] **Step 2: Implement auto-battle visualization**
-Simple HP bars and damage numbers appearing.
-
-- [ ] **Step 3: Commit**
-
----
-
-### Task 6: Map UI
-
-**Files:**
-- Create: `src/components/Map/SectorMap.tsx`
-- Create: `src/components/Map/SectorMap.css`
-
-- [ ] **Step 1: Visualize nodes and connections**
-
-- [ ] **Step 2: Handle node selection and travel**
-
-- [ ] **Step 3: Commit**
-
----
-
-### Task 7: Progression & Level Up UI
-
-**Files:**
-- Create: `src/components/Progression/LevelUp.tsx`
-
-- [ ] **Step 1: Implement Stat boost choice (ATK vs HP)**
-
-- [ ] **Step 2: Implement Milestone choice (Level 3/6)**
-
-- [ ] **Step 3: Commit**
-
----
-
-### Task 8: Game Loop Integration
-
-**Files:**
-- Modify: `src/App.tsx`
-
-- [ ] **Step 1: Connect screens based on state**
-Switch between Map, Battle, Shop, and LevelUp screens.
-
-- [ ] **Step 2: Final Polish & Verification**
-Run a full "prototype" pass.
-
-- [ ] **Step 3: Commit**

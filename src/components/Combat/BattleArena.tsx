@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './BattleArena.css';
-import { Unit, UnitType } from '../../types/game';
+import type { Unit } from '../../types/game';
+import { UnitType } from '../../types/game';
 import { calculateDamage } from '../../logic/combat';
 
 interface BattleArenaProps {

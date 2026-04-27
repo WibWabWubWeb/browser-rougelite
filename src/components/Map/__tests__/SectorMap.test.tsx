@@ -1,7 +1,8 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, test, expect, vi } from 'vitest';
 import { SectorMap } from '../SectorMap';
-import { MapNode, NodeType } from '../../../types/game';
+import type { MapNode } from "../../../types/game";
+import { NodeType } from '../../../types/game';
 
 const mockMap: MapNode[] = [
   { id: '1', type: NodeType.Skirmish, depth: 0, connections: ['2'] },
