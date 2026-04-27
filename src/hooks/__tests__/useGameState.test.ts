@@ -263,4 +263,85 @@ describe('useGameState', () => {
     expect(result.current.state.squad[0].id).toBe('u3');
     expect(result.current.state.credits).toBe(50);
   });
+
+  it('should add a 4th unit instead of replacing when the squad has 3 units', () => {
+    const { result } = renderHook(() => useGameState());
+    
+    // Setup squad with 3 units
+    const initialSquad: Unit[] = [
+      { id: 'u1', name: 'Unit 1', atkType: AttackType.Thermal, defType: ArmorType.Plating, hp: 10, maxHp: 10, atk: 5, speed: 10, level: 1, xp: 0, xpToNext: 10, milestones: [] },
+      { id: 'u2', name: 'Unit 2', atkType: AttackType.Ion, defType: ArmorType.Shields, hp: 10, maxHp: 10, atk: 5, speed: 10, level: 1, xp: 0, xpToNext: 10, milestones: [] },
+      { id: 'u3', name: 'Unit 3', atkType: AttackType.Thermal, defType: ArmorType.Plating, hp: 10, maxHp: 10, atk: 5, speed: 10, level: 1, xp: 0, xpToNext: 10, milestones: [] },
+    ];
+
+    act(() => {
+      result.current.chooseSquad(initialSquad);
+    });
+
+    const newUnit: Unit = {
+      id: 'u4',
+      name: 'Unit 4',
+      atkType: AttackType.Thermal,
+      defType: ArmorType.Plating,
+      hp: 10,
+      maxHp: 10,
+      atk: 5,
+      speed: 10,
+      level: 1,
+      xp: 0,
+      xpToNext: 10,
+      milestones: []
+    };
+
+    act(() => {
+      result.current.recruit(newUnit, 50);
+    });
+
+    expect(result.current.state.squad).toHaveLength(4);
+    expect(result.current.state.squad[3].id).toBe('u4');
+  });
+
+  it('should not exceed 6 units when recruiting without replacement', () => {
+    const { result } = renderHook(() => useGameState());
+    
+    const initialSquad: Unit[] = Array(6).fill(null).map((_, i) => ({
+      id: `u${i+1}`,
+      name: `Unit ${i+1}`,
+      atkType: AttackType.Thermal,
+      defType: ArmorType.Plating,
+      hp: 10,
+      maxHp: 10,
+      atk: 5,
+      speed: 10,
+      level: 1,
+      xp: 0,
+      xpToNext: 10,
+      milestones: []
+    }));
+
+    act(() => {
+      result.current.chooseSquad(initialSquad);
+    });
+
+    const newUnit: Unit = {
+      id: 'u7',
+      name: 'Unit 7',
+      atkType: AttackType.Thermal,
+      defType: ArmorType.Plating,
+      hp: 10,
+      maxHp: 10,
+      atk: 5,
+      speed: 10,
+      level: 1,
+      xp: 0,
+      xpToNext: 10,
+      milestones: []
+    };
+
+    act(() => {
+      result.current.recruit(newUnit, 50);
+    });
+
+    expect(result.current.state.squad).toHaveLength(6);
+  });
 });

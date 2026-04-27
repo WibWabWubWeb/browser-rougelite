@@ -80,7 +80,7 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       let newSquad = [...state.squad];
       if (action.replaceIndex !== undefined && action.replaceIndex >= 0 && action.replaceIndex < newSquad.length) {
         newSquad[action.replaceIndex] = action.unit;
-      } else {
+      } else if (newSquad.length < 6) {
         newSquad.push(action.unit);
       }
       return {
