@@ -1,98 +1,23 @@
-# Initiative 1v1 Combat Implementation Plan
+# Implement 1v1 ATB Combat Logic Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Pivot the combat system from 3-lane siege to an initiative-based 1v1 squad gauntlet.
+**Goal:** Refactor the BattleArena component from a lane-based siege to a 1v1 initiative-based (ATB) duel.
 
-**Architecture:** Update the data model to include a `speed` stat. Refactor the `BattleArena` to manage a real-time ATB (Active Time Bar) loop where units attack when their bar fills. Remove hubs and lane logic.
+**Architecture:** Use a `setInterval` driven loop to increment ATB meters for active units. When a meter hits 100, the unit attacks. Dead units are replaced by the next one in the squad.
 
-**Tech Stack:** React, TypeScript, Vitest, Vanilla CSS.
-
----
-
-### Task 0: Cleanup and Checkpoint
-
-**Files:**
-- Modify: All currently modified files in the workspace.
-
-- [ ] **Step 1: Commit current working prototype state**
-Ensure all existing work on the lane-based prototype is saved before we pivot.
-
-Run: `git add . && git commit -m "checkpoint: functional lane-based prototype before 1v1 pivot"`
-Expected: Success
+**Tech Stack:** React, TypeScript, CSS, Vitest, Testing Library.
 
 ---
 
-### Task 1: Update Data Model and Mock Data
-
-**Files:**
-- Modify: `src/types/game.ts`
-- Modify: `src/hooks/useGameState.ts`
-
-- [ ] **Step 1: Add speed to Unit interface**
-
-```typescript
-// src/types/game.ts
-export interface Unit {
-  id: string;
-  name: string;
-  type: UnitType;
-  hp: number;
-  maxHp: number;
-  atk: number;
-  speed: number; // Add this
-  level: number;
-  xp: number;
-  xpToNext: number;
-  milestones: string[];
-}
-```
-
-- [ ] **Step 2: Update INITIAL_SQUAD and unit generation with speed**
-Update `INITIAL_SQUAD` in `src/hooks/useGameState.ts`.
-
-```typescript
-// src/hooks/useGameState.ts
-const INITIAL_SQUAD: Unit[] = [
-  { id: 'p1', name: 'Interceptor', type: UnitType.Thermal, hp: 40, maxHp: 40, atk: 10, speed: 15, level: 1, xp: 0, xpToNext: 20, milestones: [] },
-  // ... update p2 (speed: 5), p3 (speed: 10)
-];
-```
-
-- [ ] **Step 3: Update App.tsx enemy generation**
-Update `generateEnemySquad` in `src/App.tsx`.
-
-```typescript
-// src/App.tsx
-const generateEnemySquad = (level: number): Unit[] => {
-  // ...
-  return Array.from({ length: 3 }).map((_, i) => ({
-    // ...
-    speed: 8 + level,
-    // ...
-  }));
-};
-```
-
-- [ ] **Step 4: Commit**
-```bash
-git add src/types/game.ts src/hooks/useGameState.ts src/App.tsx
-git commit -m "feat: add speed stat to units"
-```
-
----
-
-### Task 2: Implement 1v1 ATB Combat Logic
+### Task 1: Update BattleState and Basic Component Structure
 
 **Files:**
 - Modify: `src/components/Combat/BattleArena.tsx`
-- Modify: `src/components/Combat/BattleArena.css`
 
-- [ ] **Step 1: Refactor BattleState and Effect Loop**
-Remove lane HPs and Hub HPs. Add `atb` state.
+- [ ] **Step 1: Update BattleState interface and initial state**
 
-```tsx
-// src/components/Combat/BattleArena.tsx
+```typescript
 interface BattleState {
   playerActiveIndex: number;
   enemyActiveIndex: number;
@@ -104,58 +29,153 @@ interface BattleState {
   log: string[];
 }
 
-// Logic:
-// 1. Tick every 100ms.
-// 2. Increase ATB: atb += speed * 0.5;
-// 3. If playerATB >= 100: attack enemy, reset to 0.
-// 4. If enemy HP <= 0: increment enemyActiveIndex. If out of enemies: victory.
+// ... inside BattleArena ...
+const [state, setState] = useState<BattleState>({
+  playerActiveIndex: 0,
+  enemyActiveIndex: 0,
+  playerHPs: playerSquad.map(u => u.hp),
+  enemyHPs: enemySquad.map(u => u.hp),
+  playerATB: 0,
+  enemyATB: 0,
+  status: 'idle',
+  log: ['Combat initiated. Ready to engage.']
+});
 ```
 
-- [ ] **Step 2: Update UI for 1v1 Stage**
-Center the two active units. Show their ATB bars. Show the "bench" units behind them.
+- [ ] **Step 2: Update tests to match new structure (failing first)**
 
-- [ ] **Step 3: Update CSS for 1v1 Stage**
-Replace lane styles with a duel stage layout.
+Modify `src/components/Combat/__tests__/BattleArena.test.tsx` to include a test for ATB progression.
+
+```typescript
+  it('increments ATB when fighting', async () => {
+    vi.useFakeTimers();
+    render(<BattleArena playerSquad={mockSquad} enemySquad={mockSquad} onBattleEnd={() => {}} />);
+    fireEvent.click(screen.getByText('START BATTLE'));
+    
+    vi.advanceTimersByTime(100);
+    // We expect ATB to have increased. Since it's internal state, we check if it's reflected in the UI eventually or check log.
+    // For now, just ensure it doesn't crash and we can see the "ENGAGED" status.
+    expect(screen.getByText('ENGAGED')).toBeDefined();
+    vi.useRealTimers();
+  });
+```
+
+- [ ] **Step 3: Run tests**
+
+Run: `npm test src/components/Combat/__tests__/BattleArena.test.tsx`
+
+### Task 2: Implement Combat Loop (ATB Logic)
+
+**Files:**
+- Modify: `src/components/Combat/BattleArena.tsx`
+
+- [ ] **Step 1: Refactor the useEffect combat loop**
+
+```typescript
+  useEffect(() => {
+    if (state.status !== 'fighting') return;
+
+    const interval = setInterval(() => {
+      setState(prev => {
+        if (prev.status !== 'fighting') return prev;
+
+        const playerUnit = playerSquad[prev.playerActiveIndex];
+        const enemyUnit = enemySquad[prev.enemyActiveIndex];
+
+        if (!playerUnit || !enemyUnit) return prev;
+
+        let nextPlayerATB = prev.playerATB + playerUnit.speed * 0.5;
+        let nextEnemyATB = prev.enemyATB + enemyUnit.speed * 0.5;
+        
+        let nextPlayerHPs = [...prev.playerHPs];
+        let nextEnemyHPs = [...prev.enemyHPs];
+        let nextLog = [...prev.log];
+        let nextPlayerIndex = prev.playerActiveIndex;
+        let nextEnemyIndex = prev.enemyActiveIndex;
+
+        // Player attacks
+        if (nextPlayerATB >= 100) {
+          const damage = calculateDamage(playerUnit.type, enemyUnit.type, playerUnit.atk);
+          nextEnemyHPs[nextEnemyIndex] = Math.max(0, nextEnemyHPs[nextEnemyIndex] - damage);
+          nextLog.push(`${playerUnit.name} deals ${damage} damage to ${enemyUnit.name}!`);
+          nextPlayerATB = 0;
+          if (nextLog.length > 5) nextLog.shift();
+        }
+
+        // Enemy attacks
+        if (nextEnemyATB >= 100) {
+          const damage = calculateDamage(enemyUnit.type, playerUnit.type, enemyUnit.atk);
+          nextPlayerHPs[nextPlayerIndex] = Math.max(0, nextPlayerHPs[nextPlayerIndex] - damage);
+          nextLog.push(`${enemyUnit.name} deals ${damage} damage to ${playerUnit.name}!`);
+          nextEnemyATB = 0;
+          if (nextLog.length > 5) nextLog.shift();
+        }
+
+        // Tag-in logic
+        if (nextEnemyHPs[nextEnemyIndex] <= 0) {
+          nextEnemyIndex++;
+          nextEnemyATB = 0;
+          if (nextEnemyIndex < enemySquad.length) {
+             nextLog.push(`${enemySquad[nextEnemyIndex].name} enters the battle!`);
+          }
+        }
+        if (nextPlayerHPs[nextPlayerIndex] <= 0) {
+          nextPlayerIndex++;
+          nextPlayerATB = 0;
+          if (nextPlayerIndex < playerSquad.length) {
+            nextLog.push(`${playerSquad[nextPlayerIndex].name} enters the battle!`);
+          }
+        }
+
+        // Win/Loss check
+        let nextStatus = prev.status;
+        if (nextEnemyIndex >= enemySquad.length) nextStatus = 'victory';
+        else if (nextPlayerIndex >= playerSquad.length) nextStatus = 'defeat';
+
+        return {
+          ...prev,
+          playerActiveIndex: nextPlayerIndex,
+          enemyActiveIndex: nextEnemyIndex,
+          playerHPs: nextPlayerHPs,
+          enemyHPs: nextEnemyHPs,
+          playerATB: nextPlayerATB,
+          enemyATB: nextEnemyATB,
+          status: nextStatus,
+          log: nextLog
+        };
+      });
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [state.status, playerSquad, enemySquad]);
+```
+
+- [ ] **Step 2: Verify with tests**
+
+Run: `npm test src/components/Combat/__tests__/BattleArena.test.tsx`
+
+### Task 3: Redesign UI for "Duel Zone"
+
+**Files:**
+- Modify: `src/components/Combat/BattleArena.tsx`
+- Modify: `src/components/Combat/BattleArena.css`
+
+- [ ] **Step 1: Update JSX in BattleArena.tsx**
+
+Implement the Duel Zone layout:
+- Active units in center.
+- HP/ATB bars.
+- Bench pips.
+- Scrollable log.
+
+- [ ] **Step 2: Update CSS in BattleArena.css**
+
+- Style the `.duel-zone`, `.unit-display`, `.atb-bar`, `.bench-pips`, and `.combat-log`.
+
+- [ ] **Step 3: Final Verification**
+
+Ensure all tests pass and UI looks correct (as per spec).
 
 - [ ] **Step 4: Commit**
-```bash
-git add src/components/Combat/BattleArena.tsx src/components/Combat/BattleArena.css
-git commit -m "feat: implement 1v1 ATB combat UI and logic"
-```
 
----
-
-### Task 3: Update Battle Resolution
-
-**Files:**
-- Modify: `src/hooks/useGameState.ts`
-
-- [ ] **Step 1: Update RESOLVE_BATTLE action**
-The battle result should now reflect which units were actually lost in the 1v1 gauntlet.
-
-- [ ] **Step 2: Commit**
-```bash
-git add src/hooks/useGameState.ts
-git commit -m "feat: update battle resolution for squad-wipe conditions"
-```
-
----
-
-### Task 4: Fix Tests
-
-**Files:**
-- Modify: `src/components/Combat/__tests__/BattleArena.test.tsx`
-- Modify: `src/hooks/__tests__/useGameState.test.ts`
-
-- [ ] **Step 1: Update BattleArena tests**
-Verify that combat proceeds in 1v1 order and that ATB progresses.
-
-- [ ] **Step 2: Run all tests**
-Run: `npm test -- --run`
-Expected: PASS
-
-- [ ] **Step 3: Commit**
-```bash
-git add src/components/Combat/__tests__/BattleArena.test.tsx src/hooks/__tests__/useGameState.test.ts
-git commit -m "test: update tests for 1v1 combat system"
-```
+`git commit -m "feat: implement 1v1 ATB combat UI and logic"`

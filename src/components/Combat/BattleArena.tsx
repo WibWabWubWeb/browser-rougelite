@@ -11,10 +11,14 @@ interface BattleArenaProps {
 }
 
 interface BattleState {
+  playerActiveIndex: number;
+  enemyActiveIndex: number;
   playerHPs: number[];
   enemyHPs: number[];
-  hubHPs: { player: number; enemy: number };
+  playerATB: number;
+  enemyATB: number;
   status: 'idle' | 'fighting' | 'victory' | 'defeat';
+  log: string[];
 }
 
 export const BattleArena: React.FC<BattleArenaProps> = ({
@@ -23,10 +27,14 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
   onBattleEnd
 }) => {
   const [state, setState] = useState<BattleState>({
+    playerActiveIndex: 0,
+    enemyActiveIndex: 0,
     playerHPs: playerSquad.map(u => u.hp),
     enemyHPs: enemySquad.map(u => u.hp),
-    hubHPs: { player: 100, enemy: 100 },
-    status: 'idle'
+    playerATB: 0,
+    enemyATB: 0,
+    status: 'idle',
+    log: ['Combat initiated. Ready to engage.']
   });
 
   useEffect(() => {
@@ -34,50 +42,74 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
 
     const interval = setInterval(() => {
       setState(prev => {
-        const nextPlayerHPs = [...prev.playerHPs];
-        const nextEnemyHPs = [...prev.enemyHPs];
-        let nextHubPlayer = prev.hubHPs.player;
-        let nextHubEnemy = prev.hubHPs.enemy;
+        if (prev.status !== 'fighting') return prev;
 
-        for (let i = 0; i < 3; i++) {
-          // Player attacks
-          if (nextPlayerHPs[i] > 0) {
-            const attacker = playerSquad[i];
-            if (nextEnemyHPs[i] > 0) {
-              const damage = calculateDamage(attacker.type, enemySquad[i].type, attacker.atk);
-              nextEnemyHPs[i] = Math.max(0, nextEnemyHPs[i] - damage);
-            } else {
-              // Plating is a good neutral-ish type for Hubs in our Star Cycle
-              const damage = calculateDamage(attacker.type, UnitType.Plating, attacker.atk);
-              nextHubEnemy = Math.max(0, nextHubEnemy - damage);
-            }
+        const playerUnit = playerSquad[prev.playerActiveIndex];
+        const enemyUnit = enemySquad[prev.enemyActiveIndex];
+
+        if (!playerUnit || !enemyUnit) return prev;
+
+        let nextPlayerATB = prev.playerATB + playerUnit.speed * 0.5;
+        let nextEnemyATB = prev.enemyATB + enemyUnit.speed * 0.5;
+        
+        let nextPlayerHPs = [...prev.playerHPs];
+        let nextEnemyHPs = [...prev.enemyHPs];
+        let nextLog = [...prev.log];
+        let nextPlayerIndex = prev.playerActiveIndex;
+        let nextEnemyIndex = prev.enemyActiveIndex;
+
+        // Player attacks
+        if (nextPlayerATB >= 100) {
+          const damage = calculateDamage(playerUnit.type, enemyUnit.type, playerUnit.atk);
+          nextEnemyHPs[nextEnemyIndex] = Math.max(0, nextEnemyHPs[nextEnemyIndex] - damage);
+          nextLog.push(`${playerUnit.name} deals ${damage} damage to ${enemyUnit.name}!`);
+          nextPlayerATB = 0;
+          if (nextLog.length > 5) nextLog.shift();
+        }
+
+        // Enemy attacks
+        if (nextEnemyATB >= 100) {
+          const damage = calculateDamage(enemyUnit.type, playerUnit.type, enemyUnit.atk);
+          nextPlayerHPs[nextPlayerIndex] = Math.max(0, nextPlayerHPs[nextPlayerIndex] - damage);
+          nextLog.push(`${enemyUnit.name} deals ${damage} damage to ${playerUnit.name}!`);
+          nextEnemyATB = 0;
+          if (nextLog.length > 5) nextLog.shift();
+        }
+
+        // Tag-in logic
+        if (nextEnemyHPs[nextEnemyIndex] <= 0) {
+          nextEnemyIndex++;
+          nextEnemyATB = 0;
+          if (nextEnemyIndex < enemySquad.length) {
+             nextLog.push(`${enemySquad[nextEnemyIndex].name} enters the battle!`);
           }
-
-          // Enemy attacks
-          if (nextEnemyHPs[i] > 0) {
-            const attacker = enemySquad[i];
-            if (nextPlayerHPs[i] > 0) {
-              const damage = calculateDamage(attacker.type, playerSquad[i].type, attacker.atk);
-              nextPlayerHPs[i] = Math.max(0, nextPlayerHPs[i] - damage);
-            } else {
-              const damage = calculateDamage(attacker.type, UnitType.Plating, attacker.atk);
-              nextHubPlayer = Math.max(0, nextHubPlayer - damage);
-            }
+        }
+        if (nextPlayerHPs[nextPlayerIndex] <= 0) {
+          nextPlayerIndex++;
+          nextPlayerATB = 0;
+          if (nextPlayerIndex < playerSquad.length) {
+            nextLog.push(`${playerSquad[nextPlayerIndex].name} enters the battle!`);
           }
         }
 
+        // Win/Loss check
         let nextStatus = prev.status;
-        if (nextHubEnemy <= 0) nextStatus = 'victory';
-        else if (nextHubPlayer <= 0) nextStatus = 'defeat';
+        if (nextEnemyIndex >= enemySquad.length) nextStatus = 'victory';
+        else if (nextPlayerIndex >= playerSquad.length) nextStatus = 'defeat';
 
         return {
+          ...prev,
+          playerActiveIndex: nextPlayerIndex,
+          enemyActiveIndex: nextEnemyIndex,
           playerHPs: nextPlayerHPs,
           enemyHPs: nextEnemyHPs,
-          hubHPs: { player: nextHubPlayer, enemy: nextHubEnemy },
-          status: nextStatus
+          playerATB: nextPlayerATB,
+          enemyATB: nextEnemyATB,
+          status: nextStatus,
+          log: nextLog
         };
       });
-    }, 1000);
+    }, 100);
 
     return () => clearInterval(interval);
   }, [state.status, playerSquad, enemySquad]);
@@ -88,53 +120,66 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
     }
   }, [state.status, onBattleEnd]);
 
-  const renderUnit = (unit: Unit, currentHp: number) => {
-    if (!unit) return <div className="unit-card empty">Empty</div>;
+  const renderUnit = (unit: Unit, currentHp: number, atb: number, isActive: boolean) => {
+    if (!unit) return null;
     const hpPercent = Math.max(0, (currentHp / unit.maxHp) * 100);
+    const atbPercent = Math.min(100, atb);
     return (
-      <div className={`unit-card ${currentHp <= 0 ? 'dead' : ''}`}>
+      <div className={`unit-display ${isActive ? 'active' : 'benched'} ${currentHp <= 0 ? 'dead' : ''}`}>
         <div className="unit-name">{unit.name}</div>
-        <div className="unit-type" style={{ fontSize: '0.8em', color: '#888' }}>{unit.type}</div>
         <div className="unit-hp-bar">
-          <div className="unit-hp-fill" style={{ width: `${hpPercent}%`, background: hpPercent < 30 ? '#ff4444' : '#00ff00' }}></div>
+          <div className="unit-hp-fill" style={{ width: `${hpPercent}%` }}></div>
         </div>
+        {isActive && (
+          <div className="unit-atb-bar">
+            <div className="unit-atb-fill" style={{ width: `${atbPercent}%` }}></div>
+          </div>
+        )}
       </div>
     );
   };
 
+  const activePlayer = playerSquad[state.playerActiveIndex];
+  const activeEnemy = enemySquad[state.enemyActiveIndex];
+
   return (
     <div className="battle-arena">
-      <div className="arena-hubs">
-        <div className="hub player-hub">
-          <span>PLAYER HUB</span>
-          <div className="hub-hp-bar">
-            <div className="hub-hp-fill" style={{ width: `${state.hubHPs.player}%` }}></div>
+      <div className="status-header">
+        {state.status === 'idle' && (
+          <button className="start-btn" onClick={() => setState(p => ({ ...p, status: 'fighting' }))}>
+            START BATTLE
+          </button>
+        )}
+        {state.status === 'fighting' && <div className="fighting-label">ENGAGED</div>}
+        {state.status === 'victory' && <div className="victory-label">VICTORY</div>}
+        {state.status === 'defeat' && <div className="defeat-label">DEFEAT</div>}
+      </div>
+
+      <div className="duel-zone">
+        <div className="side player-side">
+          {activePlayer && renderUnit(activePlayer, state.playerHPs[state.playerActiveIndex], state.playerATB, true)}
+          <div className="bench">
+            {playerSquad.map((u, i) => i !== state.playerActiveIndex && (
+              <div key={u.id} className={`bench-pip ${state.playerHPs[i] <= 0 ? 'dead' : ''}`} title={u.name}></div>
+            ))}
           </div>
         </div>
-        <div className="status-display">
-          {state.status === 'idle' && (
-            <button className="start-btn" onClick={() => setState(p => ({ ...p, status: 'fighting' }))}>
-              START BATTLE
-            </button>
-          )}
-          {state.status === 'fighting' && <div className="fighting-label">ENGAGED</div>}
-          {state.status === 'victory' && <div className="victory-label" style={{ color: '#00ff00' }}>VICTORY</div>}
-          {state.status === 'defeat' && <div className="defeat-label" style={{ color: '#ff0000' }}>DEFEAT</div>}
-        </div>
-        <div className="hub enemy-hub">
-          <span>ENEMY HUB</span>
-          <div className="hub-hp-bar">
-            <div className="hub-hp-fill" style={{ width: `${state.hubHPs.enemy}%` }}></div>
+
+        <div className="vs-divider">VS</div>
+
+        <div className="side enemy-side">
+          {activeEnemy && renderUnit(activeEnemy, state.enemyHPs[state.enemyActiveIndex], state.enemyATB, true)}
+          <div className="bench">
+            {enemySquad.map((u, i) => i !== state.enemyActiveIndex && (
+              <div key={u.id} className={`bench-pip ${state.enemyHPs[i] <= 0 ? 'dead' : ''}`} title={u.name}></div>
+            ))}
           </div>
         </div>
       </div>
-      <div className="lanes">
-        {[0, 1, 2].map(i => (
-          <div key={i} className="lane">
-            {renderUnit(playerSquad[i], state.playerHPs[i])}
-            <div className="lane-divider">VS</div>
-            {renderUnit(enemySquad[i], state.enemyHPs[i])}
-          </div>
+
+      <div className="combat-log">
+        {state.log.map((entry, i) => (
+          <div key={i} className="log-entry">{entry}</div>
         ))}
       </div>
     </div>
