@@ -166,4 +166,12 @@
   .map-column {
     gap: clamp(20px, 2vh, 40px);
   }
+
+  .star-cycle-overlay {
+    bottom: 180px;
+  }
+
+  .graph-toggle-btn {
+    /* Ensure button is also raised if needed, though it's inside the overlay */
+  }
 }
