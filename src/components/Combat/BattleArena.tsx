@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './BattleArena.css';
 import type { Unit } from '../../types/game';
-import { UnitType } from '../../types/game';
 import { calculateDamage } from '../../logic/combat';
 
 interface BattleArenaProps {
@@ -93,7 +92,7 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
         }
 
         // Win/Loss check
-        let nextStatus = prev.status;
+        let nextStatus: BattleState['status'] = prev.status;
         if (nextEnemyIndex >= enemySquad.length) nextStatus = 'victory';
         else if (nextPlayerIndex >= playerSquad.length) nextStatus = 'defeat';
 

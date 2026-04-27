@@ -1,9 +1,9 @@
 import { useReducer, useCallback } from 'react';
 import type { Unit, MapNode } from "../types/game";
-import { NodeType, UnitType } from '../types/game';
+import { NodeType } from '../types/game';
 import { generateMap } from '../logic/map';
 
-export type GameScreen = 'MAP' | 'BATTLE' | 'SHOP' | 'LEVEL_UP' | 'EVENT';
+export type GameScreen = 'MAP' | 'BATTLE' | 'SHOP' | 'LEVEL_UP' | 'EVENT' | 'DRAFT';
 
 export interface GameState {
   squad: Unit[];
@@ -21,55 +21,32 @@ export type GameAction =
   | { type: 'RESOLVE_BATTLE'; xpGain: number; creditsGain: number; updatedHPs: Record<string, number> }
   | { type: 'HEAL_UNIT'; unitId: string; amount: number; cost: number }
   | { type: 'UPGRADE_UNIT'; unitId: string; upgrade: { atk?: number; maxHp?: number; milestone?: string } }
-  | { type: 'CLOSE_LEVEL_UP' };
+  | { type: 'CLOSE_LEVEL_UP' }
+  | { type: 'CHOOSE_SQUAD'; squad: Unit[] }
+  | { type: 'REORDER_SQUAD'; unitIds: string[] };
 
 const INITIAL_CREDITS = 100;
 const MAP_DEPTH = 6;
 
-const INITIAL_SQUAD: Unit[] = [
-  {
-    id: 'p1',
-    name: 'Interceptor',
-    type: UnitType.Thermal,
-    hp: 40,
-    maxHp: 40,
-    atk: 10,
-    speed: 15,
-    level: 1,
-    xp: 0,
-    xpToNext: 20,
-    milestones: [],
-  },
-  {
-    id: 'p2',
-    name: 'Bastion',
-    type: UnitType.Plating,
-    hp: 60,
-    maxHp: 60,
-    atk: 6,
-    speed: 5,
-    level: 1,
-    xp: 0,
-    xpToNext: 20,
-    milestones: [],
-  },
-  {
-    id: 'p3',
-    name: 'Volt-Raider',
-    type: UnitType.Ion,
-    hp: 35,
-    maxHp: 35,
-    atk: 12,
-    speed: 10,
-    level: 1,
-    xp: 0,
-    xpToNext: 20,
-    milestones: [],
-  },
-];
-
 function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
+    case 'CHOOSE_SQUAD':
+      return {
+        ...state,
+        squad: action.squad,
+        screen: 'MAP',
+      };
+
+    case 'REORDER_SQUAD': {
+      const newSquad = action.unitIds
+        .map(id => state.squad.find(u => u.id === id))
+        .filter((u): u is Unit => !!u);
+      return {
+        ...state,
+        squad: newSquad,
+      };
+    }
+
     case 'TRAVEL': {
       const node = state.map.find(n => n.id === action.nodeId);
       if (!node) return state;
@@ -187,12 +164,12 @@ export function useGameState() {
   const [state, dispatch] = useReducer(gameReducer, null, () => {
     const map = generateMap(MAP_DEPTH);
     return {
-      squad: INITIAL_SQUAD,
+      squad: [],
       credits: INITIAL_CREDITS,
       currentLevel: 0,
       currentNodeId: null,
       map: map,
-      screen: 'MAP' as GameScreen,
+      screen: 'DRAFT' as GameScreen,
       lastBattleLeveledUnits: [],
     };
   });
@@ -221,6 +198,14 @@ export function useGameState() {
     dispatch({ type: 'CLOSE_LEVEL_UP' });
   }, []);
 
+  const chooseSquad = useCallback((squad: Unit[]) => {
+    dispatch({ type: 'CHOOSE_SQUAD', squad });
+  }, []);
+
+  const reorderSquad = useCallback((unitIds: string[]) => {
+    dispatch({ type: 'REORDER_SQUAD', unitIds });
+  }, []);
+
   return {
     state,
     travel,
@@ -229,5 +214,7 @@ export function useGameState() {
     healUnit,
     upgradeUnit,
     closeLevelUp,
+    chooseSquad,
+    reorderSquad,
   };
 }

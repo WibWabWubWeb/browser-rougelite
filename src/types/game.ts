@@ -39,4 +39,5 @@ export interface MapNode {
   type: NodeType;
   connections: string[];
   depth: number;
+  intelType?: UnitType;
 }
