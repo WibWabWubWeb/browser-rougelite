@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { generateMap } from '../map';
-import { NodeType } from '../../types/game';
+import { NodeType, UnitType } from '../../types/game';
 
 describe('generateMap', () => {
   const totalDepth = 5;
@@ -58,6 +58,16 @@ describe('generateMap', () => {
         const incoming = nodes.filter(n => n.connections.includes(node.id));
         expect(incoming.length).toBeGreaterThan(0);
       }
+    });
+  });
+
+  it('should assign intelType to battle nodes', () => {
+    const battleNodes = nodes.filter(n => 
+      [NodeType.Skirmish, NodeType.Elite, NodeType.Boss].includes(n.type)
+    );
+    battleNodes.forEach(node => {
+      expect(node.intelType).toBeDefined();
+      expect(Object.values(UnitType)).toContain(node.intelType);
     });
   });
 });
