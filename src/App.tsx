@@ -7,6 +7,25 @@ import type { Unit } from './types/game';
 import { AttackType, ArmorType } from './types/game';
 import './App.css';
 
+export const generateEnemySquad = (level: number, forcedDefType?: ArmorType): Unit[] => {
+  const atkPool = Object.values(AttackType);
+  const defPool = Object.values(ArmorType);
+  return Array.from({ length: 3 }).map((_, i) => ({
+    id: `e-${i}`,
+    name: `Enemy Drone ${i + 1}`,
+    atkType: atkPool[i % atkPool.length],
+    defType: forcedDefType || defPool[i % defPool.length],
+    hp: 30 + level * 5,
+    maxHp: 30 + level * 5,
+    atk: 5 + level,
+    speed: 8 + level,
+    level: level,
+    xp: 0,
+    xpToNext: 100,
+    milestones: [],
+  }));
+};
+
 function App() {
   const { 
     state, 
@@ -23,25 +42,6 @@ function App() {
     const xpGain = playerWon ? 25 : 5;
     const creditsGain = playerWon ? 50 : 10;
     resolveBattle(xpGain, creditsGain, updatedHPs);
-  };
-
-  const generateEnemySquad = (level: number): Unit[] => {
-    const atkPool = Object.values(AttackType);
-    const defPool = Object.values(ArmorType);
-    return Array.from({ length: 3 }).map((_, i) => ({
-      id: `e-${i}`,
-      name: `Enemy Drone ${i + 1}`,
-      atkType: atkPool[i % atkPool.length],
-      defType: defPool[i % defPool.length],
-      hp: 30 + level * 5,
-      maxHp: 30 + level * 5,
-      atk: 5 + level,
-      speed: 8 + level,
-      level: level,
-      xp: 0,
-      xpToNext: 100,
-      milestones: [],
-    }));
   };
 
   const renderScreen = () => {
@@ -70,16 +70,18 @@ function App() {
           </div>
         );
 
-      case 'BATTLE':
+      case 'BATTLE': {
+        const currentNode = state.map.find(n => n.id === state.currentNodeId);
         return (
           <div className="game-container">
             <BattleArena 
               playerSquad={state.squad} 
-              enemySquad={generateEnemySquad(state.currentLevel)} 
+              enemySquad={generateEnemySquad(state.currentLevel, currentNode?.intelDefType)} 
               onBattleEnd={handleBattleEnd} 
             />
           </div>
         );
+      }
 
       case 'LEVEL_UP': {
         const leveledUnits = state.squad.filter(u => state.lastBattleLeveledUnits.includes(u.id));
