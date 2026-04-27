@@ -38,7 +38,8 @@ function App() {
     reorderSquad,
     buyItem,
     equipModule,
-    recruit
+    recruit,
+    useItem
   } = useGameState();
 
   const handleBattleEnd = (result: 'victory' | 'defeat', updatedHPs: Record<string, number>) => {
@@ -70,6 +71,8 @@ function App() {
               onTravel={travel} 
               squad={state.squad}
               onReorder={reorderSquad}
+              inventory={state.inventory}
+              useItem={useItem}
             />
           </div>
         );

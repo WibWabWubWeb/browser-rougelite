@@ -20,6 +20,8 @@ describe('SectorMap', () => {
         onTravel={onTravel} 
         squad={[]}
         onReorder={() => {}}
+        inventory={[]}
+        useItem={() => {}}
       />
     );
     
@@ -43,6 +45,8 @@ describe('SectorMap', () => {
         onTravel={() => {}} 
         squad={[]}
         onReorder={() => {}}
+        inventory={[]}
+        useItem={() => {}}
       />
     );
     

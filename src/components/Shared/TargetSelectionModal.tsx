@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import './TargetSelectionModal.css';
 import type { Unit } from '../../types/game';
 
@@ -9,6 +10,14 @@ interface TargetSelectionModalProps {
 }
 
 export function TargetSelectionModal({ title, squad, onSelect, onCancel }: TargetSelectionModalProps) {
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
+
+  const handleConfirm = () => {
+    if (selectedIndex !== null) {
+      onSelect(squad[selectedIndex].id, selectedIndex);
+    }
+  };
+
   return (
     <div className="modal-overlay">
       <div className="modal-content">
@@ -17,8 +26,8 @@ export function TargetSelectionModal({ title, squad, onSelect, onCancel }: Targe
           {squad.map((unit, index) => (
             <div
               key={unit.id}
-              className="unit-card"
-              onClick={() => onSelect(unit.id, index)}
+              className={`unit-card ${selectedIndex === index ? 'selected' : ''}`}
+              onClick={() => setSelectedIndex(index)}
             >
               <div className="unit-name">{unit.name}</div>
               <div className="unit-hp">{unit.hp} / {unit.maxHp} HP</div>
@@ -37,9 +46,18 @@ export function TargetSelectionModal({ title, squad, onSelect, onCancel }: Targe
             </div>
           ))}
         </div>
-        <button className="cancel-button" onClick={onCancel}>
-          Cancel
-        </button>
+        <div className="modal-actions">
+          <button className="cancel-button" onClick={onCancel}>
+            Cancel
+          </button>
+          <button 
+            className="confirm-button" 
+            onClick={handleConfirm}
+            disabled={selectedIndex === null}
+          >
+            Confirm
+          </button>
+        </div>
       </div>
     </div>
   );

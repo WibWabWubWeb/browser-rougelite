@@ -69,6 +69,9 @@ describe('TargetSelectionModal', () => {
     const marineCard = screen.getByText('Marine');
     await user.click(marineCard);
 
+    const confirmButton = screen.getByRole('button', { name: /confirm/i });
+    await user.click(confirmButton);
+
     expect(handleSelect).toHaveBeenCalledTimes(1);
     expect(handleSelect).toHaveBeenCalledWith('u1', 0);
   });

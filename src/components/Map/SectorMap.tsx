@@ -1,9 +1,10 @@
 import React from 'react';
-import type { MapNode, Unit } from "../../types/game";
+import type { MapNode, Unit, ShopItem } from "../../types/game";
 import { NodeType } from '../../types/game';
 import './SectorMap.css';
 import { SquadBar } from './SquadBar';
 import { StarCycleGraph } from './StarCycleGraph';
+import { InventoryPanel } from './InventoryPanel';
 
 interface SectorMapProps {
   map: MapNode[];
@@ -12,6 +13,8 @@ interface SectorMapProps {
   onTravel: (nodeId: string) => void;
   squad: Unit[];
   onReorder: (newSquad: Unit[]) => void;
+  inventory: ShopItem[];
+  useItem: (itemId: string, unitId: string) => void;
 }
 
 const getNodeIcon = (type: NodeType) => {
@@ -93,7 +96,9 @@ export const SectorMap: React.FC<SectorMapProps> = ({
   currentLevel,
   onTravel,
   squad,
-  onReorder
+  onReorder,
+  inventory,
+  useItem
 }) => {
   const nodeRefs = React.useRef<{ [key: string]: HTMLDivElement | null }>({});
   const containerRef = React.useRef<HTMLDivElement | null>(null);
@@ -190,6 +195,7 @@ export const SectorMap: React.FC<SectorMapProps> = ({
         </button>
         {showGraph && <StarCycleGraph />}
       </div>
+      <InventoryPanel inventory={inventory} squad={squad} useItem={useItem} />
       <SquadBar squad={squad} onReorder={onReorder} />
     </div>
   );
