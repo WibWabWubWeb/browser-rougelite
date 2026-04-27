@@ -63,4 +63,25 @@ describe('BattleArena', () => {
     expect(screen.getByText('Unit 2')).toBeDefined();
     vi.useRealTimers();
   });
+
+  it('calls onBattleEnd with final HPs', async () => {
+    vi.useFakeTimers();
+    const onBattleEnd = vi.fn();
+    const quickSquad = [
+      { id: 'q1', name: 'Quick', type: UnitType.Thermal, hp: 10, maxHp: 10, atk: 100, speed: 1000, level: 1, xp: 0, xpToNext: 10, milestones: [] }
+    ];
+    const weakEnemy = [
+      { id: 'e1', name: 'Weak', type: UnitType.Thermal, hp: 1, maxHp: 1, atk: 1, speed: 1, level: 1, xp: 0, xpToNext: 10, milestones: [] }
+    ];
+
+    render(<BattleArena playerSquad={quickSquad} enemySquad={weakEnemy} onBattleEnd={onBattleEnd} />);
+    fireEvent.click(screen.getByText('START BATTLE'));
+
+    await act(async () => {
+      vi.advanceTimersByTime(100);
+    });
+
+    expect(onBattleEnd).toHaveBeenCalledWith('victory', { 'q1': 10 });
+    vi.useRealTimers();
+  });
 });

@@ -7,7 +7,7 @@ import { calculateDamage } from '../../logic/combat';
 interface BattleArenaProps {
   playerSquad: Unit[];
   enemySquad: Unit[];
-  onBattleEnd: (result: 'victory' | 'defeat') => void;
+  onBattleEnd: (result: 'victory' | 'defeat', updatedHPs: Record<string, number>) => void;
 }
 
 interface BattleState {
@@ -116,9 +116,13 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
 
   useEffect(() => {
     if (state.status === 'victory' || state.status === 'defeat') {
-      onBattleEnd(state.status);
+      const updatedHPs: Record<string, number> = {};
+      playerSquad.forEach((unit, index) => {
+        updatedHPs[unit.id] = state.playerHPs[index];
+      });
+      onBattleEnd(state.status, updatedHPs);
     }
-  }, [state.status, onBattleEnd]);
+  }, [state.status, onBattleEnd, playerSquad, state.playerHPs]);
 
   const renderUnit = (unit: Unit, currentHp: number, atb: number, isActive: boolean) => {
     if (!unit) return null;
