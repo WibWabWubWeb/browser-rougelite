@@ -60,28 +60,44 @@ export const SquadBar: React.FC<SquadBarProps> = ({ squad, onReorder }) => {
     <div className="squad-bar">
       <div className="squad-bar-header">COMBAT ORDER (DRAG TO REORDER)</div>
       <div className="squad-units">
-        {localSquad.map((unit, index) => (
-          <div
-            key={unit.id}
-            className={`squad-unit-card ${draggedIndex === index ? 'dragging' : ''}`}
-            draggable
-            onDragStart={(e) => handleDragStart(e, index)}
-            onDragOver={(e) => handleDragOver(e, index)}
-            onDragEnd={handleDragEnd}
-            onDrop={(e) => e.preventDefault()}
-          >
-            <div className="unit-rank">{index + 1}</div>
-            <div className="unit-type-icons">
-              <span title={`ATK: ${unit.atkType}`}>{getTypeIcon(unit.atkType)}</span>
-              <span className="type-divider">/</span>
-              <span title={`DEF: ${unit.defType}`}>{getTypeIcon(unit.defType)}</span>
+        {Array.from({ length: 6 }).map((_, index) => {
+          const unit = localSquad[index];
+          if (unit) {
+            const hpPercent = (unit.hp / unit.maxHp) * 100;
+            return (
+              <div
+                key={unit.id}
+                className={`squad-unit-card ${draggedIndex === index ? 'dragging' : ''}`}
+                draggable
+                onDragStart={(e) => handleDragStart(e, index)}
+                onDragOver={(e) => handleDragOver(e, index)}
+                onDragEnd={handleDragEnd}
+                onDrop={(e) => e.preventDefault()}
+              >
+                <div className="unit-rank">{index + 1}</div>
+                <div className="unit-type-icons">
+                  <span title={`ATK: ${unit.atkType}`}>{getTypeIcon(unit.atkType)}</span>
+                  <span className="type-divider">/</span>
+                  <span title={`DEF: ${unit.defType}`}>{getTypeIcon(unit.defType)}</span>
+                </div>
+                <div className="unit-info">
+                  <div className="unit-name">{unit.name}</div>
+                  <div className="unit-stats">SPD {unit.speed} | ATK {unit.atk}</div>
+                  <div className="unit-hp-bar">
+                    <div className="unit-hp-fill" style={{ width: `${hpPercent}%` }}></div>
+                  </div>
+                  <div className="unit-hp-text">{unit.hp}/{unit.maxHp} HP</div>
+                </div>
+              </div>
+            );
+          }
+          return (
+            <div key={`empty-${index}`} className="empty-slot">
+              <div className="unit-rank">{index + 1}</div>
+              <div className="empty-slot-label">EMPTY</div>
             </div>
-            <div className="unit-info">
-              <div className="unit-name">{unit.name}</div>
-              <div className="unit-stats">SPD {unit.speed} | ATK {unit.atk}</div>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
