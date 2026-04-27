@@ -53,9 +53,9 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
         let nextPlayerATB = prev.playerATB + playerUnit.speed * 0.5;
         let nextEnemyATB = prev.enemyATB + enemyUnit.speed * 0.5;
         
-        let nextPlayerHPs = [...prev.playerHPs];
-        let nextEnemyHPs = [...prev.enemyHPs];
-        let nextLog = [...prev.log];
+        const nextPlayerHPs = [...prev.playerHPs];
+        const nextEnemyHPs = [...prev.enemyHPs];
+        const nextLog = [...prev.log];
         let nextPlayerIndex = prev.playerActiveIndex;
         let nextEnemyIndex = prev.enemyActiveIndex;
 
@@ -114,6 +114,88 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
 
     return () => clearInterval(interval);
   }, [state.status, playerSquad, enemySquad, speedMultiplier]);
+
+  const handleSkip = () => {
+    setState(current => {
+      if (current.status !== 'fighting') return current;
+
+      let loopState = {
+        ...current,
+        playerHPs: [...current.playerHPs],
+        enemyHPs: [...current.enemyHPs],
+        log: [...current.log]
+      };
+
+      while (loopState.status === 'fighting') {
+        const playerUnit = playerSquad[loopState.playerActiveIndex];
+        const enemyUnit = enemySquad[loopState.enemyActiveIndex];
+
+        if (!playerUnit || !enemyUnit) break;
+
+        let nextPlayerATB = loopState.playerATB + playerUnit.speed * 0.5;
+        let nextEnemyATB = loopState.enemyATB + enemyUnit.speed * 0.5;
+        
+        const nextPlayerHPs = [...loopState.playerHPs];
+        const nextEnemyHPs = [...loopState.enemyHPs];
+        const nextLog = [...loopState.log];
+        let nextPlayerIndex = loopState.playerActiveIndex;
+        let nextEnemyIndex = loopState.enemyActiveIndex;
+
+        // Player attacks
+        if (nextPlayerATB >= 100) {
+          const damage = calculateDamage(playerUnit.atkType, enemyUnit.defType, playerUnit.atk);
+          nextEnemyHPs[nextEnemyIndex] = Math.max(0, nextEnemyHPs[nextEnemyIndex] - damage);
+          nextLog.push(`${playerUnit.name} deals ${damage} damage to ${enemyUnit.name}!`);
+          nextPlayerATB = 0;
+          if (nextLog.length > 5) nextLog.shift();
+        }
+
+        // Enemy attacks
+        if (nextEnemyATB >= 100) {
+          const damage = calculateDamage(enemyUnit.atkType, playerUnit.defType, enemyUnit.atk);
+          nextPlayerHPs[nextPlayerIndex] = Math.max(0, nextPlayerHPs[nextPlayerIndex] - damage);
+          nextLog.push(`${enemyUnit.name} deals ${damage} damage to ${playerUnit.name}!`);
+          nextEnemyATB = 0;
+          if (nextLog.length > 5) nextLog.shift();
+        }
+
+        // Tag-in logic
+        if (nextEnemyHPs[nextEnemyIndex] <= 0) {
+          nextEnemyIndex++;
+          nextEnemyATB = 0;
+          if (nextEnemyIndex < enemySquad.length) {
+             nextLog.push(`${enemySquad[nextEnemyIndex].name} enters the battle!`);
+          }
+        }
+        if (nextPlayerHPs[nextPlayerIndex] <= 0) {
+          nextPlayerIndex++;
+          nextPlayerATB = 0;
+          if (nextPlayerIndex < playerSquad.length) {
+            nextLog.push(`${playerSquad[nextPlayerIndex].name} enters the battle!`);
+          }
+        }
+
+        // Win/Loss check
+        let nextStatus: BattleState['status'] = loopState.status;
+        if (nextEnemyIndex >= enemySquad.length) nextStatus = 'victory';
+        else if (nextPlayerIndex >= playerSquad.length) nextStatus = 'defeat';
+
+        loopState = {
+          ...loopState,
+          playerActiveIndex: nextPlayerIndex,
+          enemyActiveIndex: nextEnemyIndex,
+          playerHPs: nextPlayerHPs,
+          enemyHPs: nextEnemyHPs,
+          playerATB: nextPlayerATB,
+          enemyATB: nextEnemyATB,
+          status: nextStatus,
+          log: nextLog
+        };
+      }
+
+      return loopState;
+    });
+  };
 
   useEffect(() => {
     if (state.status === 'victory' || state.status === 'defeat') {
@@ -183,6 +265,11 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
         >
           4x
         </button>
+        {state.status === 'fighting' && (
+          <button className="speed-btn skip-btn" onClick={handleSkip}>
+            SKIP
+          </button>
+        )}
       </div>
       <div className="status-header">
         {state.status === 'idle' && (

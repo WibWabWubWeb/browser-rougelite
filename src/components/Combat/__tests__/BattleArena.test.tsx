@@ -72,4 +72,18 @@ describe('BattleArena', () => {
     expect(speed2x.className).toContain('active');
     expect(speed1x.className).not.toContain('active');
   });
+
+  test('SKIP button instantly resolves the battle', async () => {
+    const onBattleEnd = vi.fn();
+    const weakEnemy: Unit[] = [{ ...mockEnemySquad[0], hp: 1, maxHp: 50 }];
+    
+    render(<BattleArena playerSquad={mockPlayerSquad} enemySquad={weakEnemy} onBattleEnd={onBattleEnd} />);
+    
+    fireEvent.click(screen.getByText('START BATTLE'));
+    
+    const skipBtn = screen.getByText('SKIP');
+    fireEvent.click(skipBtn);
+    
+    expect(onBattleEnd).toHaveBeenCalledWith('victory', expect.any(Object));
+  });
 });
