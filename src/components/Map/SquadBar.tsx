@@ -58,7 +58,7 @@ export const SquadBar: React.FC<SquadBarProps> = ({ squad, onReorder }) => {
 
   return (
     <div className="squad-bar">
-      <div className="squad-bar-header">COMBAT ORDER (DRAG TO REORDER)</div>
+      <div className="squad-bar-header">FLEET SQUADRON (DRAG TO REORDER)</div>
       <div className="squad-units">
         {Array.from({ length: 6 }).map((_, index) => {
           const unit = localSquad[index];
@@ -82,7 +82,7 @@ export const SquadBar: React.FC<SquadBarProps> = ({ squad, onReorder }) => {
                 </div>
                 <div className="unit-info">
                   <div className="unit-name">{unit.name}</div>
-                  <div className="unit-stats">SPD {unit.speed} | ATK {unit.atk}</div>
+                  <div className="unit-stats">SPEED {unit.speed} | ATTACK {unit.atk}</div>
                   <div className="unit-hp-bar">
                     <div className="unit-hp-fill" style={{ width: `${hpPercent}%` }}></div>
                   </div>
@@ -94,7 +94,7 @@ export const SquadBar: React.FC<SquadBarProps> = ({ squad, onReorder }) => {
           return (
             <div key={`empty-${index}`} className="empty-slot">
               <div className="unit-rank">{index + 1}</div>
-              <div className="empty-slot-label">EMPTY</div>
+              <div className="empty-slot-label">EMPTY SLOT</div>
             </div>
           );
         })}
