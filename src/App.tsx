@@ -15,19 +15,11 @@ function App() {
     closeLevelUp 
   } = useGameState();
 
-  const handleBattleEnd = (result: 'victory' | 'defeat') => {
+  const handleBattleEnd = (result: 'victory' | 'defeat', updatedHPs: Record<string, number>) => {
     const playerWon = result === 'victory';
-    // Simulated HP losses for the prototype
-    const hpLosses: Record<string, number> = {};
-    if (playerWon) {
-      state.squad.forEach(u => {
-        hpLosses[u.id] = Math.floor(Math.random() * 5);
-      });
-    }
-
     const xpGain = playerWon ? 25 : 5;
     const creditsGain = playerWon ? 50 : 10;
-    resolveBattle(xpGain, creditsGain, hpLosses);
+    resolveBattle(xpGain, creditsGain, updatedHPs);
   };
 
   const generateEnemySquad = (level: number): Unit[] => {
