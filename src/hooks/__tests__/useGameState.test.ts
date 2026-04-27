@@ -344,4 +344,41 @@ describe('useGameState', () => {
 
     expect(result.current.state.squad).toHaveLength(6);
   });
+
+  it('should resolve an event and apply outcomes', () => {
+    const { result } = renderHook(() => useGameState());
+    const mockSquad = getMockSquad();
+    
+    act(() => {
+      result.current.chooseSquad(mockSquad);
+    });
+
+    const mockItem = {
+      id: 'item1',
+      name: 'Medkit',
+      category: 'consumable' as const,
+      cost: 50,
+      description: 'Heals 5 HP',
+      effect: { hp: 5 }
+    };
+
+    const outcome = {
+      id: 'o1',
+      text: 'Gained credits and XP, but lost HP and got an item',
+      credits: 50,
+      hp: -10, // -10% of current HP (10) = -1 HP
+      xp: 5,
+      item: mockItem
+    };
+
+    act(() => {
+      result.current.resolveEvent(outcome);
+    });
+
+    expect(result.current.state.credits).toBe(150);
+    expect(result.current.state.squad[0].hp).toBe(9);
+    expect(result.current.state.squad[0].xp).toBe(5);
+    expect(result.current.state.inventory).toContainEqual(mockItem);
+    expect(result.current.state.screen).toBe('MAP');
+  });
 });

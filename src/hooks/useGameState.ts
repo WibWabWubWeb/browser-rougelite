@@ -1,5 +1,5 @@
 import { useReducer, useCallback } from 'react';
-import type { Unit, MapNode, ShopItem } from "../types/game";
+import type { Unit, MapNode, ShopItem, EventOutcome } from "../types/game";
 import { NodeType } from '../types/game';
 import { generateMap } from '../logic/map';
 
@@ -27,7 +27,8 @@ export type GameAction =
   | { type: 'REORDER_SQUAD'; squad: Unit[] }
   | { type: 'BUY_ITEM'; item: ShopItem }
   | { type: 'USE_ITEM'; itemId: string; targetUnitId: string }
-  | { type: 'EQUIP_MODULE'; item: ShopItem; targetUnitId: string };
+  | { type: 'EQUIP_MODULE'; item: ShopItem; targetUnitId: string }
+  | { type: 'RESOLVE_EVENT'; outcome: EventOutcome };
 
 const INITIAL_CREDITS = 100;
 const MAP_DEPTH = 6;
@@ -218,6 +219,31 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       };
     }
 
+    case 'RESOLVE_EVENT': {
+      const { outcome } = action;
+      const updatedSquad = state.squad.map(unit => {
+        const hpChange = outcome.hp ? Math.floor(unit.hp * (outcome.hp / 100)) : 0;
+        const newHp = Math.max(0, Math.min(unit.maxHp, unit.hp + hpChange));
+        return {
+          ...unit,
+          hp: newHp,
+          xp: unit.xp + (outcome.xp || 0),
+        };
+      });
+
+      const newInventory = outcome.item 
+        ? [...state.inventory, outcome.item] 
+        : state.inventory;
+
+      return {
+        ...state,
+        squad: updatedSquad,
+        credits: state.credits + (outcome.credits || 0),
+        inventory: newInventory,
+        screen: 'MAP',
+      };
+    }
+
     default:
       return state;
   }
@@ -282,6 +308,10 @@ export function useGameState() {
     dispatch({ type: 'EQUIP_MODULE', item, targetUnitId });
   }, []);
 
+  const resolveEvent = useCallback((outcome: EventOutcome) => {
+    dispatch({ type: 'RESOLVE_EVENT', outcome });
+  }, []);
+
   return {
     state,
     travel,
@@ -295,5 +325,6 @@ export function useGameState() {
     buyItem,
     useItem,
     equipModule,
+    resolveEvent,
   };
-}
+  }

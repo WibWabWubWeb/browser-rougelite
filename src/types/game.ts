@@ -59,3 +59,26 @@ export interface ShopItem {
   description: string;
   effect: any;
 }
+
+export interface EventOutcome {
+  id: string;
+  text: string;
+  credits?: number;
+  hp?: number; // percentage of current HP, e.g. -10 means -10%
+  xp?: number;
+  item?: ShopItem;
+}
+
+export interface EventChoice {
+  id: string;
+  label: string;
+  description: string;
+  outcomes: EventOutcome[];
+}
+
+export interface GameEvent {
+  id: string;
+  title: string;
+  prompt: string;
+  choices: EventChoice[];
+}
