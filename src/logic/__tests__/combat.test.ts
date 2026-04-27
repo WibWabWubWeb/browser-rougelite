@@ -2,47 +2,56 @@ import { describe, it, expect } from 'vitest';
 import { calculateDamage } from '../combat';
 import { UnitType } from '../../types/game';
 
-describe('calculateDamage', () => {
-  it('should deal 2x damage for Thermal vs Plating', () => {
+/**
+ * THE LOOP:
+ * Thermal -> Plating -> Toxic -> Bio -> Ion -> Shields -> Thermal
+ */
+describe('calculateDamage (Balanced 6-Way Star Cycle)', () => {
+  // Strengths (Next in loop)
+  it('Thermal should be strong vs Plating (2x)', () => {
     expect(calculateDamage(UnitType.Thermal, UnitType.Plating, 10)).toBe(20);
   });
-
-  it('should deal 2x damage for Thermal vs Bio', () => {
-    expect(calculateDamage(UnitType.Thermal, UnitType.Bio, 10)).toBe(20);
+  it('Plating should be strong vs Toxic (2x)', () => {
+    expect(calculateDamage(UnitType.Plating, UnitType.Toxic, 10)).toBe(20);
   });
-
-  it('should deal 0.5x damage for Thermal vs Shields (floored)', () => {
-    expect(calculateDamage(UnitType.Thermal, UnitType.Shields, 10)).toBe(5);
-    expect(calculateDamage(UnitType.Thermal, UnitType.Shields, 11)).toBe(5);
-  });
-
-  it('should deal 2x damage for Ion vs Shields', () => {
-    expect(calculateDamage(UnitType.Ion, UnitType.Shields, 10)).toBe(20);
-  });
-
-  it('should deal 0.5x damage for Ion vs Plating (floored)', () => {
-    expect(calculateDamage(UnitType.Ion, UnitType.Plating, 10)).toBe(5);
-    expect(calculateDamage(UnitType.Ion, UnitType.Plating, 11)).toBe(5);
-  });
-
-  it('should deal 2x damage for Toxic vs Bio', () => {
+  it('Toxic should be strong vs Bio (2x)', () => {
     expect(calculateDamage(UnitType.Toxic, UnitType.Bio, 10)).toBe(20);
   });
-
-  it('should deal 0.5x damage for Toxic vs Shields (floored)', () => {
-    expect(calculateDamage(UnitType.Toxic, UnitType.Shields, 10)).toBe(5);
-    expect(calculateDamage(UnitType.Toxic, UnitType.Shields, 11)).toBe(5);
+  it('Bio should be strong vs Ion (2x)', () => {
+    expect(calculateDamage(UnitType.Bio, UnitType.Ion, 10)).toBe(20);
+  });
+  it('Ion should be strong vs Shields (2x)', () => {
+    expect(calculateDamage(UnitType.Ion, UnitType.Shields, 10)).toBe(20);
+  });
+  it('Shields should be strong vs Thermal (2x)', () => {
+    expect(calculateDamage(UnitType.Shields, UnitType.Thermal, 10)).toBe(20);
   });
 
-  it('should deal 1x damage for neutral matchups (Thermal vs Ion)', () => {
-    expect(calculateDamage(UnitType.Thermal, UnitType.Ion, 10)).toBe(10);
+  // Weaknesses (Previous in loop)
+  it('Thermal should be weak vs Shields (0.5x)', () => {
+    expect(calculateDamage(UnitType.Thermal, UnitType.Shields, 10)).toBe(5);
+  });
+  it('Plating should be weak vs Thermal (0.5x)', () => {
+    expect(calculateDamage(UnitType.Plating, UnitType.Thermal, 10)).toBe(5);
+  });
+  it('Toxic should be weak vs Plating (0.5x)', () => {
+    expect(calculateDamage(UnitType.Toxic, UnitType.Plating, 10)).toBe(5);
+  });
+  it('Bio should be weak vs Toxic (0.5x)', () => {
+    expect(calculateDamage(UnitType.Bio, UnitType.Toxic, 10)).toBe(5);
+  });
+  it('Ion should be weak vs Bio (0.5x)', () => {
+    expect(calculateDamage(UnitType.Ion, UnitType.Bio, 10)).toBe(5);
+  });
+  it('Shields should be weak vs Ion (0.5x)', () => {
+    expect(calculateDamage(UnitType.Shields, UnitType.Ion, 10)).toBe(5);
   });
 
-  it('should deal 1x damage for neutral matchups (Ion vs Bio)', () => {
-    expect(calculateDamage(UnitType.Ion, UnitType.Bio, 10)).toBe(10);
+  // Neutral examples
+  it('Thermal should be neutral vs Toxic (1x)', () => {
+    expect(calculateDamage(UnitType.Thermal, UnitType.Toxic, 10)).toBe(10);
   });
-
-  it('should deal 1x damage for neutral matchups (Toxic vs Plating)', () => {
-    expect(calculateDamage(UnitType.Toxic, UnitType.Plating, 10)).toBe(10);
+  it('Ion should be neutral vs Thermal (1x)', () => {
+    expect(calculateDamage(UnitType.Ion, UnitType.Thermal, 10)).toBe(10);
   });
 });

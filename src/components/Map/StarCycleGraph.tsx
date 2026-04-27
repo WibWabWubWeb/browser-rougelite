@@ -4,14 +4,15 @@ import './StarCycleGraph.css';
 const UNIT_TYPES = [
   { type: 'Thermal', icon: '🔥', angle: 0 },
   { type: 'Plating', icon: '🛡️', angle: 60 },
-  { type: 'Bio', icon: '🌿', angle: 120 },
-  { type: 'Ion', icon: '⚡', angle: 180 },
-  { type: 'Shields', icon: '🌀', angle: 240 },
-  { type: 'Toxic', icon: '☣️', angle: 300 },
+  { type: 'Toxic', icon: '☣️', angle: 120 },
+  { type: 'Bio', icon: '🌿', angle: 180 },
+  { type: 'Ion', icon: '⚡', angle: 240 },
+  { type: 'Shields', icon: '🌀', angle: 300 },
 ];
 
-const RADIUS = 120;
+const RADIUS = 110;
 const CENTER = 150;
+const NODE_RADIUS = 22;
 
 const getCoords = (angle: number, radius: number) => {
   const rad = (angle - 90) * (Math.PI / 180);
@@ -35,24 +36,47 @@ export const StarCycleGraph: React.FC = () => {
           </marker>
         </defs>
         
-        {/* Strong Relationships (Green) */}
-        <line x1={getCoords(0, 100).x} y1={getCoords(0, 100).y} x2={getCoords(60, 100).x} y2={getCoords(60, 100).y} stroke="#4caf50" strokeWidth="2" markerEnd="url(#arrowhead-strong)" />
-        <line x1={getCoords(0, 100).x} y1={getCoords(0, 100).y} x2={getCoords(120, 100).x} y2={getCoords(120, 100).y} stroke="#4caf50" strokeWidth="2" markerEnd="url(#arrowhead-strong)" />
-        <line x1={getCoords(180, 100).x} y1={getCoords(180, 100).y} x2={getCoords(240, 100).x} y2={getCoords(240, 100).y} stroke="#4caf50" strokeWidth="2" markerEnd="url(#arrowhead-strong)" />
-        <line x1={getCoords(300, 100).x} y1={getCoords(300, 100).y} x2={getCoords(120, 100).x} y2={getCoords(120, 100).y} stroke="#4caf50" strokeWidth="2" markerEnd="url(#arrowhead-strong)" />
+        {UNIT_TYPES.map((unit, i) => {
+          const next = UNIT_TYPES[(i + 1) % UNIT_TYPES.length];
+          
+          // Strength Line (To next)
+          const startS = getCoords(unit.angle, RADIUS - 5);
+          const endS = getCoords(next.angle, RADIUS - 5);
+          
+          // Weakness Line (To previous)
+          const prev = UNIT_TYPES[(i - 1 + UNIT_TYPES.length) % UNIT_TYPES.length];
+          const startW = getCoords(unit.angle, RADIUS - 15);
+          const endW = getCoords(prev.angle, RADIUS - 15);
 
-        {/* Weak Relationships (Red) */}
-        <line x1={getCoords(0, 80).x} y1={getCoords(0, 80).y} x2={getCoords(240, 80).x} y2={getCoords(240, 80).y} stroke="#f44336" strokeWidth="2" strokeDasharray="4" markerEnd="url(#arrowhead-weak)" />
-        <line x1={getCoords(180, 80).x} y1={getCoords(180, 80).y} x2={getCoords(60, 80).x} y2={getCoords(60, 80).y} stroke="#f44336" strokeWidth="2" strokeDasharray="4" markerEnd="url(#arrowhead-weak)" />
-        <line x1={getCoords(300, 80).x} y1={getCoords(300, 80).y} x2={getCoords(240, 80).x} y2={getCoords(240, 80).y} stroke="#f44336" strokeWidth="2" strokeDasharray="4" markerEnd="url(#arrowhead-weak)" />
-
-        {UNIT_TYPES.map((unit) => {
-          const { x, y } = getCoords(unit.angle, RADIUS);
           return (
             <g key={unit.type}>
-              <circle cx={x} cy={y} r="20" className="type-node-bg" />
-              <text x={x} y={y} dy=".3em" textAnchor="middle" className="type-icon">{unit.icon}</text>
-              <text x={x} y={y + 35} textAnchor="middle" className="type-label">{unit.type}</text>
+              {/* Strong (Green) */}
+              <line 
+                x1={startS.x} y1={startS.y} 
+                x2={endS.x} y2={endS.y} 
+                stroke="#4caf50" strokeWidth="2" 
+                markerEnd="url(#arrowhead-strong)" 
+              />
+              {/* Weak (Red) */}
+              <line 
+                x1={startW.x} y1={startW.y} 
+                x2={endW.x} y2={endW.y} 
+                stroke="#f44336" strokeWidth="1.5" 
+                strokeDasharray="4 2"
+                markerEnd="url(#arrowhead-weak)" 
+              />
+            </g>
+          );
+        })}
+
+        {UNIT_TYPES.map((unit) => {
+          const { x, y } = getCoords(unit.angle, RADIUS + 15);
+          const nodePos = getCoords(unit.angle, RADIUS);
+          return (
+            <g key={`node-${unit.type}`}>
+              <circle cx={nodePos.x} cy={nodePos.y} r={NODE_RADIUS} className="type-node-bg" />
+              <text x={nodePos.x} y={nodePos.y} dy=".35em" textAnchor="middle" className="type-icon">{unit.icon}</text>
+              <text x={x} y={y > CENTER ? y + 15 : y - 5} textAnchor="middle" className="type-label">{unit.type}</text>
             </g>
           );
         })}
