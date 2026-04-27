@@ -1,0 +1,115 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #1a1a24;
+  border: 1px solid #3a3a5a;
+  border-radius: 8px;
+  padding: 24px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-content h2 {
+  margin: 0;
+  color: #fff;
+  text-align: center;
+  font-size: 1.5rem;
+}
+
+.squad-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.unit-card {
+  background-color: #2a2a3a;
+  border: 1px solid #4a4a6a;
+  border-radius: 6px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.5fr 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.unit-card:hover {
+  background-color: #3a3a5a;
+  border-color: #6a6a8a;
+  transform: translateY(-2px);
+}
+
+.unit-name {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: #e0e0ff;
+}
+
+.unit-hp {
+  color: #ff6b6b;
+  font-weight: 500;
+}
+
+.unit-types {
+  display: flex;
+  gap: 8px;
+}
+
+.type-badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.type-badge.atk-thermal { background-color: rgba(255, 100, 100, 0.2); color: #ff8888; border: 1px solid #ff8888; }
+.type-badge.atk-ion { background-color: rgba(100, 150, 255, 0.2); color: #88bbff; border: 1px solid #88bbff; }
+.type-badge.atk-toxic { background-color: rgba(100, 255, 100, 0.2); color: #88ff88; border: 1px solid #88ff88; }
+
+.type-badge.def-plating { background-color: rgba(200, 200, 200, 0.2); color: #dddddd; border: 1px solid #dddddd; }
+.type-badge.def-shields { background-color: rgba(100, 200, 255, 0.2); color: #88ddff; border: 1px solid #88ddff; }
+.type-badge.def-bio { background-color: rgba(150, 255, 150, 0.2); color: #aaffaa; border: 1px solid #aaffaa; }
+
+.unit-stats {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+  color: #aaa;
+}
+
+.cancel-button {
+  margin-top: 8px;
+  padding: 12px;
+  background-color: transparent;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-button:hover {
+  background-color: #333;
+  border-color: #888;
+}
