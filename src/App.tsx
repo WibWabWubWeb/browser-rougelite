@@ -4,7 +4,7 @@ import { BattleArena } from './components/Combat/BattleArena';
 import { LevelUp } from './components/Progression/LevelUp';
 import { DraftScreen } from './components/Draft/DraftScreen';
 import type { Unit } from './types/game';
-import { UnitType } from './types/game';
+import { AttackType, ArmorType } from './types/game';
 import './App.css';
 
 function App() {
@@ -26,12 +26,13 @@ function App() {
   };
 
   const generateEnemySquad = (level: number): Unit[] => {
-    // Basic enemy generation for the prototype
-    const types = [UnitType.Plating, UnitType.Shields, UnitType.Bio];
+    const atkPool = Object.values(AttackType);
+    const defPool = Object.values(ArmorType);
     return Array.from({ length: 3 }).map((_, i) => ({
       id: `e-${i}`,
       name: `Enemy Drone ${i + 1}`,
-      type: types[i % types.length],
+      atkType: atkPool[i % atkPool.length],
+      defType: defPool[i % defPool.length],
       hp: 30 + level * 5,
       maxHp: 30 + level * 5,
       atk: 5 + level,

@@ -1,0 +1,50 @@
+<h2>Tactical Layout & Targeting</h2>
+<p class="subtitle">With an initiative timeline, how do units physically engage?</p>
+
+<div class="options">
+  <div class="option" data-choice="frontline" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Frontline Duels</h3>
+      <p>Only the unit at the front of the queue can attack/be attacked. When the leader falls, the next one moves up. Combat is always 1v1 between leaders.</p>
+      <div class="mockup" style="margin-top: 10px; padding: 10px;">
+        <div style="display: flex; gap: 20px; justify-content: center; align-items: center;">
+          <div style="display: flex; flex-direction: row-reverse; gap: 5px;">
+             <div class="unit-card" style="border: 2px solid #00f2fe;">P1</div>
+             <div class="unit-card" style="opacity: 0.5; width: 40px;">P2</div>
+             <div class="unit-card" style="opacity: 0.5; width: 40px;">P3</div>
+          </div>
+          <div style="font-weight: bold; font-size: 1.5rem;">⚡</div>
+          <div style="display: flex; gap: 5px;">
+             <div class="unit-card" style="border: 2px solid #ff4444;">E1</div>
+             <div class="unit-card" style="opacity: 0.5; width: 40px;">E2</div>
+             <div class="unit-card" style="opacity: 0.5; width: 40px;">E3</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="free_targeting" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Full Squad Engagement</h3>
+      <p>The whole squad is on the field. When a unit acts on the timeline, they can target any enemy. 1v1 happens at the moment of the strike.</p>
+      <div class="mockup" style="margin-top: 10px; padding: 20px;">
+        <div style="display: flex; justify-content: space-between;">
+          <div style="display: flex; flex-direction: column; gap: 5px;">
+             <div class="unit-card">P1</div>
+             <div class="unit-card">P2</div>
+             <div class="unit-card">P3</div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 5px;">
+             <div class="unit-card">E1</div>
+             <div class="unit-card">E2</div>
+             <div class="unit-card">E3</div>
+          </div>
+        </div>
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #4facfe; font-size: 2rem;">🏹</div>
+      </div>
+    </div>
+  </div>
+</div>

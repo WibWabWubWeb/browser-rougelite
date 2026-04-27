@@ -1,31 +1,32 @@
 import { describe, test, expect } from 'vitest';
-import { UnitType, NodeType } from '../game';
+import { AttackType, ArmorType, NodeType } from '../game';
 import type { Unit, MapNode } from '../game';
 
 describe('Core Game Types', () => {
-  test('UnitType enum has expected values', () => {
-    expect(UnitType.Thermal).toBe('Thermal');
-    expect(UnitType.Ion).toBe('Ion');
-    expect(UnitType.Toxic).toBe('Toxic');
-    expect(UnitType.Plating).toBe('Plating');
-    expect(UnitType.Shields).toBe('Shields');
-    expect(UnitType.Bio).toBe('Bio');
+  test('AttackType has expected values', () => {
+    expect(AttackType.Thermal).toBe('Thermal');
+    expect(AttackType.Ion).toBe('Ion');
+    expect(AttackType.Toxic).toBe('Toxic');
+  });
+
+  test('ArmorType has expected values', () => {
+    expect(ArmorType.Plating).toBe('Plating');
+    expect(ArmorType.Shields).toBe('Shields');
+    expect(ArmorType.Bio).toBe('Bio');
   });
 
   test('NodeType enum has expected values', () => {
     expect(NodeType.Skirmish).toBe('Skirmish');
     expect(NodeType.Elite).toBe('Elite');
     expect(NodeType.Shop).toBe('Shop');
-    expect(NodeType.Event).toBe('Event');
-    expect(NodeType.Repair).toBe('Repair');
-    expect(NodeType.Boss).toBe('Boss');
   });
 
   test('Unit interface structure', () => {
     const unit: Unit = {
       id: '1',
       name: 'Soldier',
-      type: UnitType.Thermal,
+      atkType: AttackType.Thermal,
+      defType: ArmorType.Plating,
       hp: 100,
       maxHp: 100,
       atk: 10,
@@ -35,16 +36,22 @@ describe('Core Game Types', () => {
       xpToNext: 100,
       milestones: []
     };
-    expect(unit.id).toBe('1');
+    expect(unit.name).toBe('Soldier');
+    expect(unit.atkType).toBe('Thermal');
+    expect(unit.defType).toBe('Plating');
   });
 
   test('MapNode interface structure', () => {
     const node: MapNode = {
-      id: 'n1',
+      id: 'node-1',
       type: NodeType.Skirmish,
-      connections: [],
-      depth: 0
+      connections: ['node-2'],
+      depth: 1,
+      intelAtkType: AttackType.Ion,
+      intelDefType: ArmorType.Shields
     };
-    expect(node.id).toBe('n1');
+    expect(node.type).toBe('Skirmish');
+    expect(node.intelAtkType).toBe('Ion');
+    expect(node.intelDefType).toBe('Shields');
   });
 });

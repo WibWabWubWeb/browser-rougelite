@@ -1,18 +1,24 @@
-export const UnitType = {
+export const AttackType = {
   Thermal: 'Thermal',
   Ion: 'Ion',
-  Toxic: 'Toxic',
+  Toxic: 'Toxic'
+} as const;
+
+export type AttackType = (typeof AttackType)[keyof typeof AttackType];
+
+export const ArmorType = {
   Plating: 'Plating',
   Shields: 'Shields',
   Bio: 'Bio'
 } as const;
 
-export type UnitType = (typeof UnitType)[keyof typeof UnitType];
+export type ArmorType = (typeof ArmorType)[keyof typeof ArmorType];
 
 export interface Unit {
   id: string;
   name: string;
-  type: UnitType;
+  atkType: AttackType;
+  defType: ArmorType;
   hp: number;
   maxHp: number;
   atk: number;
@@ -39,5 +45,6 @@ export interface MapNode {
   type: NodeType;
   connections: string[];
   depth: number;
-  intelType?: UnitType;
+  intelAtkType?: AttackType;
+  intelDefType?: ArmorType;
 }

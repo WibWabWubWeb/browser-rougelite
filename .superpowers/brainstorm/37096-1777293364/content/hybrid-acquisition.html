@@ -1,0 +1,30 @@
+<h2>Unit Composition (Decoupled)</h2>
+<p class="subtitle">With separate Attack and Defense types, how do they behave?</p>
+
+<div class="options">
+  <div class="option" data-choice="multiplier" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>The Combat Grid (Damage)</h3>
+      <p>A 3x3 matrix where specific Attack types deal 2x or 0.5x damage to specific Defense types. Simple to understand, high tactical depth.</p>
+      <div class="mockup" style="margin-top: 10px; font-size: 0.6rem;">
+        <table style="width: 100%;">
+          <tr><th>ATK\DEF</th><th>🛡️ Plat</th><th>🌀 Shld</th><th>🌿 Bio</th></tr>
+          <tr><td>🔥 Ther</td><td style="color:#00ff00">2x</td><td style="color:#ff4444">0.5x</td><td style="color:#00ff00">2x</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="behavioral" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Differentiated Behaviors</h3>
+      <p>Counters aren't just damage. 🌀 <b>Shields</b> might block 100% of damage until they break, while 🛡️ <b>Plating</b> reduces every hit by a flat amount. 🌿 <b>Bio</b> could slowly regenerate HP.</p>
+      <div class="mockup" style="margin-top: 10px; font-size: 0.7rem; color: #4facfe;">
+        <div>🔥 THERMAL vs 🛡️ PLATING</div>
+        <div>-> EFFECT: -5 ARMOR (Permanent)</div>
+      </div>
+    </div>
+  </div>
+</div>

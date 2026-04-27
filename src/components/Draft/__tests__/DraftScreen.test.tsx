@@ -1,24 +1,23 @@
 import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, test, expect, vi } from 'vitest';
 import { DraftScreen } from '../DraftScreen';
-import { vi, describe, it, expect } from 'vitest';
 
 describe('DraftScreen', () => {
-  it('renders three squad options', () => {
-    const onSelect = vi.fn();
-    render(<DraftScreen onSelect={onSelect} />);
-    
-    const squads = screen.getAllByRole('heading', { level: 3 });
-    expect(squads).toHaveLength(3);
+  test('renders 3 squad options', () => {
+    render(<DraftScreen onSelect={() => {}} />);
+    expect(screen.getByText('Squad 1')).toBeDefined();
+    expect(screen.getByText('Squad 2')).toBeDefined();
+    expect(screen.getByText('Squad 3')).toBeDefined();
   });
 
-  it('calls onSelect when a squad is selected', () => {
+  test('calls onSelect when a squad is picked', () => {
     const onSelect = vi.fn();
     render(<DraftScreen onSelect={onSelect} />);
     
-    const selectButtons = screen.getAllByText(/Select Squad/i);
+    const selectButtons = screen.getAllByText('Select Squad');
     fireEvent.click(selectButtons[0]);
     
-    expect(onSelect).toHaveBeenCalledTimes(1);
-    expect(onSelect).toHaveBeenCalledWith(expect.any(Array));
+    expect(onSelect).toHaveBeenCalled();
+    expect(onSelect.mock.calls[0][0]).toHaveLength(3);
   });
 });

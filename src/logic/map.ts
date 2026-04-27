@@ -1,5 +1,5 @@
 import type { MapNode } from "../types/game";
-import { NodeType, UnitType } from '../types/game';
+import { NodeType, AttackType, ArmorType } from '../types/game';
 
 export function generateMap(totalDepth: number): MapNode[] {
   const nodes: MapNode[] = [];
@@ -44,10 +44,12 @@ export function generateMap(totalDepth: number): MapNode[] {
         connections: [],
       };
       
-      // Assign intelType for battle nodes
+      // Assign intel for battle nodes
       if (type === NodeType.Skirmish || type === NodeType.Elite || type === NodeType.Boss) {
-        const types = Object.values(UnitType);
-        node.intelType = types[Math.floor(Math.random() * types.length)];
+        const atkTypes = Object.values(AttackType);
+        const defTypes = Object.values(ArmorType);
+        node.intelAtkType = atkTypes[Math.floor(Math.random() * atkTypes.length)];
+        node.intelDefType = defTypes[Math.floor(Math.random() * defTypes.length)];
       }
 
       nodesAtDepth.push(node);

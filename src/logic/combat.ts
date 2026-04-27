@@ -1,38 +1,38 @@
-import { UnitType } from '../types/game';
+import { AttackType, ArmorType } from '../types/game';
 
 /**
- * Calculates damage based on attacker and defender types using a balanced 6-way Star Cycle.
+ * Calculates damage based on attacker and defender types using a 3x3 matrix.
  * 
- * THE LOOP:
- * Thermal -> Plating -> Toxic -> Bio -> Ion -> Shields -> Thermal
- * 
- * Each type deals:
- * - 2.0x damage to the next type in the loop (Strength)
- * - 0.5x damage to the previous type in the loop (Weakness/Resisted)
- * - 1.0x damage otherwise (Neutral)
+ * THE MATRIX:
+ * | ATK \ DEF | Plating | Shields | Bio     |
+ * |-----------|---------|---------|---------|
+ * | Thermal   | 2.0x    | 0.5x    | 1.0x    |
+ * | Ion       | 1.0x    | 2.0x    | 0.5x    |
+ * | Toxic     | 0.5x    | 1.0x    | 2.0x    |
  */
 export function calculateDamage(
-  attackerType: UnitType,
-  defenderType: UnitType,
+  attackerType: AttackType,
+  defenderType: ArmorType,
   baseDamage: number
 ): number {
-  const multipliers: Record<UnitType, { strong: UnitType; weak: UnitType }> = {
-    [UnitType.Thermal]: { strong: UnitType.Plating, weak: UnitType.Shields },
-    [UnitType.Plating]: { strong: UnitType.Toxic, weak: UnitType.Thermal },
-    [UnitType.Toxic]: { strong: UnitType.Bio, weak: UnitType.Plating },
-    [UnitType.Bio]: { strong: UnitType.Ion, weak: UnitType.Toxic },
-    [UnitType.Ion]: { strong: UnitType.Shields, weak: UnitType.Bio },
-    [UnitType.Shields]: { strong: UnitType.Thermal, weak: UnitType.Ion },
+  const multipliers: Record<AttackType, Record<ArmorType, number>> = {
+    [AttackType.Thermal]: {
+      [ArmorType.Plating]: 2.0,
+      [ArmorType.Shields]: 0.5,
+      [ArmorType.Bio]: 1.0,
+    },
+    [AttackType.Ion]: {
+      [ArmorType.Plating]: 1.0,
+      [ArmorType.Shields]: 2.0,
+      [ArmorType.Bio]: 0.5,
+    },
+    [AttackType.Toxic]: {
+      [ArmorType.Plating]: 0.5,
+      [ArmorType.Shields]: 1.0,
+      [ArmorType.Bio]: 2.0,
+    },
   };
 
-  const effect = multipliers[attackerType];
-  let multiplier = 1;
-
-  if (defenderType === effect.strong) {
-    multiplier = 2;
-  } else if (defenderType === effect.weak) {
-    multiplier = 0.5;
-  }
-
+  const multiplier = multipliers[attackerType][defenderType];
   return Math.floor(baseDamage * multiplier);
 }

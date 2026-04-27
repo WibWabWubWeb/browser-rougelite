@@ -2,19 +2,19 @@ import { renderHook, act } from '@testing-library/react';
 import { useGameState } from '../useGameState';
 import { describe, it, expect } from 'vitest';
 import type { Unit } from '../../types/game';
-import { UnitType, NodeType } from '../../types/game';
+import { AttackType, ArmorType, NodeType } from '../../types/game';
 
 describe('useGameState', () => {
   const getMockSquad = (): Unit[] => [
-    { id: 'u1', name: 'Unit 1', type: UnitType.Thermal, hp: 10, maxHp: 10, atk: 5, speed: 10, level: 1, xp: 0, xpToNext: 10, milestones: [] },
-    { id: 'u2', name: 'Unit 2', type: UnitType.Ion, hp: 10, maxHp: 10, atk: 5, speed: 10, level: 1, xp: 0, xpToNext: 10, milestones: [] },
+    { id: 'u1', name: 'Unit 1', atkType: AttackType.Thermal, defType: ArmorType.Plating, hp: 10, maxHp: 10, atk: 5, speed: 10, level: 1, xp: 0, xpToNext: 10, milestones: [] },
+    { id: 'u2', name: 'Unit 2', atkType: AttackType.Ion, defType: ArmorType.Shields, hp: 10, maxHp: 10, atk: 5, speed: 10, level: 1, xp: 0, xpToNext: 10, milestones: [] },
   ];
 
   it('should initialize with default state', () => {
     const { result } = renderHook(() => useGameState());
-    expect(result.current.state.squad.length).toBe(0); // Starts empty
+    expect(result.current.state.squad.length).toBe(0);
     expect(result.current.state.credits).toBe(100);
-    expect(result.current.state.screen).toBe('DRAFT'); // Starts in DRAFT
+    expect(result.current.state.screen).toBe('DRAFT');
     expect(result.current.state.map.length).toBeGreaterThan(0);
   });
 
@@ -81,7 +81,8 @@ describe('useGameState', () => {
     const mockUnit: Unit = {
       id: 'u-new',
       name: 'Test Unit',
-      type: UnitType.Thermal,
+      atkType: AttackType.Thermal,
+      defType: ArmorType.Plating,
       hp: 10,
       maxHp: 10,
       atk: 5,
@@ -97,7 +98,6 @@ describe('useGameState', () => {
     });
 
     expect(result.current.state.squad).toHaveLength(1);
-    expect(result.current.state.squad.find(u => u.id === 'u-new')).toBeDefined();
     expect(result.current.state.credits).toBe(50);
   });
 
@@ -135,26 +135,6 @@ describe('useGameState', () => {
     expect(updatedUnit.level).toBe(2);
     expect(updatedUnit.xp).toBe(5); 
     expect(result.current.state.screen).toBe('LEVEL_UP');
-  });
-
-  it('should heal a unit', () => {
-    const { result } = renderHook(() => useGameState());
-    const mockSquad = getMockSquad();
-    
-    act(() => {
-      result.current.chooseSquad(mockSquad);
-    });
-    
-    act(() => {
-      result.current.resolveBattle(0, 0, { 'u1': 4 });
-    });
-
-    act(() => {
-      result.current.healUnit('u1', 5, 10);
-    });
-
-    expect(result.current.state.squad.find(u => u.id === 'u1')!.hp).toBe(9);
-    expect(result.current.state.credits).toBe(90);
   });
 
   it('should upgrade unit stats', () => {

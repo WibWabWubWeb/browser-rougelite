@@ -59,8 +59,17 @@
   width: 20px;
 }
 
-.unit-type-icon {
-  font-size: 1.5rem;
+.unit-type-icons {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 1.2rem;
+}
+
+.type-divider {
+  font-size: 0.8rem;
+  color: #555;
+  margin: 0 2px;
 }
 
 .unit-info {

@@ -21,7 +21,6 @@ export const SquadBar: React.FC<SquadBarProps> = ({ squad, onReorder }) => {
   const handleDragStart = (e: React.DragEvent, index: number) => {
     setDraggedIndex(index);
     e.dataTransfer.effectAllowed = 'move';
-    // Create a ghost image or just set data
     e.dataTransfer.setData('text/plain', index.toString());
   };
 
@@ -45,7 +44,7 @@ export const SquadBar: React.FC<SquadBarProps> = ({ squad, onReorder }) => {
     setDraggedIndex(null);
   };
 
-  const getIntelIcon = (type?: string) => {
+  const getTypeIcon = (type?: string) => {
     switch (type) {
       case 'Thermal': return '🔥';
       case 'Ion': return '⚡';
@@ -72,7 +71,11 @@ export const SquadBar: React.FC<SquadBarProps> = ({ squad, onReorder }) => {
             onDrop={(e) => e.preventDefault()}
           >
             <div className="unit-rank">{index + 1}</div>
-            <div className="unit-type-icon">{getIntelIcon(unit.type)}</div>
+            <div className="unit-type-icons">
+              <span title={`ATK: ${unit.atkType}`}>{getTypeIcon(unit.atkType)}</span>
+              <span className="type-divider">/</span>
+              <span title={`DEF: ${unit.defType}`}>{getTypeIcon(unit.defType)}</span>
+            </div>
             <div className="unit-info">
               <div className="unit-name">{unit.name}</div>
               <div className="unit-stats">SPD {unit.speed} | ATK {unit.atk}</div>

@@ -1,0 +1,37 @@
+<h2>Squad Management on Map</h2>
+<p class="subtitle">How should the player reorder their units while navigating?</p>
+
+<div class="options">
+  <div class="option" data-choice="drag_drop" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Drag & Drop Interface</h3>
+      <p>A dedicated squad bar at the top or bottom of the map. Drag units to change their position in the relay line.</p>
+      <div class="mockup" style="margin-top: 10px; padding: 10px; border: 1px dashed #4facfe;">
+        <div style="display: flex; gap: 10px; justify-content: center;">
+          <div class="unit-card" style="width: 50px; cursor: move;">P1</div>
+          <div class="unit-card" style="width: 50px; cursor: move; border-style: dotted;">P2</div>
+          <div class="unit-card" style="width: 50px; cursor: move;">P3</div>
+        </div>
+        <div style="font-size: 0.6rem; text-align: center; margin-top: 5px;">Drag to reorder</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="swap_buttons" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Simple Swap Arrows</h3>
+      <p>Units are shown in a list. Arrows between them allow swapping positions with a single click/tap.</p>
+      <div class="mockup" style="margin-top: 10px; padding: 10px;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 5px;">
+          <div class="unit-card" style="width: 40px;">P1</div>
+          <div style="font-size: 0.8rem;">⇄</div>
+          <div class="unit-card" style="width: 40px;">P2</div>
+          <div style="font-size: 0.8rem;">⇄</div>
+          <div class="unit-card" style="width: 40px;">P3</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

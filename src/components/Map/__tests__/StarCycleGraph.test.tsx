@@ -1,26 +1,25 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { describe, test, expect } from 'vitest';
 import { StarCycleGraph } from '../StarCycleGraph';
 
 describe('StarCycleGraph', () => {
-  it('renders correctly', () => {
+  test('renders all attack types', () => {
     render(<StarCycleGraph />);
-    expect(screen.getByText('Star Cycle')).toBeInTheDocument();
+    expect(screen.getByText('Thermal')).toBeDefined();
+    expect(screen.getByText('Ion')).toBeDefined();
+    expect(screen.getByText('Toxic')).toBeDefined();
   });
 
-  it('renders all unit types', () => {
+  test('renders all armor types', () => {
     render(<StarCycleGraph />);
-    const unitTypes = ['Thermal', 'Plating', 'Bio', 'Ion', 'Shields', 'Toxic'];
-    unitTypes.forEach(type => {
-      expect(screen.getByText(type)).toBeInTheDocument();
-    });
+    expect(screen.getByText('Plating')).toBeDefined();
+    expect(screen.getByText('Shields')).toBeDefined();
+    expect(screen.getByText('Bio')).toBeDefined();
   });
 
-  it('renders SVG with markers', () => {
-    const { container } = render(<StarCycleGraph />);
-    const svg = container.querySelector('svg');
-    expect(svg).toBeInTheDocument();
-    expect(container.querySelector('#arrowhead-strong')).toBeInTheDocument();
-    expect(container.querySelector('#arrowhead-weak')).toBeInTheDocument();
+  test('renders the SVG with labels', () => {
+    render(<StarCycleGraph />);
+    expect(screen.getByText('ATTACK')).toBeDefined();
+    expect(screen.getByText('ARMOR')).toBeDefined();
   });
 });

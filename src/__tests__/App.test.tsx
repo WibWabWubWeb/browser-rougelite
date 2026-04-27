@@ -1,19 +1,20 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import App from '../App';
 import { describe, it, expect } from 'vitest';
+import App from '../App';
 
 describe('App Integration', () => {
-  it('starts on the draft screen and transitions to the map screen after selecting a squad', () => {
+  it('starts on the draft screen and transitions to the map screen after selecting a squad', async () => {
     render(<App />);
     
-    // Check if DraftScreen is rendered
-    expect(screen.getByText(/Initial Deployment/i)).toBeInTheDocument();
+    // Check if on Draft Screen
+    expect(screen.getByText('Initial Deployment')).toBeDefined();
     
-    // Select a squad
-    const selectButtons = screen.getAllByText(/Select Squad/i);
+    // Select the first squad
+    const selectButtons = screen.getAllByText('Select Squad');
     fireEvent.click(selectButtons[0]);
     
-    // Check if Map screen is rendered
-    expect(screen.getByText(/Sector Navigation/i)).toBeInTheDocument();
+    // Should now be on Map Screen
+    expect(screen.getByText('Sector Navigation')).toBeDefined();
+    expect(screen.getByTestId('sector-map')).toBeDefined();
   });
 });

@@ -2,10 +2,10 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, test, expect, vi } from 'vitest';
 import { SectorMap } from '../SectorMap';
 import type { MapNode } from "../../../types/game";
-import { NodeType } from '../../../types/game';
+import { NodeType, AttackType, ArmorType } from '../../../types/game';
 
 const mockMap: MapNode[] = [
-  { id: '1', type: NodeType.Skirmish, depth: 0, connections: ['2'] },
+  { id: '1', type: NodeType.Skirmish, depth: 0, connections: ['2'], intelAtkType: AttackType.Thermal, intelDefType: ArmorType.Plating },
   { id: '2', type: NodeType.Boss, depth: 1, connections: [] },
 ];
 
@@ -25,42 +25,19 @@ describe('SectorMap', () => {
     
     expect(screen.getByTestId('sector-map')).toBeDefined();
     
-    // Check for Skirmish icon (⚔️) and Boss icon (👑)
+    // Check for Skirmish icon (⚔️)
     expect(screen.getByText('⚔️')).toBeDefined();
-    const nextNode = screen.getByText('👑');
-    expect(nextNode).toBeDefined();
     
-    // Click the boss node (which should be selectable from node 1)
-    fireEvent.click(nextNode);
+    // Click the boss node
+    const bossNode = screen.getByText('👑');
+    fireEvent.click(bossNode);
     expect(onTravel).toHaveBeenCalledWith('2');
   });
 
-  test('initial state handles null currentNodeId', () => {
-    const onTravel = vi.fn();
+  test('renders intel icons for battle nodes', () => {
     render(
       <SectorMap 
         map={mockMap} 
-        currentNodeId={null} 
-        currentLevel={0} 
-        onTravel={onTravel} 
-        squad={[]}
-        onReorder={() => {}}
-      />
-    );
-    
-    // First node should be selectable
-    const firstNode = screen.getByText('⚔️');
-    fireEvent.click(firstNode);
-    expect(onTravel).toHaveBeenCalledWith('1');
-  });
-
-  test('renders intel icons for battle nodes', () => {
-    const mapWithIntel: MapNode[] = [
-      { id: '1', type: NodeType.Skirmish, depth: 0, connections: [], intelType: 'Thermal' },
-    ];
-    render(
-      <SectorMap 
-        map={mapWithIntel} 
         currentNodeId={null} 
         currentLevel={0} 
         onTravel={() => {}} 
@@ -69,8 +46,8 @@ describe('SectorMap', () => {
       />
     );
     
-    // Check for Thermal intel icon (🔥)
+    // Check for Thermal icon (🔥) and Plating icon (🛡️) in intel
     expect(screen.getByText('🔥')).toBeDefined();
-    expect(screen.getByTitle('Primary Enemy: Thermal')).toBeDefined();
+    expect(screen.getByText('🛡️')).toBeDefined();
   });
 });

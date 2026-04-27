@@ -59,7 +59,7 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
 
         // Player attacks
         if (nextPlayerATB >= 100) {
-          const damage = calculateDamage(playerUnit.type, enemyUnit.type, playerUnit.atk);
+          const damage = calculateDamage(playerUnit.atkType, enemyUnit.defType, playerUnit.atk);
           nextEnemyHPs[nextEnemyIndex] = Math.max(0, nextEnemyHPs[nextEnemyIndex] - damage);
           nextLog.push(`${playerUnit.name} deals ${damage} damage to ${enemyUnit.name}!`);
           nextPlayerATB = 0;
@@ -68,7 +68,7 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
 
         // Enemy attacks
         if (nextEnemyATB >= 100) {
-          const damage = calculateDamage(enemyUnit.type, playerUnit.type, enemyUnit.atk);
+          const damage = calculateDamage(enemyUnit.atkType, playerUnit.defType, enemyUnit.atk);
           nextPlayerHPs[nextPlayerIndex] = Math.max(0, nextPlayerHPs[nextPlayerIndex] - damage);
           nextLog.push(`${enemyUnit.name} deals ${damage} damage to ${playerUnit.name}!`);
           nextEnemyATB = 0;
@@ -123,6 +123,18 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
     }
   }, [state.status, onBattleEnd, playerSquad, state.playerHPs]);
 
+  const getTypeIcon = (type?: string) => {
+    switch (type) {
+      case 'Thermal': return '🔥';
+      case 'Ion': return '⚡';
+      case 'Toxic': return '☣️';
+      case 'Plating': return '🛡️';
+      case 'Shields': return '🌀';
+      case 'Bio': return '🌿';
+      default: return '';
+    }
+  };
+
   const renderUnit = (unit: Unit, currentHp: number, atb: number, isActive: boolean) => {
     if (!unit) return null;
     const hpPercent = Math.max(0, (currentHp / unit.maxHp) * 100);
@@ -130,6 +142,9 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
     return (
       <div className={`unit-display ${isActive ? 'active' : 'benched'} ${currentHp <= 0 ? 'dead' : ''}`}>
         <div className="unit-name">{unit.name}</div>
+        <div className="unit-type-header">
+          {getTypeIcon(unit.atkType)} / {getTypeIcon(unit.defType)}
+        </div>
         <div className="unit-hp-bar">
           <div className="unit-hp-fill" style={{ width: `${hpPercent}%` }}></div>
         </div>

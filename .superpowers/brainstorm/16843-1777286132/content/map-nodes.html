@@ -1,0 +1,30 @@
+<h2>Encounter Information on Map</h2>
+<p class="subtitle">How should the unit types be displayed at each node?</p>
+
+<div class="options">
+  <div class="option" data-choice="icons" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Strategic Icons</h3>
+      <p>A small type icon floats next to the battle node. Quick to read at a glance.</p>
+      <div class="mockup" style="margin-top: 10px; display: flex; justify-content: center; align-items: center; gap: 10px;">
+        <div class="node">⚔️</div>
+        <div style="background: #440000; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem;">ION</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="tooltips" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Detailed Intel (Hover/Tap)</h3>
+      <p>The map stays clean, but hovering or tapping a node reveals the enemy type and stats.</p>
+      <div class="mockup" style="margin-top: 10px; text-align: center;">
+        <div class="node" style="margin: 0 auto; border-color: #00f2fe;">⚔️</div>
+        <div class="mock-nav" style="background: #222; margin-top: 5px; font-size: 0.6rem;">
+          INTEL: [ION DRONE] ATK 10 | SPD 12
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

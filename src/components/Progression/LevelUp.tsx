@@ -29,6 +29,18 @@ export const LevelUp: React.FC<LevelUpProps> = ({
 
   const allSelected = leveledUnits.every(unit => selections[unit.id]);
 
+  const getTypeIcon = (type?: string) => {
+    switch (type) {
+      case 'Thermal': return '🔥';
+      case 'Ion': return '⚡';
+      case 'Toxic': return '☣️';
+      case 'Plating': return '🛡️';
+      case 'Shields': return '🌀';
+      case 'Bio': return '🌿';
+      default: return '';
+    }
+  };
+
   return (
     <div className="level-up-overlay">
       <div className="level-up-container">
@@ -42,7 +54,9 @@ export const LevelUp: React.FC<LevelUpProps> = ({
               <div key={unit.id} className="unit-card">
                 <div className="unit-header">
                   <h2>{unit.name}</h2>
-                  <span className="unit-type">{unit.type}</span>
+                  <span className="unit-type">
+                    {getTypeIcon(unit.atkType)} / {getTypeIcon(unit.defType)}
+                  </span>
                 </div>
                 <p className="level-text">New Level: {unit.level}</p>
                 <div className="unit-stats">

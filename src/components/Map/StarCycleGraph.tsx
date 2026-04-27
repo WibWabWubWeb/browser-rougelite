@@ -1,31 +1,24 @@
 import React from 'react';
 import './StarCycleGraph.css';
 
-const UNIT_TYPES = [
-  { type: 'Thermal', icon: '🔥', angle: 0 },
-  { type: 'Plating', icon: '🛡️', angle: 60 },
-  { type: 'Toxic', icon: '☣️', angle: 120 },
-  { type: 'Bio', icon: '🌿', angle: 180 },
-  { type: 'Ion', icon: '⚡', angle: 240 },
-  { type: 'Shields', icon: '🌀', angle: 300 },
+const ATK_TYPES = [
+  { type: 'Thermal', icon: '🔥', x: 60, y: 80 },
+  { type: 'Ion', icon: '⚡', x: 60, y: 150 },
+  { type: 'Toxic', icon: '☣️', x: 60, y: 220 },
 ];
 
-const RADIUS = 110;
-const CENTER = 150;
-const NODE_RADIUS = 22;
+const DEF_TYPES = [
+  { type: 'Plating', icon: '🛡️', x: 240, y: 80 },
+  { type: 'Shields', icon: '🌀', x: 240, y: 150 },
+  { type: 'Bio', icon: '🌿', x: 240, y: 220 },
+];
 
-const getCoords = (angle: number, radius: number) => {
-  const rad = (angle - 90) * (Math.PI / 180);
-  return {
-    x: CENTER + radius * Math.cos(rad),
-    y: CENTER + radius * Math.sin(rad),
-  };
-};
+const NODE_RADIUS = 20;
 
 export const StarCycleGraph: React.FC = () => {
   return (
     <div className="star-cycle-container">
-      <h3>Star Cycle</h3>
+      <h3>Combat Matrix</h3>
       <svg viewBox="0 0 300 300" className="star-cycle-svg">
         <defs>
           <marker id="arrowhead-strong" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
@@ -35,51 +28,41 @@ export const StarCycleGraph: React.FC = () => {
             <polygon points="0 0, 10 3.5, 0 7" fill="#f44336" />
           </marker>
         </defs>
-        
-        {UNIT_TYPES.map((unit, i) => {
-          const next = UNIT_TYPES[(i + 1) % UNIT_TYPES.length];
-          
-          // Strength Line (To next)
-          const startS = getCoords(unit.angle, RADIUS - 5);
-          const endS = getCoords(next.angle, RADIUS - 5);
-          
-          // Weakness Line (To previous)
-          const prev = UNIT_TYPES[(i - 1 + UNIT_TYPES.length) % UNIT_TYPES.length];
-          const startW = getCoords(unit.angle, RADIUS - 15);
-          const endW = getCoords(prev.angle, RADIUS - 15);
 
-          return (
-            <g key={unit.type}>
-              {/* Strong (Green) */}
-              <line 
-                x1={startS.x} y1={startS.y} 
-                x2={endS.x} y2={endS.y} 
-                stroke="#4caf50" strokeWidth="2" 
-                markerEnd="url(#arrowhead-strong)" 
-              />
-              {/* Weak (Red) */}
-              <line 
-                x1={startW.x} y1={startW.y} 
-                x2={endW.x} y2={endW.y} 
-                stroke="#f44336" strokeWidth="1.5" 
-                strokeDasharray="4 2"
-                markerEnd="url(#arrowhead-weak)" 
-              />
-            </g>
-          );
-        })}
+        {/* Labels */}
+        <text x="60" y="40" textAnchor="middle" fill="#aaa" fontSize="10" fontWeight="bold">ATTACK</text>
+        <text x="240" y="40" textAnchor="middle" fill="#aaa" fontSize="10" fontWeight="bold">ARMOR</text>
 
-        {UNIT_TYPES.map((unit) => {
-          const { x, y } = getCoords(unit.angle, RADIUS + 15);
-          const nodePos = getCoords(unit.angle, RADIUS);
-          return (
-            <g key={`node-${unit.type}`}>
-              <circle cx={nodePos.x} cy={nodePos.y} r={NODE_RADIUS} className="type-node-bg" />
-              <text x={nodePos.x} y={nodePos.y} dy=".35em" textAnchor="middle" className="type-icon">{unit.icon}</text>
-              <text x={x} y={y > CENTER ? y + 15 : y - 5} textAnchor="middle" className="type-label">{unit.type}</text>
-            </g>
-          );
-        })}
+        {/* Connections */}
+        {/* Thermal (0) vs Plating (0) [S], Shields (1) [W] */}
+        <line x1={ATK_TYPES[0].x + 20} y1={ATK_TYPES[0].y} x2={DEF_TYPES[0].x - 20} y2={DEF_TYPES[0].y} stroke="#4caf50" strokeWidth="2" markerEnd="url(#arrowhead-strong)" />
+        <line x1={ATK_TYPES[0].x + 20} y1={ATK_TYPES[0].y} x2={DEF_TYPES[1].x - 20} y2={DEF_TYPES[1].y} stroke="#f44336" strokeWidth="1.5" strokeDasharray="4 2" markerEnd="url(#arrowhead-weak)" />
+
+        {/* Ion (1) vs Shields (1) [S], Bio (2) [W] */}
+        <line x1={ATK_TYPES[1].x + 20} y1={ATK_TYPES[1].y} x2={DEF_TYPES[1].x - 20} y2={DEF_TYPES[1].y} stroke="#4caf50" strokeWidth="2" markerEnd="url(#arrowhead-strong)" />
+        <line x1={ATK_TYPES[1].x + 20} y1={ATK_TYPES[1].y} x2={DEF_TYPES[2].x - 20} y2={DEF_TYPES[2].y} stroke="#f44336" strokeWidth="1.5" strokeDasharray="4 2" markerEnd="url(#arrowhead-weak)" />
+
+        {/* Toxic (2) vs Bio (2) [S], Plating (0) [W] */}
+        <line x1={ATK_TYPES[2].x + 20} y1={ATK_TYPES[2].y} x2={DEF_TYPES[2].x - 20} y2={DEF_TYPES[2].y} stroke="#4caf50" strokeWidth="2" markerEnd="url(#arrowhead-strong)" />
+        <line x1={ATK_TYPES[2].x + 20} y1={ATK_TYPES[2].y} x2={DEF_TYPES[0].x - 20} y2={DEF_TYPES[0].y} stroke="#f44336" strokeWidth="1.5" strokeDasharray="4 2" markerEnd="url(#arrowhead-weak)" />
+
+        {/* Attack Nodes */}
+        {ATK_TYPES.map((node) => (
+          <g key={node.type}>
+            <circle cx={node.x} cy={node.y} r={NODE_RADIUS} className="type-node-bg" />
+            <text x={node.x} y={node.y} dy=".35em" textAnchor="middle" className="type-icon">{node.icon}</text>
+            <text x={node.x - 30} y={node.y} dy=".35em" textAnchor="end" className="type-label-small">{node.type}</text>
+          </g>
+        ))}
+
+        {/* Defense Nodes */}
+        {DEF_TYPES.map((node) => (
+          <g key={node.type}>
+            <circle cx={node.x} cy={node.y} r={NODE_RADIUS} className="type-node-bg" />
+            <text x={node.x} y={node.y} dy=".35em" textAnchor="middle" className="type-icon">{node.icon}</text>
+            <text x={node.x + 30} y={node.y} dy=".35em" textAnchor="start" className="type-label-small">{node.type}</text>
+          </g>
+        ))}
       </svg>
       <div className="star-cycle-legend">
         <div className="legend-item"><span className="line strong"></span> Strong (2x)</div>

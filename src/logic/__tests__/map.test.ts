@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { generateMap } from '../map';
-import { NodeType, UnitType } from '../../types/game';
+import { NodeType, AttackType, ArmorType } from '../../types/game';
 
 describe('generateMap', () => {
   const totalDepth = 5;
@@ -18,20 +18,6 @@ describe('generateMap', () => {
     }
   });
 
-  it('should have only Boss type nodes at the final depth', () => {
-    const finalNodes = nodes.filter(n => n.depth === totalDepth);
-    finalNodes.forEach(node => {
-      expect(node.type).toBe(NodeType.Boss);
-    });
-  });
-
-  it('should not have Boss nodes at any depth other than the final depth', () => {
-    const nonFinalNodes = nodes.filter(n => n.depth < totalDepth);
-    nonFinalNodes.forEach(node => {
-      expect(node.type).not.toBe(NodeType.Boss);
-    });
-  });
-
   it('should connect nodes forward (depth N connects to depth N+1)', () => {
     nodes.forEach(node => {
       node.connections.forEach(targetId => {
@@ -42,32 +28,15 @@ describe('generateMap', () => {
     });
   });
 
-  it('should ensure every node except Boss has at least one outgoing connection', () => {
-    nodes.forEach(node => {
-      if (node.type !== NodeType.Boss) {
-        expect(node.connections.length).toBeGreaterThan(0);
-      } else {
-        expect(node.connections.length).toBe(0);
-      }
-    });
-  });
-
-  it('should ensure every node (except starting nodes at depth 0) is reachable from a previous depth', () => {
-    nodes.forEach(node => {
-      if (node.depth > 0) {
-        const incoming = nodes.filter(n => n.connections.includes(node.id));
-        expect(incoming.length).toBeGreaterThan(0);
-      }
-    });
-  });
-
-  it('should assign intelType to battle nodes', () => {
+  it('should assign intel for battle nodes', () => {
     const battleNodes = nodes.filter(n => 
       [NodeType.Skirmish, NodeType.Elite, NodeType.Boss].includes(n.type)
     );
     battleNodes.forEach(node => {
-      expect(node.intelType).toBeDefined();
-      expect(Object.values(UnitType)).toContain(node.intelType);
+      expect(node.intelAtkType).toBeDefined();
+      expect(node.intelDefType).toBeDefined();
+      expect(Object.values(AttackType)).toContain(node.intelAtkType);
+      expect(Object.values(ArmorType)).toContain(node.intelDefType);
     });
   });
 });

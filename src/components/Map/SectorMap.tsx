@@ -26,7 +26,7 @@ const getNodeIcon = (type: NodeType) => {
   }
 };
 
-const getIntelIcon = (type?: string) => {
+const getTypeIcon = (type?: string) => {
   switch (type) {
     case 'Thermal': return '🔥';
     case 'Ion': return '⚡';
@@ -161,9 +161,10 @@ export const SectorMap: React.FC<SectorMapProps> = ({
               title={node.type}
             >
               {getNodeIcon(node.type)}
-              {node.intelType && (
-                <div className="node-intel" title={`Primary Enemy: ${node.intelType}`}>
-                  {getIntelIcon(node.intelType)}
+              {(node.intelAtkType || node.intelDefType) && (
+                <div className="node-intel" title={`Primary Enemy: ATK ${node.intelAtkType} / DEF ${node.intelDefType}`}>
+                  <div className="intel-atk">{getTypeIcon(node.intelAtkType)}</div>
+                  <div className="intel-def">{getTypeIcon(node.intelDefType)}</div>
                 </div>
               )}
             </div>

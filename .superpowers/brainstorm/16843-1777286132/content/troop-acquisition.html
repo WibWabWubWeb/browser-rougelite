@@ -1,0 +1,30 @@
+<h2>Starting Squad Selection</h2>
+<p class="subtitle">How should players begin their journey?</p>
+
+<div class="options">
+  <div class="option" data-choice="single_set" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Single Drafted Squad</h3>
+      <p>The game generates 3 random units. The player sees them and starts the run. Simple and fast.</p>
+      <div class="mockup" style="margin-top: 10px; display: flex; gap: 5px; justify-content: center;">
+        <div class="unit-card" style="width: 40px; background: #004444;">T</div>
+        <div class="unit-card" style="width: 40px; background: #444400;">I</div>
+        <div class="unit-card" style="width: 40px; background: #440044;">B</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="multiple_options" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Multiple Choice (3 Squads)</h3>
+      <p>The game generates 3 different squads (each with 3 units). The player picks their favorite starting synergy.</p>
+      <div class="mockup" style="margin-top: 10px;">
+        <div style="font-size: 0.6rem; opacity: 0.7;">Squad 1 [T, I, B]</div>
+        <div style="font-size: 0.6rem; opacity: 0.7;">Squad 2 [S, P, T]</div>
+        <div style="font-size: 0.6rem; opacity: 0.7;">Squad 3 [B, B, I]</div>
+      </div>
+    </div>
+  </div>
+</div>

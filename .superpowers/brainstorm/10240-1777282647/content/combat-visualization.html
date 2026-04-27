@@ -1,0 +1,48 @@
+<h2>Combat Visualization: 1v1 ATB</h2>
+<p class="subtitle">Mockup of the Active Time Bar interface</p>
+
+<div class="mockup" style="padding: 40px; background: #050510; border: 1px solid #1a1a3a;">
+  <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 20px;">
+    <!-- Player Side -->
+    <div style="text-align: center;">
+      <div class="label" style="color: #4facfe;">PLAYER SQUAD</div>
+      <div style="display: flex; gap: 5px; margin-bottom: 10px; justify-content: center;">
+        <div style="width: 20px; height: 20px; background: #333; border: 1px solid #4facfe;"></div>
+        <div style="width: 20px; height: 20px; background: #333; opacity: 0.5;"></div>
+      </div>
+      <div class="unit-card" style="width: 150px; border: 2px solid #4facfe; position: relative;">
+        <div style="font-weight: bold;">Interceptor</div>
+        <div style="font-size: 0.8rem; color: #888;">HP: 40/40</div>
+        <!-- ATB Bar -->
+        <div style="height: 6px; background: #111; margin-top: 10px; border-radius: 3px; overflow: hidden;">
+          <div style="width: 75%; height: 100%; background: #00f2fe; box-shadow: 0 0 10px #00f2fe;"></div>
+        </div>
+        <div style="font-size: 0.6rem; text-align: right; margin-top: 2px;">READY 75%</div>
+      </div>
+    </div>
+
+    <div style="font-size: 2rem; font-weight: bold; margin-bottom: 40px;">VS</div>
+
+    <!-- Enemy Side -->
+    <div style="text-align: center;">
+      <div class="label" style="color: #ff4444;">ENEMY SQUAD</div>
+      <div style="display: flex; gap: 5px; margin-bottom: 10px; justify-content: center;">
+        <div style="width: 20px; height: 20px; background: #333; border: 1px solid #ff4444;"></div>
+        <div style="width: 20px; height: 20px; background: #333; opacity: 0.5;"></div>
+      </div>
+      <div class="unit-card" style="width: 150px; border: 2px solid #ff4444;">
+        <div style="font-weight: bold;">Drone A</div>
+        <div style="font-size: 0.8rem; color: #888;">HP: 30/30</div>
+        <!-- ATB Bar -->
+        <div style="height: 6px; background: #111; margin-top: 10px; border-radius: 3px; overflow: hidden;">
+          <div style="width: 30%; height: 100%; background: #ff4444;"></div>
+        </div>
+        <div style="font-size: 0.6rem; text-align: right; margin-top: 2px;">WAIT 30%</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mock-nav" style="background: #111; text-align: center; padding: 5px; font-size: 0.7rem;">
+    LOG: Interceptor is preparing Ion Blast...
+  </div>
+</div>
