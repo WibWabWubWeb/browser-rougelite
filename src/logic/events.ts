@@ -24,6 +24,16 @@ export const GAME_EVENTS: GameEvent[] = [
             }
           },
           {
+            atkType: AttackType.Cryo,
+            chanceOverride: 0.95,
+            outcomeOverride: {
+              id: 'cryo-success',
+              text: 'The absolute zero pulses froze the spiders mid-scuttle. Shattering them was trivial.',
+              xp: 55,
+              credits: 40
+            }
+          },
+          {
             atkType: AttackType.Toxic,
             chanceOverride: 0.0,
             outcomeOverride: {
@@ -79,6 +89,15 @@ export const GAME_EVENTS: GameEvent[] = [
               id: 'plating-success',
               text: 'The heavy plating resisted the corrosion. Sensor fixed!',
               xp: 40
+            }
+          },
+          {
+            defType: ArmorType.NanoFiber,
+            chanceOverride: 1.0,
+            outcomeOverride: {
+              id: 'nanofiber-success',
+              text: 'The advanced nanofibers are completely inert to the acid. The repair was effortless.',
+              xp: 60
             }
           },
           {
@@ -170,6 +189,27 @@ export const GAME_EVENTS: GameEvent[] = [
         id: 'brace',
         label: 'Brace',
         description: 'Prepare for hull damage.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            defType: ArmorType.Prism,
+            chanceOverride: 1.0,
+            outcomeOverride: {
+              id: 'prism-brace',
+              text: 'The Prismatic armor refracted the solar radiation harmlessly into space.',
+              xp: 40
+            }
+          },
+          {
+            defType: ArmorType.Ceramic,
+            chanceOverride: 0.9,
+            outcomeOverride: {
+              id: 'ceramic-brace',
+              text: 'The high-grade ceramic heat shielding absorbed the brunt of the storm.',
+              hp: -5
+            }
+          }
+        ],
         outcomes: [
           {
             id: 'brace-damage',
@@ -189,6 +229,19 @@ export const GAME_EVENTS: GameEvent[] = [
         id: 'help',
         label: 'Help',
         description: 'Drive off the pirates.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            atkType: AttackType.Kinetic,
+            chanceOverride: 1.0,
+            outcomeOverride: {
+              id: 'kinetic-help',
+              text: 'Your unit used high-velocity kinetic rounds to shred the pirate hull from a distance.',
+              xp: 40,
+              credits: 60
+            }
+          }
+        ],
         outcomes: [
           {
             id: 'help-reward',
@@ -229,6 +282,16 @@ export const GAME_EVENTS: GameEvent[] = [
               text: 'The precision Ion pulses bypassed the security layers. A wealth of knowledge is yours!',
               xp: 100,
               credits: 50
+            }
+          },
+          {
+            atkType: AttackType.Laser,
+            chanceOverride: 0.9,
+            outcomeOverride: {
+              id: 'laser-decrypt-success',
+              text: 'High-frequency laser pulses read the data faster than the encryption could rotate.',
+              xp: 120,
+              credits: 20
             }
           }
         ],
@@ -368,6 +431,16 @@ export const GAME_EVENTS: GameEvent[] = [
               text: 'The heat sliced through the crystal perfectly.',
               credits: 200
             }
+          },
+          {
+            atkType: AttackType.Laser,
+            chanceOverride: 1.0,
+            outcomeOverride: {
+              id: 'laser-harvest',
+              text: 'Precision laser cutting harvested the purest shards without any waste.',
+              credits: 300,
+              xp: 20
+            }
           }
         ],
         outcomes: [
@@ -398,6 +471,16 @@ export const GAME_EVENTS: GameEvent[] = [
               id: 'bio-commune',
               text: 'Your unit bonded with the entity, gaining profound insight.',
               xp: 120
+            }
+          },
+          {
+            defType: ArmorType.Prism,
+            chanceOverride: 1.0,
+            outcomeOverride: {
+              id: 'prism-commune',
+              text: 'The Prismatic armor resonated with the entity\'s frequency, creating a perfect harmonic link.',
+              xp: 150,
+              credits: 50
             }
           }
         ],
@@ -440,6 +523,18 @@ export const GAME_EVENTS: GameEvent[] = [
         label: 'Fight Your Way Out',
         description: 'Aggressive maneuver to break the lock.',
         requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            atkType: AttackType.Kinetic,
+            chanceOverride: 0.8,
+            outcomeOverride: {
+              id: 'kinetic-fight',
+              text: 'You punched through their shields with heavy kinetic slugs before they could react.',
+              credits: 400,
+              xp: 80
+            }
+          }
+        ],
         outcomes: [
           {
             id: 'fight-success',
@@ -476,6 +571,15 @@ export const GAME_EVENTS: GameEvent[] = [
               id: 'thermal-burn',
               text: 'The growth was completely vaporized.',
               xp: 60
+            }
+          },
+          {
+            atkType: AttackType.Cryo,
+            chanceOverride: 0.9,
+            outcomeOverride: {
+              id: 'cryo-freeze-moss',
+              text: 'The moss was flash-frozen and shattered into harmless dust.',
+              xp: 70
             }
           }
         ],
@@ -616,6 +720,15 @@ export const GAME_EVENTS: GameEvent[] = [
               text: 'The digital toxin dissolved their logic gates.',
               xp: 70
             }
+          },
+          {
+            atkType: AttackType.Cryo,
+            chanceOverride: 0.9,
+            outcomeOverride: {
+              id: 'cryo-nanite',
+              text: 'The absolute zero pulses slowed the nanite replication to a crawl, allowing you to bypass them.',
+              xp: 85
+            }
           }
         ],
         outcomes: [
@@ -646,6 +759,15 @@ export const GAME_EVENTS: GameEvent[] = [
               id: 'plating-nanite',
               text: 'The heavy armor resisted the microscopic teeth.',
               hp: -5
+            }
+          },
+          {
+            defType: ArmorType.NanoFiber,
+            chanceOverride: 1.0,
+            outcomeOverride: {
+              id: 'nanofiber-nanite',
+              text: 'The nanites recognized the advanced nanofibers as "one of their own" and left the unit untouched.',
+              xp: 100
             }
           }
         ],
@@ -678,6 +800,16 @@ export const GAME_EVENTS: GameEvent[] = [
               text: 'The diplomat feels safe with your organic-oriented unit.',
               credits: 150,
               xp: 50
+            }
+          },
+          {
+            defType: ArmorType.Prism,
+            chanceOverride: 0.9,
+            outcomeOverride: {
+              id: 'prism-diplomat',
+              text: 'The diplomat is mesmerized by the Prismatic armor\'s light patterns and offers a generous gift.',
+              credits: 250,
+              xp: 30
             }
           }
         ],
@@ -717,6 +849,16 @@ export const GAME_EVENTS: GameEvent[] = [
               text: 'A quick Ion burst fried the trigger.',
               credits: 300
             }
+          },
+          {
+            atkType: AttackType.Laser,
+            chanceOverride: 0.9,
+            outcomeOverride: {
+              id: 'laser-disarm',
+              text: 'A precision laser beam cut the detonator wire with micron accuracy.',
+              credits: 250,
+              xp: 20
+            }
           }
         ],
         outcomes: [
@@ -754,6 +896,15 @@ export const GAME_EVENTS: GameEvent[] = [
               id: 'ion-ghost',
               text: 'You revealed the signal was a holographic trap.',
               xp: 100
+            }
+          },
+          {
+            atkType: AttackType.Laser,
+            chanceOverride: 0.85,
+            outcomeOverride: {
+              id: 'laser-ghost',
+              text: 'Your precision scanners used laser lidar to map the true geometry of the nebula, spotting the trap.',
+              xp: 110
             }
           }
         ],
@@ -793,6 +944,15 @@ export const GAME_EVENTS: GameEvent[] = [
               text: 'The shields shimmered but held.',
               hp: 0
             }
+          },
+          {
+            defType: ArmorType.Ceramic,
+            chanceOverride: 1.0,
+            outcomeOverride: {
+              id: 'ceramic-rain',
+              text: 'The ceramic armor plates are completely immune to chemical corrosion. The rain slid right off.',
+              xp: 50
+            }
           }
         ],
         outcomes: [
@@ -824,6 +984,16 @@ export const GAME_EVENTS: GameEvent[] = [
               text: 'You balanced the heat levels perfectly.',
               xp: 200
             }
+          },
+          {
+            atkType: AttackType.Cryo,
+            chanceOverride: 0.9,
+            outcomeOverride: {
+              id: 'cryo-reactor',
+              text: 'The Cryo pulses instantly stabilized the runaway thermal reaction.',
+              xp: 250,
+              credits: 100
+            }
           }
         ],
         outcomes: [
@@ -853,6 +1023,17 @@ export const GAME_EVENTS: GameEvent[] = [
         label: 'Integrate Fragment',
         description: 'Add the code to a unit.',
         requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            atkType: AttackType.Ion,
+            chanceOverride: 0.9,
+            outcomeOverride: {
+              id: 'ion-integrate',
+              text: 'The unit used precision Ion pulses to scrub the fragment of malware before integration.',
+              xp: 200
+            }
+          }
+        ],
         outcomes: [
           {
             id: 'integrate-success',
@@ -892,6 +1073,15 @@ export const GAME_EVENTS: GameEvent[] = [
             }
           },
           {
+            defType: ArmorType.NanoFiber,
+            chanceOverride: 0.95,
+            outcomeOverride: {
+              id: 'nanofiber-toxin',
+              text: 'The non-porous nanofibers blocked the gas perfectly.',
+              xp: 50
+            }
+          },
+          {
             atkType: AttackType.Toxic,
             chanceOverride: 1.0,
             outcomeOverride: {
@@ -927,6 +1117,19 @@ export const GAME_EVENTS: GameEvent[] = [
         id: 'keep-it',
         label: 'Keep It',
         description: 'See if it can be useful.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            atkType: AttackType.Ion,
+            chanceOverride: 0.9,
+            outcomeOverride: {
+              id: 'ion-bot-reprogram',
+              text: 'You used a low-power Ion burst to reset its factory settings. It knows where some loot is!',
+              credits: 150,
+              xp: 20
+            }
+          }
+        ],
         outcomes: [
           {
             id: 'bot-credits',
@@ -964,6 +1167,19 @@ export const GAME_EVENTS: GameEvent[] = [
         id: 'solve',
         label: 'Solve Riddle',
         description: 'Dedicate processing power to the answer.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            atkType: AttackType.Laser,
+            chanceOverride: 0.8,
+            outcomeOverride: {
+              id: 'laser-riddle-solve',
+              text: 'Your unit used high-speed laser optical computing to solve the riddle in milliseconds.',
+              credits: 200,
+              xp: 60
+            }
+          }
+        ],
         outcomes: [
           {
             id: 'solve-success',
@@ -992,6 +1208,18 @@ export const GAME_EVENTS: GameEvent[] = [
         label: 'Explore Hangar',
         description: 'Send a unit to scout.',
         requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            defType: ArmorType.Ceramic,
+            chanceOverride: 0.8,
+            outcomeOverride: {
+              id: 'ceramic-station-scout',
+              text: 'The unit walked through a localized fire without a scratch, finding an old credit chip.',
+              credits: 200,
+              xp: 30
+            }
+          }
+        ],
         outcomes: [
           {
             id: 'explore-credits',
@@ -1027,6 +1255,16 @@ export const GAME_EVENTS: GameEvent[] = [
               id: 'ion-surge-success',
               text: 'The unit used its own Ion core to buffer the storm.',
               xp: 80
+            }
+          },
+          {
+            defType: ArmorType.Shields,
+            chanceOverride: 0.95,
+            outcomeOverride: {
+              id: 'shields-surge-success',
+              text: 'The advanced shielding absorbed the surge and converted it into auxiliary power.',
+              xp: 90,
+              credits: 30
             }
           }
         ],
@@ -1067,6 +1305,15 @@ export const GAME_EVENTS: GameEvent[] = [
               text: 'The thick plating absorbed the radiation. Leak sealed!',
               xp: 100
             }
+          },
+          {
+            defType: ArmorType.Ceramic,
+            chanceOverride: 0.95,
+            outcomeOverride: {
+              id: 'ceramic-leak-success',
+              text: 'The ceramic composite plates blocked the radiation perfectly. Leak sealed safely.',
+              xp: 120
+            }
           }
         ],
         outcomes: [
@@ -1095,6 +1342,26 @@ export const GAME_EVENTS: GameEvent[] = [
         id: 'take-prototype',
         label: 'Take Prototype',
         description: 'Claim the experimental module.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            atkType: AttackType.Laser,
+            chanceOverride: 1.0,
+            outcomeOverride: {
+              id: 'laser-prototype-secure',
+              text: 'Your unit used precise laser cutting to disable the pressure sensors on the pedestal.',
+              item: {
+                id: 'exp-laser-1',
+                name: 'Focused Beam Core',
+                category: 'module',
+                cost: 300,
+                description: 'Increases Laser damage by 25%.',
+                effect: { type: 'stat', stat: 'atk', value: 8 }
+              },
+              xp: 50
+            }
+          }
+        ],
         outcomes: [
           {
             id: 'prototype-success',
@@ -1216,6 +1483,26 @@ export const GAME_EVENTS: GameEvent[] = [
                 effect: { type: 'stat', stat: 'hp', value: 20 }
               }
             }
+          },
+          {
+            defType: ArmorType.Plating,
+            chanceOverride: 0.7,
+            outcomeOverride: {
+              id: 'plating-test-success',
+              text: 'The heavy plating took the hits like a champ. You salvaged some high-grade materials.',
+              credits: 200,
+              xp: 40
+            }
+          },
+          {
+            defType: ArmorType.NanoFiber,
+            chanceOverride: 0.9,
+            outcomeOverride: {
+              id: 'nanofiber-test-success',
+              text: 'The unit\'s speed and small profile made it nearly impossible to hit. You reached the center easily.',
+              credits: 150,
+              xp: 100
+            }
           }
         ],
         outcomes: [
@@ -1244,6 +1531,32 @@ export const GAME_EVENTS: GameEvent[] = [
         id: 'buy-prototype',
         label: 'Buy for 200 Credits',
         description: 'A risky investment.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            atkType: AttackType.Ion,
+            chanceOverride: 1.0,
+            outcomeOverride: {
+              id: 'ion-buy-fix',
+              text: 'You used precision Ion pulses to stabilize the bot\'s core before activation. It works perfectly!',
+              credits: -200,
+              newUnit: {
+                id: 'proto-bot-fixed',
+                name: 'Stabilized Prototype',
+                atkType: AttackType.Laser,
+                defType: ArmorType.Prism,
+                hp: 100,
+                maxHp: 100,
+                atk: 22,
+                speed: 15,
+                level: 3,
+                xp: 0,
+                xpToNext: 400,
+                milestones: []
+              }
+            }
+          }
+        ],
         outcomes: [
           {
             id: 'buy-bot-success',
@@ -1285,6 +1598,31 @@ export const GAME_EVENTS: GameEvent[] = [
         id: 'awaken',
         label: 'Awaken Occupant',
         description: 'A delicate procedure.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            atkType: AttackType.Cryo,
+            chanceOverride: 1.0,
+            outcomeOverride: {
+              id: 'cryo-awaken-success',
+              text: 'Using controlled Cryo-pulses, you safely managed the thawing process. The legend lives!',
+              newUnit: {
+                id: 'unit-legend-cryo',
+                name: 'Cryo-Guardian',
+                atkType: AttackType.Cryo,
+                defType: ArmorType.Ceramic,
+                hp: 140,
+                maxHp: 140,
+                atk: 20,
+                speed: 10,
+                level: 4,
+                xp: 0,
+                xpToNext: 800,
+                milestones: []
+              }
+            }
+          }
+        ],
         outcomes: [
           {
             id: 'cryo-new-unit',
@@ -1341,6 +1679,22 @@ export const GAME_EVENTS: GameEvent[] = [
                 effect: { type: 'stat', stat: 'atk', value: 10 }
               }
             }
+          },
+          {
+            atkType: AttackType.Kinetic,
+            chanceOverride: 0.8,
+            outcomeOverride: {
+              id: 'kinetic-science-success',
+              text: 'You used a kinetic grapple to pull the module out of the wreck before it exploded.',
+              item: {
+                id: 'mod-kinetic-1',
+                name: 'Impact Plate',
+                category: 'module',
+                cost: 220,
+                description: 'Increases Kinetic damage by 15%.',
+                effect: { type: 'stat', stat: 'atk', value: 6 }
+              }
+            }
           }
         ],
         outcomes: [
@@ -1377,6 +1731,18 @@ export const GAME_EVENTS: GameEvent[] = [
         label: 'Breach Vault',
         description: 'High risk, high reward.',
         requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            defType: ArmorType.Prism,
+            chanceOverride: 0.95,
+            outcomeOverride: {
+              id: 'prism-vault-success',
+              text: 'The Prismatic armor harmlessly refracted the security lasers. You walked right through.',
+              credits: 600,
+              xp: 150
+            }
+          }
+        ],
         outcomes: [
           {
             id: 'vault-success',
@@ -1427,6 +1793,28 @@ export const GAME_EVENTS: GameEvent[] = [
                 maxHp: 90,
                 atk: 14,
                 speed: 11,
+                level: 2,
+                xp: 0,
+                xpToNext: 200,
+                milestones: []
+              }
+            }
+          },
+          {
+            atkType: AttackType.Laser,
+            chanceOverride: 0.85,
+            outcomeOverride: {
+              id: 'laser-repair-success',
+              text: 'You used a precision laser to weld the bot\'s damaged logic core. It\'s back online!',
+              newUnit: {
+                id: 'factory-bot-laser',
+                name: 'Welded Drone',
+                atkType: AttackType.Laser,
+                defType: ArmorType.NanoFiber,
+                hp: 80,
+                maxHp: 80,
+                atk: 16,
+                speed: 14,
                 level: 2,
                 xp: 0,
                 xpToNext: 200,
@@ -1484,6 +1872,15 @@ export const GAME_EVENTS: GameEvent[] = [
               text: 'The unit used its own toxins to create a buffer. Safe!',
               xp: 50
             }
+          },
+          {
+            defType: ArmorType.NanoFiber,
+            chanceOverride: 0.9,
+            outcomeOverride: {
+              id: 'nanofiber-neutralize',
+              text: 'The unit used its nanofiber suit to physically absorb and filter the cloud.',
+              xp: 70
+            }
           }
         ],
         outcomes: [
@@ -1518,6 +1915,19 @@ export const GAME_EVENTS: GameEvent[] = [
         id: 'reach-through',
         label: 'Reach Through',
         description: 'Try to pull something from the other side.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            atkType: AttackType.Cryo,
+            chanceOverride: 0.8,
+            outcomeOverride: {
+              id: 'cryo-rift-stabilize',
+              text: 'You used Cryo-energy to freeze the rift open just long enough to grab some tech.',
+              credits: 400,
+              xp: 50
+            }
+          }
+        ],
         outcomes: [
           {
             id: 'rift-new-unit',
@@ -1570,6 +1980,26 @@ export const GAME_EVENTS: GameEvent[] = [
         id: 'raid-armory',
         label: 'Raid Armory',
         description: 'Search for heavy weapons.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            atkType: AttackType.Kinetic,
+            chanceOverride: 0.9,
+            outcomeOverride: {
+              id: 'kinetic-armory-success',
+              text: 'Your unit recognized the military kinetic weapon systems and recovered a rare barrel assembly.',
+              item: {
+                id: 'mod-kinetic-super',
+                name: 'Hyper-Velocity Rail',
+                category: 'module',
+                cost: 500,
+                description: 'Kinetic damage ignores 50% Plating.',
+                effect: { type: 'special' }
+              },
+              xp: 100
+            }
+          }
+        ],
         outcomes: [
           {
             id: 'armory-success',
@@ -1603,6 +2033,31 @@ export const GAME_EVENTS: GameEvent[] = [
         id: 'give-body',
         label: 'Provide a Chassis',
         description: 'Download the AI into a spare drone.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            atkType: AttackType.Laser,
+            chanceOverride: 1.0,
+            outcomeOverride: {
+              id: 'laser-ai-transfer',
+              text: 'You used a high-speed laser uplink to transfer the AI without losing a single bit of data.',
+              newUnit: {
+                id: 'unit-ai-perfect',
+                name: 'AURA-X',
+                atkType: AttackType.Laser,
+                defType: ArmorType.NanoFiber,
+                hp: 100,
+                maxHp: 100,
+                atk: 24,
+                speed: 20,
+                level: 4,
+                xp: 0,
+                xpToNext: 800,
+                milestones: []
+              }
+            }
+          }
+        ],
         outcomes: [
           {
             id: 'ai-join',
@@ -1635,6 +2090,19 @@ export const GAME_EVENTS: GameEvent[] = [
         id: 'loot-mines',
         label: 'Loot Extractors',
         description: 'Take the ore.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            atkType: AttackType.Kinetic,
+            chanceOverride: 0.9,
+            outcomeOverride: {
+              id: 'kinetic-mining-loot',
+              text: 'Your unit used its kinetic drills to open the hardened extractors safely.',
+              credits: 500,
+              xp: 40
+            }
+          }
+        ],
         outcomes: [
           {
             id: 'mines-credits',
@@ -1685,6 +2153,16 @@ export const GAME_EVENTS: GameEvent[] = [
                 effect: { type: 'special' }
               }
             }
+          },
+          {
+            atkType: AttackType.Laser,
+            chanceOverride: 0.8,
+            outcomeOverride: {
+              id: 'laser-hack-success',
+              text: 'You used a low-power laser to blind their sensors while you looted the cache.',
+              credits: 400,
+              xp: 50
+            }
           }
         ],
         outcomes: [
@@ -1714,6 +2192,25 @@ export const GAME_EVENTS: GameEvent[] = [
         label: 'Retrieve Cloak',
         description: 'Send a unit into the shimmering field.',
         requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            defType: ArmorType.Prism,
+            chanceOverride: 0.9,
+            outcomeOverride: {
+              id: 'prism-stealth-success',
+              text: 'The Prismatic armor stabilized the flickering field, allowing a safe retrieval.',
+              item: {
+                id: 'mod-stealth-prism',
+                name: 'Prism Cloak',
+                category: 'module',
+                cost: 400,
+                description: 'Grants invisibility for 1 turn.',
+                effect: { type: 'special' }
+              },
+              xp: 80
+            }
+          }
+        ],
         outcomes: [
           {
             id: 'cloak-success',
@@ -1748,6 +2245,18 @@ export const GAME_EVENTS: GameEvent[] = [
         label: 'Touch Relic',
         description: 'A terrifying risk.',
         requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            defType: ArmorType.Bio,
+            chanceOverride: 0.6,
+            outcomeOverride: {
+              id: 'bio-relic-survive',
+              text: 'The unit\'s organic nature absorbed some of the curse as raw evolutionary energy.',
+              xp: 400,
+              hp: -20
+            }
+          }
+        ],
         outcomes: [
           {
             id: 'relic-power',
@@ -1798,6 +2307,16 @@ export const GAME_EVENTS: GameEvent[] = [
                 effect: { type: 'stat', stat: 'hp', value: 30 }
               }
             }
+          },
+          {
+            atkType: AttackType.Toxic,
+            chanceOverride: 0.85,
+            outcomeOverride: {
+              id: 'toxic-harvest-success',
+              text: 'You used specialized toxins to preserve the organic matter during transport.',
+              credits: 300,
+              xp: 50
+            }
           }
         ],
         outcomes: [
@@ -1826,6 +2345,25 @@ export const GAME_EVENTS: GameEvent[] = [
         id: 'stabilize-portal',
         label: 'Stabilize Portal',
         description: 'Try to pull a useful item through.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            atkType: AttackType.Ion,
+            chanceOverride: 0.9,
+            outcomeOverride: {
+              id: 'ion-portal-success',
+              text: 'Precision Ion pulses locked the portal in place.',
+              item: {
+                id: 'mod-portal-1',
+                name: 'Echo Core',
+                category: 'module',
+                cost: 350,
+                description: 'Gains 10% XP bonus.',
+                effect: { type: 'special' }
+              }
+            }
+          }
+        ],
         outcomes: [
           {
             id: 'portal-new-unit',
@@ -1858,6 +2396,627 @@ export const GAME_EVENTS: GameEvent[] = [
               effect: { type: 'stat', stat: 'hp', value: 20 }
             },
             chance: 0.7
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'prismatic-reflection',
+    title: 'Prismatic Reflection',
+    prompt: 'A rogue security satellite is charging a massive orbital laser. It is locked onto your ship!',
+    choices: [
+      {
+        id: 'deflect',
+        label: 'Deflect Beam',
+        description: 'Send a unit to intercept and reflect the beam.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            defType: ArmorType.Prism,
+            chanceOverride: 1.0,
+            outcomeOverride: {
+              id: 'prism-reflect-success',
+              text: 'The Prismatic armor caught the beam and reflected it back at the satellite, destroying it instantly!',
+              credits: 400,
+              xp: 100
+            }
+          }
+        ],
+        outcomes: [
+          {
+            id: 'reflect-success',
+            text: 'You managed to tilt the ship, causing the beam to graze the shields.',
+            hp: -15,
+            chance: 0.4
+          },
+          {
+            id: 'reflect-fail',
+            text: 'The beam punched through! Direct hit!',
+            hp: -60,
+            chance: 0.6
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'magnetic-railgun-test',
+    title: 'Magnetic Railgun Test',
+    prompt: 'An abandoned military range is still active. A massive railgun is targeting floating debris nearby.',
+    choices: [
+      {
+        id: 'hack-railgun',
+        label: 'Reprogram Railgun',
+        description: 'Use the railgun to destroy a nearby pirate stash.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            atkType: AttackType.Kinetic,
+            chanceOverride: 0.9,
+            outcomeOverride: {
+              id: 'kinetic-railgun-success',
+              text: 'Your unit understood the kinetic ballistics and scored a perfect hit on the stash!',
+              credits: 600,
+              xp: 50
+            }
+          }
+        ],
+        outcomes: [
+          {
+            id: 'railgun-success',
+            text: 'The railgun fired, but missed the main cache.',
+            credits: 100,
+            chance: 0.5
+          },
+          {
+            id: 'railgun-fail',
+            text: 'The railgun misfired and hit your ship!',
+            hp: -40,
+            chance: 0.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'absolute-zero-pocket',
+    title: 'Absolute Zero Pocket',
+    prompt: 'You have entered a region of space where the temperature is dropping rapidly. Systems are seizing up.',
+    choices: [
+      {
+        id: 'thermal-burst',
+        label: 'Thermal Burst',
+        description: 'Use a thermal weapon to heat the ship.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            atkType: AttackType.Thermal,
+            chanceOverride: 0.8,
+            outcomeOverride: {
+              id: 'thermal-warmth',
+              text: 'The controlled thermal release kept the ship functional.',
+              xp: 40
+            }
+          }
+        ],
+        outcomes: [
+          {
+            id: 'thermal-fail',
+            text: 'The cold was too much. The engines stalled.',
+            hp: -20,
+            chance: 1.0
+          }
+        ]
+      },
+      {
+        id: 'extra-insulation',
+        label: 'Use Insulation',
+        description: 'Send a unit to patch the most vulnerable areas.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            defType: ArmorType.NanoFiber,
+            chanceOverride: 1.0,
+            outcomeOverride: {
+              id: 'nanofiber-cold-success',
+              text: 'The nanofibers provided perfect thermal insulation. The unit worked comfortably in the cold.',
+              xp: 80
+            }
+          },
+          {
+            atkType: AttackType.Cryo,
+            chanceOverride: 1.0,
+            outcomeOverride: {
+              id: 'cryo-cold-mastery',
+              text: 'The Cryo-specialist harvested the ambient cold to supercharge their own weapon systems!',
+              xp: 150,
+              item: {
+                id: 'mod-cryo-cold',
+                name: 'Zero-Point Core',
+                category: 'module',
+                cost: 300,
+                description: 'Cryo attacks deal 30% more damage.',
+                effect: { type: 'stat', stat: 'atk', value: 10 }
+              }
+            }
+          }
+        ],
+        outcomes: [
+          {
+            id: 'insulation-fail',
+            text: 'The unit was nearly frozen solid!',
+            hp: -40,
+            chance: 1.0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'heavy-ceramic-vault',
+    title: 'Heavy Ceramic Vault',
+    prompt: 'You find a vault covered in layers of ancient heat-shielding ceramic. No kinetic weapon can dent it.',
+    choices: [
+      {
+        id: 'laser-cut',
+        label: 'Laser Cut',
+        description: 'Use a laser to melt through the shielding.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            atkType: AttackType.Laser,
+            chanceOverride: 0.95,
+            outcomeOverride: {
+              id: 'laser-vault-success',
+              text: 'The laser sliced through the ceramic like butter. The vault is yours!',
+              credits: 800,
+              xp: 100
+            }
+          }
+        ],
+        outcomes: [
+          {
+            id: 'vault-fail',
+            text: 'You couldn\'t even scratch the surface.',
+            xp: 10,
+            chance: 1.0
+          }
+        ]
+      },
+      {
+        id: 'kinetic-brute-force',
+        label: 'Brute Force',
+        description: 'Try to smash it open.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            atkType: AttackType.Kinetic,
+            chanceOverride: 0.1,
+            outcomeOverride: {
+              id: 'kinetic-vault-luck',
+              text: 'A lucky strike found a hairline fracture! The vault shattered!',
+              credits: 500,
+              xp: 200
+            }
+          }
+        ],
+        outcomes: [
+          {
+            id: 'kinetic-vault-fail',
+            text: 'The kinetic rounds just bounced off, nearly hitting your own ship.',
+            hp: -15,
+            chance: 1.0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'kinetic-impact-storm',
+    title: 'Kinetic Impact Storm',
+    prompt: 'A cloud of high-velocity micro-debris is ahead. It will shred standard hulls.',
+    choices: [
+      {
+        id: 'tank-storm',
+        label: 'Tank the Storm',
+        description: 'Send a unit to protect the main thrusters.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            defType: ArmorType.Ceramic,
+            chanceOverride: 1.0,
+            outcomeOverride: {
+              id: 'ceramic-storm-success',
+              text: 'The ceramic composite plates pulverized the debris upon impact. No damage taken!',
+              xp: 80
+            }
+          },
+          {
+            defType: ArmorType.Plating,
+            chanceOverride: 0.8,
+            outcomeOverride: {
+              id: 'plating-storm-success',
+              text: 'The heavy plating took a beating, but the thrusters are safe.',
+              hp: -10,
+              xp: 40
+            }
+          }
+        ],
+        outcomes: [
+          {
+            id: 'storm-damage',
+            text: 'The debris shredded the unit\'s exterior.',
+            hp: -50,
+            chance: 1.0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'laser-comm-array',
+    title: 'Laser Communication Array',
+    prompt: 'A deep-space relay is out of alignment. Its laser transmitter is pointing at a nearby sun.',
+    choices: [
+      {
+        id: 'realign',
+        label: 'Realign Array',
+        description: 'Send a unit to manually adjust the beam.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            atkType: AttackType.Laser,
+            chanceOverride: 0.9,
+            outcomeOverride: {
+              id: 'laser-align-success',
+              text: 'Your unit used its own laser emitters to calibrate the relay perfectly.',
+              xp: 120,
+              credits: 100
+            }
+          }
+        ],
+        outcomes: [
+          {
+            id: 'align-success',
+            text: 'You managed to nudge it back into place.',
+            xp: 50,
+            chance: 0.6
+          },
+          {
+            id: 'align-fail',
+            text: 'The beam hit the ship as it rotated!',
+            hp: -30,
+            chance: 0.4
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'cryo-preservation-leak',
+    title: 'Cryo-Preservation Leak',
+    prompt: 'A shipment of rare biological samples is thawing. If they reach room temperature, they will spoil.',
+    choices: [
+      {
+        id: 'refreeze',
+        label: 'Refreeze Samples',
+        description: 'Use a unit to stabilize the temperature.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            atkType: AttackType.Cryo,
+            chanceOverride: 1.0,
+            outcomeOverride: {
+              id: 'cryo-refreeze-success',
+              text: 'The Cryo-pulses perfectly re-stabilized the preservation field. The samples are saved!',
+              credits: 500,
+              xp: 50
+            }
+          }
+        ],
+        outcomes: [
+          {
+            id: 'refreeze-fail',
+            text: 'The samples spoiled. What a waste.',
+            xp: 10,
+            chance: 1.0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'nanofiber-weaving',
+    title: 'NanoFiber Weaving',
+    prompt: 'A critical structural support beam has cracked. You need a specialized repair.',
+    choices: [
+      {
+        id: 'weave-repair',
+        label: 'Weave Repair',
+        description: 'Send a unit to use its armor fibers for the repair.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            defType: ArmorType.NanoFiber,
+            chanceOverride: 1.0,
+            outcomeOverride: {
+              id: 'nanofiber-weave-success',
+              text: 'The unit wove its advanced nanofibers into the crack, making the beam stronger than ever!',
+              xp: 100,
+              hp: 20 // Hull repair
+            }
+          }
+        ],
+        outcomes: [
+          {
+            id: 'weave-fail',
+            text: 'A standard weld won\'t hold. The ship is less stable now.',
+            hp: -10,
+            chance: 1.0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'prism-mirror-array',
+    title: 'Prism Mirror Array',
+    prompt: 'You find a derelict ship designed to focus stellar energy. Its mirror array is shattered.',
+    choices: [
+      {
+        id: 'focus-energy',
+        label: 'Focus Energy',
+        description: 'Try to use the remaining mirrors to charge your ship.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            defType: ArmorType.Prism,
+            chanceOverride: 0.95,
+            outcomeOverride: {
+              id: 'prism-focus-success',
+              text: 'Your Prismatic armor acted as a perfect lens, focusing the energy directly into your ship.',
+              credits: 400,
+              xp: 80
+            }
+          },
+          {
+            atkType: AttackType.Laser,
+            chanceOverride: 0.85,
+            outcomeOverride: {
+              id: 'laser-focus-success',
+              text: 'You used your laser to create a guiding path for the stellar energy.',
+              credits: 300,
+              xp: 60
+            }
+          }
+        ],
+        outcomes: [
+          {
+            id: 'focus-success',
+            text: 'You got a small charge.',
+            credits: 100,
+            chance: 0.5
+          },
+          {
+            id: 'focus-fail',
+            text: 'The unfocused light nearly blinded the crew!',
+            hp: -10,
+            chance: 0.5
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'kinetic-demolition',
+    title: 'Kinetic Demolition',
+    prompt: 'A massive asteroid is on a collision course with a small mining colony. You can help.',
+    choices: [
+      {
+        id: 'deflect-asteroid',
+        label: 'Deflect Asteroid',
+        description: 'Use heavy weapons to nudge it off course.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            atkType: AttackType.Kinetic,
+            chanceOverride: 1.0,
+            outcomeOverride: {
+              id: 'kinetic-demo-success',
+              text: 'The heavy kinetic slugs imparted enough momentum to move the asteroid safely away.',
+              credits: 500,
+              xp: 150
+            }
+          }
+        ],
+        outcomes: [
+          {
+            id: 'demo-success',
+            text: 'You blew off a few chunks, enough to save the colony.',
+            credits: 200,
+            xp: 50,
+            chance: 0.4
+          },
+          {
+            id: 'demo-fail',
+            text: 'You didn\'t have enough power. The colony was hit.',
+            xp: -50,
+            chance: 0.6
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'ceramic-heat-sink',
+    title: 'Ceramic Heat Sink',
+    prompt: 'A station is located inside a volcanic moon. The heat is extreme.',
+    choices: [
+      {
+        id: 'enter-station',
+        label: 'Enter Station',
+        description: 'Send a unit to retrieve data from the core.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            defType: ArmorType.Ceramic,
+            chanceOverride: 1.0,
+            outcomeOverride: {
+              id: 'ceramic-heat-success',
+              text: 'The ceramic armor plates handled the thousands of degrees without warping. Success!',
+              xp: 150,
+              credits: 200
+            }
+          }
+        ],
+        outcomes: [
+          {
+            id: 'heat-damage',
+            text: 'The unit\'s systems melted in the extreme heat!',
+            hp: -70,
+            chance: 1.0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'cryo-stasis-rescue',
+    title: 'Cryo-Stasis Rescue',
+    prompt: 'You rescued a high-priority target, but their life support is failing. They need to be kept cold.',
+    choices: [
+      {
+        id: 'stasis-assist',
+        label: 'Assist Stasis',
+        description: 'Send a unit to maintain the target\'s temperature.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            atkType: AttackType.Cryo,
+            chanceOverride: 1.0,
+            outcomeOverride: {
+              id: 'cryo-rescue-success',
+              text: 'Your unit maintained the target at perfect stasis levels until you reached safety.',
+              credits: 700,
+              xp: 100
+            }
+          }
+        ],
+        outcomes: [
+          {
+            id: 'rescue-fail',
+            text: 'The target thawed too early and didn\'t make it.',
+            xp: 20,
+            chance: 1.0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'laser-tripwire-maze',
+    title: 'Laser Tripwire Maze',
+    prompt: 'A vault is guarded by a dense maze of visible laser tripwires.',
+    choices: [
+      {
+        id: 'walk-through',
+        label: 'Walk Through',
+        description: 'Send a unit to navigate the maze.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            defType: ArmorType.Prism,
+            chanceOverride: 1.0,
+            outcomeOverride: {
+              id: 'prism-maze-success',
+              text: 'The Prismatic armor absorbed and refracted the tripwire beams, making the sensors believe nobody was there!',
+              credits: 500,
+              xp: 100
+            }
+          },
+          {
+            defType: ArmorType.NanoFiber,
+            chanceOverride: 0.8,
+            outcomeOverride: {
+              id: 'nanofiber-maze-success',
+              text: 'The unit\'s extreme flexibility allowed it to contort through the maze effortlessly.',
+              credits: 400,
+              xp: 80
+            }
+          }
+        ],
+        outcomes: [
+          {
+            id: 'maze-fail',
+            text: 'A tripwire was hit! Automated turrets opened fire!',
+            hp: -40,
+            chance: 1.0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'nano-swarm-reconstruction',
+    title: 'Nano-Swarm Reconstruction',
+    prompt: 'A cloud of "builder" nanites is drifting aimlessly. They are looking for a template.',
+    choices: [
+      {
+        id: 'provide-template',
+        label: 'Provide Template',
+        description: 'Send a unit to interface with the swarm.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            defType: ArmorType.NanoFiber,
+            chanceOverride: 1.0,
+            outcomeOverride: {
+              id: 'nanofiber-template-success',
+              text: 'The builder nanites recognized the advanced nanofibers and began duplicating them, repairing the unit!',
+              hp: 50,
+              xp: 100
+            }
+          }
+        ],
+        outcomes: [
+          {
+            id: 'template-fail',
+            text: 'The nanites didn\'t understand the unit\'s structure and began dismantling it for parts!',
+            hp: -30,
+            chance: 1.0
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'kinetic-recoil-calibration',
+    title: 'Kinetic Recoil Calibration',
+    prompt: 'A massive explosion has sent your ship spinning. You need to stabilize.',
+    choices: [
+      {
+        id: 'use-recoil',
+        label: 'Use Weapon Recoil',
+        description: 'Send a unit to fire its weapons in specific bursts to counter the spin.',
+        requiresUnitSelection: true,
+        unitRequirements: [
+          {
+            atkType: AttackType.Kinetic,
+            chanceOverride: 1.0,
+            outcomeOverride: {
+              id: 'kinetic-stabilize-success',
+              text: 'The heavy recoil from the kinetic rounds acted like perfect thrusters, stabilizing the ship.',
+              xp: 100
+            }
+          }
+        ],
+        outcomes: [
+          {
+            id: 'stabilize-fail',
+            text: 'The bursts were poorly timed, making the spin even worse!',
+            hp: -20,
+            chance: 1.0
           }
         ]
       }

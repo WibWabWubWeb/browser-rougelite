@@ -14,14 +14,51 @@
   height: auto;
 }
 
+.matrix-line {
+  transition: opacity 0.3s ease, stroke-width 0.3s ease;
+  opacity: 0.4;
+}
+
+.matrix-line.highlight {
+  opacity: 1;
+}
+
+.matrix-line.dimmed {
+  opacity: 0.05;
+}
+
+.type-node-group {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.type-node-group.clickable {
+  cursor: pointer;
+}
+
+.type-node-group.dim {
+  opacity: 0.2;
+}
+
+.type-node-group.active .type-node-bg {
+  stroke-width: 2;
+  stroke: #fff;
+  fill: #2a3a4a;
+}
+
+.type-node-group.active .type-icon {
+  filter: drop-shadow(0 0 5px #fff);
+}
+
 .type-node-bg {
   fill: #1a2a3a;
   stroke: #00f2ff;
   stroke-width: 1;
+  transition: all 0.3s ease;
 }
 
 .type-icon {
   font-size: 1.2rem;
+  transition: all 0.3s ease;
 }
 
 .type-label {

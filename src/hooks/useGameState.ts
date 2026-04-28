@@ -3,7 +3,7 @@ import type { Unit, MapNode, ShopItem, EventOutcome } from "../types/game";
 import { NodeType } from '../types/game';
 import { generateMap } from '../logic/map';
 
-export type GameScreen = 'MAP' | 'BATTLE' | 'SHOP' | 'LEVEL_UP' | 'EVENT' | 'DRAFT';
+export type GameScreen = 'MAP' | 'BATTLE' | 'SHOP' | 'LEVEL_UP' | 'EVENT' | 'DRAFT' | 'GAME_OVER';
 
 export interface GameState {
   squad: Unit[];
@@ -29,7 +29,8 @@ export type GameAction =
   | { type: 'USE_ITEM'; itemId: string; targetUnitId: string }
   | { type: 'EQUIP_MODULE'; item: ShopItem; targetUnitId: string }
   | { type: 'RESOLVE_EVENT'; outcome: EventOutcome; targetUnitId?: string }
-  | { type: 'REMOVE_UNIT'; unitId: string };
+  | { type: 'REMOVE_UNIT'; unitId: string }
+  | { type: 'RESTART_GAME' };
 
 const INITIAL_CREDITS = 100;
 const MAP_DEPTH = 6;
@@ -120,6 +121,15 @@ function gameReducer(state: GameState, action: GameAction): GameState {
           xpToNext: newXpToNext,
         };
       });
+
+      const allDead = updatedSquad.every(u => u.hp <= 0);
+      if (allDead) {
+        return {
+          ...state,
+          squad: updatedSquad,
+          screen: 'GAME_OVER'
+        };
+      }
 
       return {
         ...state,
@@ -221,9 +231,13 @@ function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'REMOVE_UNIT': {
+      const updatedSquad = state.squad.filter(u => u.id !== action.unitId);
+      const allDead = updatedSquad.length === 0 || updatedSquad.every(u => u.hp <= 0);
+      
       return {
         ...state,
-        squad: state.squad.filter(u => u.id !== action.unitId),
+        squad: updatedSquad,
+        screen: allDead ? 'GAME_OVER' : state.screen,
       };
     }
 
@@ -246,6 +260,8 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         updatedSquad = updatedSquad.filter(u => u.id !== targetUnitId);
       }
 
+      const allDead = updatedSquad.length === 0 || updatedSquad.every(u => u.hp <= 0);
+
       const newInventory = outcome.item 
         ? [...state.inventory, outcome.item] 
         : state.inventory;
@@ -255,7 +271,21 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         squad: updatedSquad,
         credits: state.credits + (outcome.credits || 0),
         inventory: newInventory,
-        screen: 'MAP',
+        screen: allDead ? 'GAME_OVER' : 'MAP',
+      };
+    }
+
+    case 'RESTART_GAME': {
+      const map = generateMap(MAP_DEPTH);
+      return {
+        squad: [],
+        inventory: [],
+        credits: INITIAL_CREDITS,
+        currentLevel: 0,
+        currentNodeId: null,
+        map: map,
+        screen: 'DRAFT',
+        lastBattleLeveledUnits: [],
       };
     }
 
@@ -331,6 +361,10 @@ export function useGameState() {
     dispatch({ type: 'REMOVE_UNIT', unitId });
   }, []);
 
+  const restartGame = useCallback(() => {
+    dispatch({ type: 'RESTART_GAME' });
+  }, []);
+
   return {
     state,
     travel,
@@ -346,5 +380,6 @@ export function useGameState() {
     equipModule,
     resolveEvent,
     removeUnit,
+    restartGame,
   };
   }

@@ -49,9 +49,15 @@ export const SquadBar: React.FC<SquadBarProps> = ({ squad, onReorder }) => {
       case 'Thermal': return '🔥';
       case 'Ion': return '⚡';
       case 'Toxic': return '☣️';
+      case 'Kinetic': return '☄️';
+      case 'Laser': return '🔦';
+      case 'Cryo': return '❄️';
       case 'Plating': return '🛡️';
       case 'Shields': return '🌀';
       case 'Bio': return '🌿';
+      case 'Ceramic': return '🏺';
+      case 'Prism': return '💎';
+      case 'NanoFiber': return '🧶';
       default: return '';
     }
   };
@@ -64,6 +70,7 @@ export const SquadBar: React.FC<SquadBarProps> = ({ squad, onReorder }) => {
           const unit = localSquad[index];
           if (unit) {
             const hpPercent = (unit.hp / unit.maxHp) * 100;
+            const xpPercent = (unit.xp / unit.xpToNext) * 100;
             return (
               <div
                 key={unit.id}
@@ -81,10 +88,13 @@ export const SquadBar: React.FC<SquadBarProps> = ({ squad, onReorder }) => {
                   <span title={`DEF: ${unit.defType}`}>{getTypeIcon(unit.defType)}</span>
                 </div>
                 <div className="unit-info">
-                  <div className="unit-name">{unit.name}</div>
-                  <div className="unit-stats">SPEED {unit.speed} | ATTACK {unit.atk}</div>
+                  <div className="unit-name">{unit.name} <span className="unit-level-tag">LV.{unit.level}</span></div>
+                  <div className="unit-stats">SPEED {unit.speed} | ATK {unit.atk}</div>
                   <div className="unit-hp-bar">
                     <div className="unit-hp-fill" style={{ width: `${hpPercent}%` }}></div>
+                  </div>
+                  <div className="unit-xp-bar">
+                    <div className="unit-xp-fill" style={{ width: `${xpPercent}%` }}></div>
                   </div>
                   <div className="unit-hp-text">{unit.hp}/{unit.maxHp} HP</div>
                 </div>

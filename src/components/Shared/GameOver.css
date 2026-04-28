@@ -1,0 +1,84 @@
+.game-over-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle, #200000 0%, #000 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+  animation: death-fade 1s ease-out;
+}
+
+@keyframes death-fade {
+  from { opacity: 0; background: #fff; }
+  to { opacity: 1; background: radial-gradient(circle, #200000 0%, #000 100%); }
+}
+
+.game-over-content {
+  text-align: center;
+  padding: 3rem;
+  border: 2px solid #ff0000;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.8);
+  box-shadow: 0 0 50px rgba(255, 0, 0, 0.3);
+  max-width: 500px;
+  width: 90%;
+}
+
+.game-over-title {
+  color: #ff0000;
+  font-size: 3rem;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 5px;
+  text-shadow: 0 0 20px #ff0000;
+}
+
+.game-over-msg {
+  color: #aaa;
+  font-size: 1.2rem;
+  margin: 1rem 0 2rem;
+}
+
+.game-over-stats {
+  background: rgba(255, 0, 0, 0.1);
+  border: 1px solid #400;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2.5rem;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+}
+
+.stat-value {
+  color: #ff0000;
+  font-size: 1.5rem;
+}
+
+.restart-button {
+  width: 100%;
+  padding: 1rem;
+  background: #ff0000;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 2px;
+}
+
+.restart-button:hover {
+  background: #ff3333;
+  box-shadow: 0 0 20px #ff0000;
+  transform: translateY(-2px);
+}

@@ -6,6 +6,7 @@ import { LevelUp } from './components/Progression/LevelUp';
 import { DraftScreen } from './components/Draft/DraftScreen';
 import { ShopScreen } from './components/Shop/ShopScreen';
 import { EventScreen } from './components/Events/EventScreen';
+import { GameOver } from './components/Shared/GameOver';
 import { getRandomEvent } from './logic/events';
 import type { Unit, GameEvent } from './types/game';
 import { AttackType, ArmorType } from './types/game';
@@ -43,7 +44,8 @@ function App() {
     equipModule,
     recruit,
     useItem,
-    resolveEvent
+    resolveEvent,
+    restartGame
   } = useGameState();
 
   const [activeEvent, setActiveEvent] = useState<GameEvent | null>(null);
@@ -152,6 +154,13 @@ function App() {
           </div>
         );
       }
+
+      case 'GAME_OVER':
+        return (
+          <div className="game-container centered">
+            <GameOver depth={state.currentLevel} onRestart={restartGame} />
+          </div>
+        );
 
       default:
         return <div>Unknown Screen</div>;

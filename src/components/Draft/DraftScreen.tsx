@@ -14,7 +14,7 @@ const generateRandomUnit = (id: string): Unit => {
   const atkType = ATK_POOL[Math.floor(Math.random() * ATK_POOL.length)];
   const defType = DEF_POOL[Math.floor(Math.random() * DEF_POOL.length)];
   const names = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta', 'Theta'];
-  const name = `${atkType}/${defType} ${names[Math.floor(Math.random() * names.length)]}`;
+  const name = `${names[Math.floor(Math.random() * names.length)]} Squadron`;
   
   return {
     id,
@@ -47,6 +47,24 @@ export const DraftScreen: React.FC<DraftScreenProps> = ({ onSelect }) => {
     generateSquad(2),
   ]);
 
+  const getTypeIcon = (type?: string) => {
+    switch (type) {
+      case 'Thermal': return '🔥';
+      case 'Ion': return '⚡';
+      case 'Toxic': return '☣️';
+      case 'Kinetic': return '☄️';
+      case 'Laser': return '🔦';
+      case 'Cryo': return '❄️';
+      case 'Plating': return '🛡️';
+      case 'Shields': return '🌀';
+      case 'Bio': return '🌿';
+      case 'Ceramic': return '🏺';
+      case 'Prism': return '💎';
+      case 'NanoFiber': return '🧶';
+      default: return '';
+    }
+  };
+
   return (
     <div className="draft-screen">
       <header className="draft-header">
@@ -61,7 +79,11 @@ export const DraftScreen: React.FC<DraftScreenProps> = ({ onSelect }) => {
             <div className="unit-list">
               {squad.map(unit => (
                 <div key={unit.id} className="unit-info-compact" title={`HP: ${unit.hp}, ATK: ${unit.atk}, SPD: ${unit.speed}`}>
-                  <div className="unit-icon">{unit.atkType.substring(0, 1)}/{unit.defType.substring(0, 1)}</div>
+                  <div className="unit-icon">
+                    {getTypeIcon(unit.atkType)}
+                    <span className="type-sep">/</span>
+                    {getTypeIcon(unit.defType)}
+                  </div>
                   <div className="unit-details">
                     <span className="unit-name">{unit.name}</span>
                     <span className="unit-type">{unit.atkType} / {unit.defType}</span>

@@ -34,9 +34,15 @@ export const LevelUp: React.FC<LevelUpProps> = ({
       case 'Thermal': return '🔥';
       case 'Ion': return '⚡';
       case 'Toxic': return '☣️';
+      case 'Kinetic': return '☄️';
+      case 'Laser': return '🔦';
+      case 'Cryo': return '❄️';
       case 'Plating': return '🛡️';
       case 'Shields': return '🌀';
       case 'Bio': return '🌿';
+      case 'Ceramic': return '🏺';
+      case 'Prism': return '💎';
+      case 'NanoFiber': return '🧶';
       default: return '';
     }
   };
@@ -59,6 +65,9 @@ export const LevelUp: React.FC<LevelUpProps> = ({
                   </span>
                 </div>
                 <p className="level-text">New Level: {unit.level}</p>
+                <div className="unit-xp-bar">
+                  <div className="unit-xp-fill" style={{ width: `${(unit.xp / unit.xpToNext) * 100}%` }}></div>
+                </div>
                 <div className="unit-stats">
                   <div>ATK: {unit.atk}</div>
                   <div>HP: {unit.hp}/{unit.maxHp}</div>

@@ -4,9 +4,15 @@ import type { Unit } from '../../types/game';
 import { calculateDamage } from '../../logic/combat';
 
 interface Effect {
-  type: 'Thermal' | 'Ion' | 'Toxic';
+  type: 'Thermal' | 'Ion' | 'Toxic' | 'Kinetic' | 'Laser' | 'Cryo';
   source: 'player' | 'enemy';
   id: number;
+}
+
+interface DamageNumber {
+  id: number;
+  value: number;
+  source: 'player' | 'enemy';
 }
 
 interface BattleArenaProps {
@@ -26,6 +32,7 @@ interface BattleState {
   log: string[];
   currentEffect: Effect | null;
   effectTicks: number;
+  damageNumbers: DamageNumber[];
 }
 
 export const BattleArena: React.FC<BattleArenaProps> = ({
@@ -45,7 +52,8 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
     status: 'idle',
     log: ['Combat initiated. Ready to engage.'],
     currentEffect: null,
-    effectTicks: 0
+    effectTicks: 0,
+    damageNumbers: []
   });
 
   useEffect(() => {
@@ -70,6 +78,7 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
         let nextEnemyIndex = prev.enemyActiveIndex;
         let nextEffect = prev.currentEffect;
         let nextEffectTicks = Math.max(0, prev.effectTicks - 1);
+        let nextDamageNumbers = prev.damageNumbers.filter(d => Date.now() - d.id < 1000);
 
         // Effect cleanup: only clear when ticks run out
         if (nextEffectTicks === 0) {
@@ -84,6 +93,7 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
           nextPlayerATB = 0;
           nextEffect = { type: playerUnit.atkType, source: 'player', id: Date.now() };
           nextEffectTicks = 5; // Stay visible for 5 ticks
+          nextDamageNumbers.push({ id: Date.now(), value: damage, source: 'player' });
           if (nextLog.length > 5) nextLog.shift();
         }
 
@@ -95,6 +105,7 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
           nextEnemyATB = 0;
           nextEffect = { type: enemyUnit.atkType, source: 'enemy', id: Date.now() + 1 };
           nextEffectTicks = 5; // Stay visible for 5 ticks
+          nextDamageNumbers.push({ id: Date.now() + 1, value: damage, source: 'enemy' });
           if (nextLog.length > 5) nextLog.shift();
         }
 
@@ -134,7 +145,8 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
           status: nextStatus,
           log: nextLog,
           currentEffect: nextEffect,
-          effectTicks: nextEffectTicks
+          effectTicks: nextEffectTicks,
+          damageNumbers: nextDamageNumbers
         };
       });
     }, 100 / speedMultiplier);
@@ -239,14 +251,20 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
       case 'Thermal': return '🔥';
       case 'Ion': return '⚡';
       case 'Toxic': return '☣️';
+      case 'Kinetic': return '☄️';
+      case 'Laser': return '🔦';
+      case 'Cryo': return '❄️';
       case 'Plating': return '🛡️';
       case 'Shields': return '🌀';
       case 'Bio': return '🌿';
+      case 'Ceramic': return '🏺';
+      case 'Prism': return '💎';
+      case 'NanoFiber': return '🧶';
       default: return '';
     }
   };
 
-  const renderUnit = (unit: Unit, currentHp: number, atb: number, isActive: boolean, isAttacking: boolean) => {
+  const renderUnit = (unit: Unit, currentHp: number, atb: number, isActive: boolean, isAttacking: boolean, damageNumbers: DamageNumber[]) => {
     if (!unit) return null;
     const hpPercent = Math.max(0, (currentHp / unit.maxHp) * 100);
     const atbPercent = Math.min(100, atb);
@@ -264,6 +282,38 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
             <div className="unit-atb-fill" style={{ width: `${atbPercent}%` }}></div>
           </div>
         )}
+        <div className="damage-container">
+          {damageNumbers.map(d => (
+            <div key={d.id} className="damage-number">-{d.value}</div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+  const renderBench = (squad: Unit[], hps: number[], activeIndex: number, side: 'player' | 'enemy') => {
+    const benchedUnits = squad.slice(activeIndex + 1);
+    const benchedHPs = hps.slice(activeIndex + 1);
+
+    if (benchedUnits.length === 0) return <div className="bench empty">NO REINFORCEMENTS</div>;
+
+    return (
+      <div className={`bench-list ${side}`}>
+        <div className="bench-title">NEXT IN LINE</div>
+        {benchedUnits.map((u, i) => {
+          const hpPercent = (benchedHPs[i] / u.maxHp) * 100;
+          return (
+            <div key={u.id} className={`bench-card ${benchedHPs[i] <= 0 ? 'dead' : ''}`}>
+              <div className="bench-card-header">
+                <span className="bench-name">{u.name}</span>
+                <span className="bench-types">{getTypeIcon(u.atkType)}/{getTypeIcon(u.defType)}</span>
+              </div>
+              <div className="bench-hp-bar">
+                <div className="bench-hp-fill" style={{ width: `${hpPercent}%` }}></div>
+              </div>
+            </div>
+          );
+        })}
       </div>
     );
   };
@@ -316,13 +366,10 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
             state.playerHPs[state.playerActiveIndex], 
             state.playerATB, 
             true,
-            state.currentEffect?.source === 'player'
+            state.currentEffect?.source === 'player',
+            state.damageNumbers.filter(d => d.source === 'enemy')
           )}
-          <div className="bench">
-            {playerSquad.map((u, i) => i !== state.playerActiveIndex && (
-              <div key={u.id} className={`bench-pip ${state.playerHPs[i] <= 0 ? 'dead' : ''}`} title={u.name}></div>
-            ))}
-          </div>
+          {renderBench(playerSquad, state.playerHPs, state.playerActiveIndex, 'player')}
         </div>
 
         <div className="vs-divider">
@@ -332,6 +379,9 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
               {state.currentEffect.type === 'Thermal' && <div className="fire-beam"></div>}
               {state.currentEffect.type === 'Ion' && <div className="lightning-bolt"></div>}
               {state.currentEffect.type === 'Toxic' && <div className="toxic-glob"></div>}
+              {state.currentEffect.type === 'Kinetic' && <div className="kinetic-slug"></div>}
+              {state.currentEffect.type === 'Laser' && <div className="laser-beam"></div>}
+              {state.currentEffect.type === 'Cryo' && <div className="cryo-blast"></div>}
             </div>
           )}
         </div>
@@ -342,13 +392,10 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
             state.enemyHPs[state.enemyActiveIndex], 
             state.enemyATB, 
             true,
-            state.currentEffect?.source === 'enemy'
+            state.currentEffect?.source === 'enemy',
+            state.damageNumbers.filter(d => d.source === 'player')
           )}
-          <div className="bench">
-            {enemySquad.map((u, i) => i !== state.enemyActiveIndex && (
-              <div key={u.id} className={`bench-pip ${state.enemyHPs[i] <= 0 ? 'dead' : ''}`} title={u.name}></div>
-            ))}
-          </div>
+          {renderBench(enemySquad, state.enemyHPs, state.enemyActiveIndex, 'enemy')}
         </div>
       </div>
 

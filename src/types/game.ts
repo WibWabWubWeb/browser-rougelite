@@ -1,7 +1,10 @@
 export const AttackType = {
   Thermal: 'Thermal',
   Ion: 'Ion',
-  Toxic: 'Toxic'
+  Toxic: 'Toxic',
+  Kinetic: 'Kinetic',
+  Laser: 'Laser',
+  Cryo: 'Cryo'
 } as const;
 
 export type AttackType = (typeof AttackType)[keyof typeof AttackType];
@@ -9,7 +12,10 @@ export type AttackType = (typeof AttackType)[keyof typeof AttackType];
 export const ArmorType = {
   Plating: 'Plating',
   Shields: 'Shields',
-  Bio: 'Bio'
+  Bio: 'Bio',
+  Ceramic: 'Ceramic',
+  Prism: 'Prism',
+  NanoFiber: 'NanoFiber'
 } as const;
 
 export type ArmorType = (typeof ArmorType)[keyof typeof ArmorType];

@@ -3,6 +3,7 @@
 ## 🟢 Immediate Priority
 - [x] **Expand Event Pool**: Added specialized encounters like Space Spider Plague and Acid Nebula.
 - [x] **Clear Event Rewards**: Implemented a results screen with clear reward visualization.
+- [x] **6x6 Combat Matrix**: Expanded from 3x3 to 6x6 with new Kinetic, Laser, and Cryo types.
 - [ ] **XP Bar Visibility**: Add a visual XP progress bar to the unit cards in the `SquadBar` and other unit overviews.
 - [ ] **Combat UI Overhaul**: Update the battle screen to show the full waiting line of units. Replace the small pips with detailed cards showing types and remaining HP for all upcoming squad members.
 - [ ] **Attack Animations**: Implement visual feedback when attacks occur, such as hit flashes, unit "shaking" on impact, and floating damage numbers to make combat feel more impactful.

@@ -29,7 +29,10 @@ export function TargetSelectionModal({ title, squad, onSelect, onCancel }: Targe
               className={`unit-card ${selectedIndex === index ? 'selected' : ''}`}
               onClick={() => setSelectedIndex(index)}
             >
-              <div className="unit-name">{unit.name}</div>
+              <div className="unit-name">
+                {unit.name}
+                <div className="unit-lv">LV.{unit.level}</div>
+              </div>
               <div className="unit-hp">{unit.hp} / {unit.maxHp} HP</div>
               <div className="unit-types">
                 <span className={`type-badge atk-${unit.atkType.toLowerCase()}`}>
@@ -38,6 +41,14 @@ export function TargetSelectionModal({ title, squad, onSelect, onCancel }: Targe
                 <span className={`type-badge def-${unit.defType.toLowerCase()}`}>
                   {unit.defType}
                 </span>
+              </div>
+              <div className="unit-progress">
+                <div className="progress-bar hp">
+                  <div className="fill" style={{ width: `${(unit.hp / unit.maxHp) * 100}%` }}></div>
+                </div>
+                <div className="progress-bar xp">
+                  <div className="fill" style={{ width: `${(unit.xp / unit.xpToNext) * 100}%` }}></div>
+                </div>
               </div>
               <div className="unit-stats">
                 <span>ATK: {unit.atk}</span>
