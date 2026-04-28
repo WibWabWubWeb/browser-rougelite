@@ -67,6 +67,9 @@ export interface EventOutcome {
   hp?: number; // percentage of current HP, e.g. -10 means -10%
   xp?: number;
   item?: ShopItem;
+  chance?: number; // 0.0 to 1.0, used when choice has multiple outcomes
+  removeUnit?: boolean; // If true, the targetUnitId will be removed from squad
+  newUnit?: Unit; // If present, this unit will be added to the squad
 }
 
 export interface EventChoice {
@@ -74,6 +77,17 @@ export interface EventChoice {
   label: string;
   description: string;
   outcomes: EventOutcome[];
+  
+  // Specific requirements that modify chances or outcomes
+  unitRequirements?: {
+    atkType?: AttackType;
+    defType?: ArmorType;
+    chanceOverride?: number;
+    outcomeOverride?: EventOutcome;
+  }[];
+  
+  // If true, the player must select a unit from their squad to perform this action
+  requiresUnitSelection?: boolean;
 }
 
 export interface GameEvent {

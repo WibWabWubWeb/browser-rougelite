@@ -3,6 +3,12 @@ import './BattleArena.css';
 import type { Unit } from '../../types/game';
 import { calculateDamage } from '../../logic/combat';
 
+interface Effect {
+  type: 'Thermal' | 'Ion' | 'Toxic';
+  source: 'player' | 'enemy';
+  id: number;
+}
+
 interface BattleArenaProps {
   playerSquad: Unit[];
   enemySquad: Unit[];
@@ -18,6 +24,8 @@ interface BattleState {
   enemyATB: number;
   status: 'idle' | 'fighting' | 'victory' | 'defeat';
   log: string[];
+  currentEffect: Effect | null;
+  effectTicks: number;
 }
 
 export const BattleArena: React.FC<BattleArenaProps> = ({
@@ -35,7 +43,9 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
     playerATB: 0,
     enemyATB: 0,
     status: 'idle',
-    log: ['Combat initiated. Ready to engage.']
+    log: ['Combat initiated. Ready to engage.'],
+    currentEffect: null,
+    effectTicks: 0
   });
 
   useEffect(() => {
@@ -58,6 +68,13 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
         const nextLog = [...prev.log];
         let nextPlayerIndex = prev.playerActiveIndex;
         let nextEnemyIndex = prev.enemyActiveIndex;
+        let nextEffect = prev.currentEffect;
+        let nextEffectTicks = Math.max(0, prev.effectTicks - 1);
+
+        // Effect cleanup: only clear when ticks run out
+        if (nextEffectTicks === 0) {
+          nextEffect = null;
+        }
 
         // Player attacks
         if (nextPlayerATB >= 100) {
@@ -65,6 +82,8 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
           nextEnemyHPs[nextEnemyIndex] = Math.max(0, nextEnemyHPs[nextEnemyIndex] - damage);
           nextLog.push(`${playerUnit.name} deals ${damage} damage to ${enemyUnit.name}!`);
           nextPlayerATB = 0;
+          nextEffect = { type: playerUnit.atkType, source: 'player', id: Date.now() };
+          nextEffectTicks = 5; // Stay visible for 5 ticks
           if (nextLog.length > 5) nextLog.shift();
         }
 
@@ -74,6 +93,8 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
           nextPlayerHPs[nextPlayerIndex] = Math.max(0, nextPlayerHPs[nextPlayerIndex] - damage);
           nextLog.push(`${enemyUnit.name} deals ${damage} damage to ${playerUnit.name}!`);
           nextEnemyATB = 0;
+          nextEffect = { type: enemyUnit.atkType, source: 'enemy', id: Date.now() + 1 };
+          nextEffectTicks = 5; // Stay visible for 5 ticks
           if (nextLog.length > 5) nextLog.shift();
         }
 
@@ -81,6 +102,8 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
         if (nextEnemyHPs[nextEnemyIndex] <= 0) {
           nextEnemyIndex++;
           nextEnemyATB = 0;
+          nextEffect = null; 
+          nextEffectTicks = 0;
           if (nextEnemyIndex < enemySquad.length) {
              nextLog.push(`${enemySquad[nextEnemyIndex].name} enters the battle!`);
           }
@@ -88,6 +111,8 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
         if (nextPlayerHPs[nextPlayerIndex] <= 0) {
           nextPlayerIndex++;
           nextPlayerATB = 0;
+          nextEffect = null;
+          nextEffectTicks = 0;
           if (nextPlayerIndex < playerSquad.length) {
             nextLog.push(`${playerSquad[nextPlayerIndex].name} enters the battle!`);
           }
@@ -107,7 +132,9 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
           playerATB: nextPlayerATB,
           enemyATB: nextEnemyATB,
           status: nextStatus,
-          log: nextLog
+          log: nextLog,
+          currentEffect: nextEffect,
+          effectTicks: nextEffectTicks
         };
       });
     }, 100 / speedMultiplier);
@@ -219,12 +246,12 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
     }
   };
 
-  const renderUnit = (unit: Unit, currentHp: number, atb: number, isActive: boolean) => {
+  const renderUnit = (unit: Unit, currentHp: number, atb: number, isActive: boolean, isAttacking: boolean) => {
     if (!unit) return null;
     const hpPercent = Math.max(0, (currentHp / unit.maxHp) * 100);
     const atbPercent = Math.min(100, atb);
     return (
-      <div className={`unit-display ${isActive ? 'active' : 'benched'} ${currentHp <= 0 ? 'dead' : ''}`}>
+      <div className={`unit-display ${isActive ? 'active' : 'benched'} ${currentHp <= 0 ? 'dead' : ''} ${isAttacking ? 'attacking' : ''}`}>
         <div className="unit-name">{unit.name}</div>
         <div className="unit-type-header">
           {getTypeIcon(unit.atkType)} / {getTypeIcon(unit.defType)}
@@ -284,7 +311,13 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
 
       <div className="duel-zone">
         <div className="side player-side">
-          {activePlayer && renderUnit(activePlayer, state.playerHPs[state.playerActiveIndex], state.playerATB, true)}
+          {activePlayer && renderUnit(
+            activePlayer, 
+            state.playerHPs[state.playerActiveIndex], 
+            state.playerATB, 
+            true,
+            state.currentEffect?.source === 'player'
+          )}
           <div className="bench">
             {playerSquad.map((u, i) => i !== state.playerActiveIndex && (
               <div key={u.id} className={`bench-pip ${state.playerHPs[i] <= 0 ? 'dead' : ''}`} title={u.name}></div>
@@ -292,10 +325,25 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
           </div>
         </div>
 
-        <div className="vs-divider">VS</div>
+        <div className="vs-divider">
+          VS
+          {state.currentEffect && (
+            <div key={state.currentEffect.id} className={`battle-effect ${state.currentEffect.type.toLowerCase()} ${state.currentEffect.source}`}>
+              {state.currentEffect.type === 'Thermal' && <div className="fire-beam"></div>}
+              {state.currentEffect.type === 'Ion' && <div className="lightning-bolt"></div>}
+              {state.currentEffect.type === 'Toxic' && <div className="toxic-glob"></div>}
+            </div>
+          )}
+        </div>
 
         <div className="side enemy-side">
-          {activeEnemy && renderUnit(activeEnemy, state.enemyHPs[state.enemyActiveIndex], state.enemyATB, true)}
+          {activeEnemy && renderUnit(
+            activeEnemy, 
+            state.enemyHPs[state.enemyActiveIndex], 
+            state.enemyATB, 
+            true,
+            state.currentEffect?.source === 'enemy'
+          )}
           <div className="bench">
             {enemySquad.map((u, i) => i !== state.enemyActiveIndex && (
               <div key={u.id} className={`bench-pip ${state.enemyHPs[i] <= 0 ? 'dead' : ''}`} title={u.name}></div>

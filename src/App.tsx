@@ -141,10 +141,13 @@ function App() {
           <div className="game-container centered">
             <EventScreen 
               event={activeEvent} 
-              onResolve={(outcome) => {
-                resolveEvent(outcome);
+              squad={state.squad}
+              onResolve={(outcome, targetUnitId) => {
+                resolveEvent(outcome, targetUnitId);
                 setActiveEvent(null);
               }} 
+              recruit={recruit}
+              removeUnit={removeUnit}
             />
           </div>
         );

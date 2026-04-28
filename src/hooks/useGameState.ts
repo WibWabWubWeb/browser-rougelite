@@ -28,7 +28,8 @@ export type GameAction =
   | { type: 'BUY_ITEM'; item: ShopItem }
   | { type: 'USE_ITEM'; itemId: string; targetUnitId: string }
   | { type: 'EQUIP_MODULE'; item: ShopItem; targetUnitId: string }
-  | { type: 'RESOLVE_EVENT'; outcome: EventOutcome };
+  | { type: 'RESOLVE_EVENT'; outcome: EventOutcome; targetUnitId?: string }
+  | { type: 'REMOVE_UNIT'; unitId: string };
 
 const INITIAL_CREDITS = 100;
 const MAP_DEPTH = 6;
@@ -219,9 +220,19 @@ function gameReducer(state: GameState, action: GameAction): GameState {
       };
     }
 
+    case 'REMOVE_UNIT': {
+      return {
+        ...state,
+        squad: state.squad.filter(u => u.id !== action.unitId),
+      };
+    }
+
     case 'RESOLVE_EVENT': {
-      const { outcome } = action;
-      const updatedSquad = state.squad.map(unit => {
+      const { outcome, targetUnitId } = action;
+      
+      let updatedSquad = state.squad.map(unit => {
+        if (targetUnitId && unit.id !== targetUnitId) return unit;
+
         const hpChange = outcome.hp ? Math.floor(unit.hp * (outcome.hp / 100)) : 0;
         const newHp = Math.max(0, Math.min(unit.maxHp, unit.hp + hpChange));
         return {
@@ -230,6 +241,10 @@ function gameReducer(state: GameState, action: GameAction): GameState {
           xp: unit.xp + (outcome.xp || 0),
         };
       });
+
+      if (outcome.removeUnit && targetUnitId) {
+        updatedSquad = updatedSquad.filter(u => u.id !== targetUnitId);
+      }
 
       const newInventory = outcome.item 
         ? [...state.inventory, outcome.item] 
@@ -308,8 +323,12 @@ export function useGameState() {
     dispatch({ type: 'EQUIP_MODULE', item, targetUnitId });
   }, []);
 
-  const resolveEvent = useCallback((outcome: EventOutcome) => {
-    dispatch({ type: 'RESOLVE_EVENT', outcome });
+  const resolveEvent = useCallback((outcome: EventOutcome, targetUnitId?: string) => {
+    dispatch({ type: 'RESOLVE_EVENT', outcome, targetUnitId });
+  }, []);
+
+  const removeUnit = useCallback((unitId: string) => {
+    dispatch({ type: 'REMOVE_UNIT', unitId });
   }, []);
 
   return {
@@ -326,5 +345,6 @@ export function useGameState() {
     useItem,
     equipModule,
     resolveEvent,
+    removeUnit,
   };
   }
